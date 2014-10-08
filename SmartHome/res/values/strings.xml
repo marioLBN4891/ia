@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Smart Home Environment</string>
+    <string name="benvenuto">Buongiorno</string>
+    <string name="start">Corso di Laurea Magistrale\nin Informatica\n\nEsame di \nIntelligenza Artificiale\n\nProgetto:\nSmart Home Environment\nC@SA</string>
+    <string name="cd_text">SHE_C@SA</string>
+    <string name="action_settings">Configurazioni</string>
+    <string name="activityLogin">Accesso</string>
+    <string name="formLogin">Accedi a C@SA</string>
+    <string name="username">Nome Utente:</string>
+    <string name="password">Password:</string>
+    <string name="login">Entra</string>
+    <string name="registration">Registrati</string>
+    <string name="activityRegistration">Registrazione</string>
+    <string name="cognome">Cognome:</string>
+    <string name="nome">Nome:</string>
+    <string name="password2">Ripeti\npassword:</string>
+    <string name="activityMain">Opzioni</string>
+
+    <string-array name="opzioni_array">
+        <item>Simulazione</item>
+        <item>Info personali</item>
+        <item>Data</item>
+        <item>Ora</item>
+        <item>Meteo</item>
+        <item>Sensori</item>
+        <item>Componenti</item>
+    </string-array>
+
+    <string name="drawer_open">Apri menù di navigazione</string>
+    <string name="drawer_close">Chiudi menù di navigazione</string>
+    <string name="actionInquiry">Domanda</string>
+    <string name="activityInquiry">Domanda</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="text_fragment_ora1">Modifica l\'orario di partenza della simulazione.\nUtilizza l\'orario corrente o fissane uno a tuo piacimento.</string>
+    <string name="text_fragment_ora2">Modifica orario:</string>
+    <string name="cambiaOrario">Cambia Orario</string>
+    <string name="text_fragment_data1">Modifica la data di partenza della simulazione.\nUtilizza la data corrente o scegline una qualsiasi dal calendario.</string>
+    <string name="text_fragment_data2">Modifica data:</string>
+    <string name="cambiaData">Cambia Data</string>
+    <string name="text_fragment_sim1">Impostazioni simulazione</string>
+    <string name="text_fragment_sim2">Data:</string>
+    <string name="text_fragment_sim3">Ora:</string>
+    <string name="startSimulazione">Avvia Simulazione</string>
+    <string name="title_activity_simulazione">SimulazioneActivity</string>
+
+</resources>
