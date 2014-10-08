@@ -1,9 +1,5 @@
 package ai.smarthome;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.fragment.ComponentiFragment;
 import ai.smarthome.fragment.DataFragment;
@@ -11,7 +7,7 @@ import ai.smarthome.fragment.InfoPersonaliFragment;
 import ai.smarthome.fragment.MeteoFragment;
 import ai.smarthome.fragment.OraFragment;
 import ai.smarthome.fragment.SensoriFragment;
-import ai.smarthome.fragment.SimulazioneFragment;
+import ai.smarthome.fragment.RiepilogoFragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -65,6 +62,8 @@ import android.widget.Toast;
  */
 public class MainActivity extends Activity {
     
+	public static final String CONFIGURAZIONE = "configurazione";
+	
 	private DrawerLayout drawerLayout;
     private ListView drawerListView;
     private ActionBarDrawerToggle drawerToggle;
@@ -73,8 +72,7 @@ public class MainActivity extends Activity {
     private CharSequence intestazioneActivity;
     private String[] intestazioneOpzioni; 
 
-    private int hour, minute;
-    private long dataMilliTime;
+    private Configurazione conf = new Configurazione();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +81,7 @@ public class MainActivity extends Activity {
 
         setNavigationDrawer(savedInstanceState);
         
-        setData();
-        setOrario();
+      
         
     }
 
@@ -173,27 +170,13 @@ public class MainActivity extends Activity {
         Fragment fragment = null;
         
         Bundle args = new Bundle();
-        args.putInt("posizione", position);
+        conf.setPosizione(position);
+        args.putSerializable(CONFIGURAZIONE, conf);
         
-        if (position == 0 ) {
-        	fragment = new SimulazioneFragment();
-        	args.putLong("dataMilliTime", dataMilliTime);
-        	args.putInt("hour", hour);
-        	args.putInt("minute", minute);
-        }
-        
+        if (position == 0 ) fragment = new RiepilogoFragment();
         if (position == 1 ) fragment = new InfoPersonaliFragment();
-        
-        if (position == 2 ) {
-        	fragment = new DataFragment();
-        	args.putLong("dataMilliTime", dataMilliTime);
-        }
-        
-        if (position == 3 ) {
-        	fragment = new OraFragment();
-        	args.putInt("hour", hour);
-        	args.putInt("minute", minute);
-        }
+        if (position == 2 ) fragment = new DataFragment();
+        if (position == 3 ) fragment = new OraFragment();
         if (position == 4 ) fragment = new MeteoFragment();
         if (position == 5 ) fragment = new SensoriFragment();
         if (position == 6 ) fragment = new ComponentiFragment();
@@ -250,15 +233,13 @@ public class MainActivity extends Activity {
     	
     	TextView orarioText = (TextView) findViewById(R.id.orarioText);
     	TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-    	hour = timePicker.getCurrentHour();
-    	minute = timePicker.getCurrentMinute();
-    	
-    	
-    	orarioText.setText(new StringBuilder().append("Orario configurato: ").append(pad(hour)).append(":").append(pad(minute)));
-    	timePicker.setCurrentHour(hour);
-		timePicker.setCurrentMinute(minute);
-		
-    	Toast.makeText(getApplicationContext(), "Orario modificato con successo", Toast.LENGTH_SHORT).show();
+    	conf.setHour(timePicker.getCurrentHour());
+    	conf.setMinute(timePicker.getCurrentMinute());
+    	orarioText.setText(new StringBuilder().append("Orario configurato: ").append(conf.getOraToString()));
+    	timePicker.setCurrentHour(conf.getHour());
+		timePicker.setCurrentMinute(conf.getMinute());
+		Toast.makeText(getApplicationContext(), "Orario modificato con successo", Toast.LENGTH_SHORT).show();
+    
     }
     
     @SuppressLint("SimpleDateFormat")
@@ -266,48 +247,38 @@ public class MainActivity extends Activity {
     	
     	TextView dataText = (TextView) findViewById(R.id.dataText);
     	CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-    	dataMilliTime = calendarView.getDate();
-    	
-    	Date dataConf = new Date();
-    	dataConf.setTime(dataMilliTime);
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-    	String dataConfigurata = sdf.format(dataConf);
-    	dataText.setText(new StringBuilder().append("Data configurata: ").append(dataConfigurata));
-    	
+    	conf.setDataMilliTime(calendarView.getDate());  
+    	dataText.setText(new StringBuilder().append("Data configurata: ").append(conf.getDataToString()));
     	Toast.makeText(getApplicationContext(), "Data modificata con successo", Toast.LENGTH_SHORT).show();
     	
     }
     
     public void startSimulazione(View view) {
-    	Configurazione conf = new Configurazione();
-    	conf.setDataMilliTime(dataMilliTime);
-    	conf.setHour(hour);
-    	conf.setMinute(minute);
     	
     	Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     	intent.putExtra("configurazione", conf);
     	startActivity(intent);
         finish();
     }
+    
+    public void cambiaSensori(View view) {
+    	
+    	Switch temperatura = (Switch)findViewById(R.id.temperatura);
+        Switch umidita = (Switch)findViewById(R.id.umidita);
+        Switch vento = (Switch)findViewById(R.id.vento);
+        Switch presenza = (Switch)findViewById(R.id.presenza);
+        Switch sonoro = (Switch)findViewById(R.id.sonoro);
+        conf.setSensoreTemperatura(temperatura.isChecked());
+        conf.setSensoreUmidita(umidita.isChecked());
+        conf.setSensoreVento(vento.isChecked());
+        conf.setSensorePresenza(presenza.isChecked());
+        conf.setSensoreSonoro(sonoro.isChecked());
+    	Toast.makeText(getApplicationContext(), "Sensori modificati con successo", Toast.LENGTH_SHORT).show();
+    	
+    }
    
    
     
-    private void setData() {
-    	Date data = new Date();
-    	dataMilliTime = data.getTime();
-    }
+     
     
-    private void setOrario() {
-    	final Calendar c = Calendar.getInstance();
-    	hour = c.get(Calendar.HOUR_OF_DAY);
-    	minute = c.get(Calendar.MINUTE);
-    }
-    
-    
-    private static String pad(int c) {
-		if (c >= 10)
-		   return String.valueOf(c);
-		else
-		   return "0" + String.valueOf(c);
-	}
 }

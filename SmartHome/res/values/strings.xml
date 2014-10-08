@@ -19,7 +19,7 @@
     <string name="activityMain">Opzioni</string>
 
     <string-array name="opzioni_array">
-        <item>Simulazione</item>
+        <item>Riepilogo</item>
         <item>Info personali</item>
         <item>Data</item>
         <item>Ora</item>
@@ -35,14 +35,25 @@
     <string name="hello_world">Hello world!</string>
     <string name="text_fragment_ora1">Modifica l\'orario di partenza della simulazione.\nUtilizza l\'orario corrente o fissane uno a tuo piacimento.</string>
     <string name="text_fragment_ora2">Modifica orario:</string>
-    <string name="cambiaOrario">Cambia Orario</string>
+    <string name="cambiaOrario">Modifica Orario</string>
     <string name="text_fragment_data1">Modifica la data di partenza della simulazione.\nUtilizza la data corrente o scegline una qualsiasi dal calendario.</string>
     <string name="text_fragment_data2">Modifica data:</string>
-    <string name="cambiaData">Cambia Data</string>
+    <string name="cambiaData">Modifica Data</string>
     <string name="text_fragment_sim1">Impostazioni simulazione</string>
     <string name="text_fragment_sim2">Data:</string>
     <string name="text_fragment_sim3">Ora:</string>
-    <string name="startSimulazione">Avvia Simulazione</string>
-    <string name="title_activity_simulazione">SimulazioneActivity</string>
-
+    <string name="text_fragment_sim4">Sensori:</string>
+    <string name="startSimulazione">Simulazione</string>
+    
+    <string name="activitySimulazione">Avvio Simulazione</string> 
+    
+    <string name="text_fragment_sensori1">Modifica lo stato di funzionamento dei sensori presenti nell\'ambiente domestico.\nAttiva o disattiva i sensori.</string>
+    <string name="temperatura">Rilevamento temperatura</string>
+    <string name="umidita">Rilevamento umidità</string>
+    <string name="vento">Rilevamento vento</string>
+    <string name="presenza">Rilevamento presenza</string>
+    <string name="sonoro">Rilevamento sonoro</string>
+    <string name="cambiaSensori">Modifica Impostazioni</string>
+    
+	<string name="cucina_text">immagine cucina</string>
 </resources>

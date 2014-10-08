@@ -49,7 +49,7 @@
         </activity>
         <activity
             android:name=".SimulazioneActivity"
-            android:label="@string/title_activity_simulazione" 
+            android:label="@string/activitySimulazione" 
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

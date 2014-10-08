@@ -1,8 +1,7 @@
 package ai.smarthome.fragment;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import ai.smarthome.R;
+import ai.smarthome.database.wrapper.Configurazione;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -16,12 +15,7 @@ import android.widget.TextView;
 @SuppressLint("SimpleDateFormat")
 public class DataFragment extends Fragment {
 	
-    public static final String ARG_OBJECT_NUMBER = "posizione";
-
-    private Long dataMilliTime;
-	
-	private TextView dataText;
-	private CalendarView calendarView; 
+	public static final String CONFIGURAZIONE = "configurazione";
 	
     public DataFragment() {
         // Empty constructor required for fragment subclasses
@@ -30,24 +24,19 @@ public class DataFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	
-    	int i = getArguments().getInt(ARG_OBJECT_NUMBER);
+    	Configurazione conf = (Configurazione) getArguments().getSerializable(CONFIGURAZIONE);
     	View rootView = inflater.inflate(R.layout.fragment_data, container, false);
-        String object = getResources().getStringArray(R.array.opzioni_array)[i];
-        getActivity().setTitle(object);
+        String intestazione = getResources().getStringArray(R.array.opzioni_array)[conf.getPosizione()];
+        getActivity().setTitle(intestazione);
 		
-        dataText = (TextView)rootView.findViewById(R.id.dataText);
-        calendarView = (CalendarView)rootView.findViewById(R.id.calendarView);
+        TextView dataText = (TextView)rootView.findViewById(R.id.dataText);
+        CalendarView calendarView = (CalendarView)rootView.findViewById(R.id.calendarView);
         
         calendarView.setShowWeekNumber(false);
         calendarView.setFirstDayOfWeek(2);
 
-        dataMilliTime = getArguments().getLong("dataMilliTime");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-    	Date data = new Date();
-        data.setTime(dataMilliTime);
-        String dataConfigurata = sdf.format(data);
-        dataText.setText(new StringBuilder().append("Data configurata: ").append(dataConfigurata));
-        calendarView.setDate(dataMilliTime);
+        dataText.setText(new StringBuilder().append("Data configurata: ").append(conf.getDataToString()));
+        calendarView.setDate(conf.getDataMilliTime());
         
         return rootView;
        }

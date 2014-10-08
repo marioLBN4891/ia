@@ -21,7 +21,8 @@ public class SimulazioneActivity extends Activity {
 		getMenuInflater().inflate(R.menu.simulazione, menu);
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-	
+		
+		
 		return true;
 	}
 
