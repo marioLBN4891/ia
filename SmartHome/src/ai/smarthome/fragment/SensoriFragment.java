@@ -25,16 +25,23 @@ public class SensoriFragment extends Fragment {
         String intestazione = getResources().getStringArray(R.array.opzioni_array)[conf.getPosizione()];
         getActivity().setTitle(intestazione);
 
-        Switch temperatura = (Switch)rootView.findViewById(R.id.temperatura);
-        Switch umidita = (Switch)rootView.findViewById(R.id.umidita);
-        Switch vento = (Switch)rootView.findViewById(R.id.vento);
-        Switch presenza = (Switch)rootView.findViewById(R.id.presenza);
-        Switch sonoro = (Switch)rootView.findViewById(R.id.sonoro);
+        Switch temperatura = (Switch)rootView.findViewById(R.id.sens_temperatura);
+        Switch umidita = (Switch)rootView.findViewById(R.id.sens_umidita);
+        Switch vento = (Switch)rootView.findViewById(R.id.sens_vento);
+        Switch presenza = (Switch)rootView.findViewById(R.id.sens_presenza);
+        Switch sonoro = (Switch)rootView.findViewById(R.id.sens_sonoro);
+        
         temperatura.setChecked(conf.getSensoreTemperatura());
         umidita.setChecked(conf.getSensoreUmidita());
         vento.setChecked(conf.getSensoreVento());
         presenza.setChecked(conf.getSensorePresenza());
         sonoro.setChecked(conf.getSensoreSonoro());
+        
+        temperatura.setClickable(false);
+        umidita.setClickable(false);
+        vento.setClickable(false);
+        presenza.setClickable(false);
+        sonoro.setClickable(false);
         
         return rootView;
     }

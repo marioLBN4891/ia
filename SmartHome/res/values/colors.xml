@@ -1,4 +1,4 @@
 <resources>
     <color name="bianco_opaco">#FFFFFFFF</color>
-    <color name="colore_start_text">#4B4B4B</color>
+    <color name="colore_intestazione_text">#4B4B4B</color>
 </resources>

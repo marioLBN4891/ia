@@ -1,6 +1,10 @@
 package ai.smarthome;
 
+import java.util.ArrayList;
+
+import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.fragment.ComponentiFragment;
 import ai.smarthome.fragment.DataFragment;
 import ai.smarthome.fragment.InfoPersonaliFragment;
@@ -20,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -63,26 +69,27 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     
 	public static final String CONFIGURAZIONE = "configurazione";
-	
+	public static final String UTENTE = "UTENTE";
 	private DrawerLayout drawerLayout;
     private ListView drawerListView;
     private ActionBarDrawerToggle drawerToggle;
 
-    private CharSequence intestazioneDrawer;
-    private CharSequence intestazioneActivity;
+    private CharSequence intestazioneDrawer, intestazioneActivity;
     private String[] intestazioneOpzioni; 
 
+    
     private Configurazione conf = new Configurazione();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setNavigationDrawer(savedInstanceState);
         
-      
-        
+        Bundle bundle = getIntent().getExtras();
+        if(bundle.get(UTENTE)!= null) {
+            conf.setUtente((Utente)bundle.get(UTENTE));
+        }
     }
 
     public void setNavigationDrawer(Bundle savedInstanceState) {
@@ -126,7 +133,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.logout, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -147,10 +154,20 @@ public class MainActivity extends Activity {
         }
         // Handle action buttons
         switch(item.getItemId()) {
-        case R.id.actionInquiry:
-            Intent intent = new Intent(MainActivity.this, InquiryActivity.class);
-            startActivity(intent);
-            return true;
+        case R.id.logout:
+        	final DatabaseHelper dbH = new DatabaseHelper(this);
+        	new AlertDialog.Builder(this).setIcon(R.drawable.logout).setTitle("Logout")
+            .setMessage("Vuoi disconnetterti?")
+            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                	dbH.deleteConnessioneVeloce();
+                	Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }).setNegativeButton("No", null).show();
+        	return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -178,8 +195,8 @@ public class MainActivity extends Activity {
         if (position == 2 ) fragment = new DataFragment();
         if (position == 3 ) fragment = new OraFragment();
         if (position == 4 ) fragment = new MeteoFragment();
-        if (position == 5 ) fragment = new SensoriFragment();
-        if (position == 6 ) fragment = new ComponentiFragment();
+        if (position == 5 ) fragment = new ComponentiFragment();
+        if (position == 6 ) fragment = new SensoriFragment();
         
         fragment.setArguments(args);
 
@@ -219,7 +236,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this).setIcon(R.drawable.ic_launcher).setTitle("Esci")
+        new AlertDialog.Builder(this).setIcon(R.drawable.exit).setTitle("Esci")
                 .setMessage("Chiudere l'applicazione?")
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     @Override
@@ -255,19 +272,23 @@ public class MainActivity extends Activity {
     
     public void startSimulazione(View view) {
     	
+    	ArrayList<String> lista = conf.toPrologRules("t0");
+    	for(String stringa : lista) {
+    		Log.d("PROLOG", stringa);
+    	}
+    	
     	Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     	intent.putExtra("configurazione", conf);
     	startActivity(intent);
-        finish();
     }
     
     public void cambiaSensori(View view) {
     	
-    	Switch temperatura = (Switch)findViewById(R.id.temperatura);
-        Switch umidita = (Switch)findViewById(R.id.umidita);
-        Switch vento = (Switch)findViewById(R.id.vento);
-        Switch presenza = (Switch)findViewById(R.id.presenza);
-        Switch sonoro = (Switch)findViewById(R.id.sonoro);
+    	Switch temperatura = (Switch)findViewById(R.id.sens_temperatura);
+        Switch umidita = (Switch)findViewById(R.id.sens_umidita);
+        Switch vento = (Switch)findViewById(R.id.sens_vento);
+        Switch presenza = (Switch)findViewById(R.id.sens_presenza);
+        Switch sonoro = (Switch)findViewById(R.id.sens_sonoro);
         conf.setSensoreTemperatura(temperatura.isChecked());
         conf.setSensoreUmidita(umidita.isChecked());
         conf.setSensoreVento(vento.isChecked());
@@ -276,9 +297,44 @@ public class MainActivity extends Activity {
     	Toast.makeText(getApplicationContext(), "Sensori modificati con successo", Toast.LENGTH_SHORT).show();
     	
     }
-   
-   
     
+    
+    public void cambiaComponenti(View view) {
+    	
+    	Switch televisione = (Switch)findViewById(R.id.televisione);
+        Switch radio = (Switch)findViewById(R.id.radio);
+        Switch condizionatore = (Switch)findViewById(R.id.condizionatore);
+        Switch balcone = (Switch)findViewById(R.id.balcone);
+        Switch macchinaCaffe = (Switch)findViewById(R.id.macchinaCaffe);
+        Switch illuminazione = (Switch)findViewById(R.id.illuminazione);
+        conf.setComponenteTelevisione(televisione.isChecked());
+        conf.setComponenteRadio(radio.isChecked());
+        conf.setComponenteCondizionatore(condizionatore.isChecked());
+        conf.setComponenteBalcone(balcone.isChecked());
+        conf.setComponenteMacchinaCaffe(macchinaCaffe.isChecked());
+        conf.setComponenteIlluminazione(illuminazione.isChecked());
+    	Toast.makeText(getApplicationContext(), "Componenti modificati con successo", Toast.LENGTH_SHORT).show();
+    	
+    }
+   
+   
+    public void cambiaMeteo(View view) {
+    	
+    	SeekBar seekMeteo = (SeekBar)findViewById(R.id.seekMeteo);
+    	SeekBar seekTempEst = (SeekBar)findViewById(R.id.seekTemperaturaEsterna);
+    	SeekBar seekTempInt = (SeekBar)findViewById(R.id.seekTemperaturaInterna);
+    	SeekBar seekUmidita = (SeekBar)findViewById(R.id.seekUmidita);
+    	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
+    	SeekBar seekVisibilita = (SeekBar)findViewById(R.id.seekVisibilita);
+    	conf.setClimaMeteo(seekMeteo.getProgress());
+    	conf.setClimaTemperaturaEsterna(seekTempEst.getProgress());
+        conf.setClimaTemperaturaInterna(seekTempInt.getProgress());
+        conf.setClimaUmidita(seekUmidita.getProgress());
+        conf.setClimaVento(seekVento.getProgress());
+        conf.setClimaVisibilita(seekVisibilita.getProgress());
+        Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
+    	
+    }
      
     
 }

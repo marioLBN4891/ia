@@ -3,6 +3,7 @@ package ai.smarthome.database;
 import java.text.MessageFormat;
 
 import ai.smarthome.database.table.AccessiTable;
+import ai.smarthome.database.table.ConnessioneVeloceTable;
 import ai.smarthome.database.table.UtentiTable;
 import ai.smarthome.database.wrapper.Utente;
 import android.content.ContentValues;
@@ -27,9 +28,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		
 		String sqlUtentiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL, {4} TEXT NOT NULL, {5} TEXT NOT NULL);";
 		String sqlAccessiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} INTEGER NOT NULL, {3} TEXT NOT NULL, FOREIGN KEY({2}) REFERENCES {4}({5}));";
+		String sqlUConnessioneVeloceTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL);";
 		
 		db.execSQL(MessageFormat.format(sqlUtentiTable, UtentiTable.TABLE_NAME, UtentiTable._ID, UtentiTable.USERNAME, UtentiTable.PASSWORD, UtentiTable.COGNOME, UtentiTable.NOME));
 		db.execSQL(MessageFormat.format(sqlAccessiTable, AccessiTable.TABLE_NAME, AccessiTable._ID, AccessiTable.USERNAME, AccessiTable.ACCESSO, UtentiTable.TABLE_NAME, UtentiTable._ID));
+		db.execSQL(MessageFormat.format(sqlUConnessioneVeloceTable, ConnessioneVeloceTable.TABLE_NAME, ConnessioneVeloceTable._ID, ConnessioneVeloceTable.USERNAME, ConnessioneVeloceTable.PASSWORD));
 		
 	}
 
@@ -47,6 +50,45 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		value.put(UtentiTable.COGNOME, cognome);
 		value.put(UtentiTable.NOME, nome);
 		db.insert(UtentiTable.TABLE_NAME, null, value);
+	}
+	
+	public void setConnessioneVeloce(String username, String password) {
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues value = new ContentValues();
+		value.put(ConnessioneVeloceTable.USERNAME, username);
+		value.put(ConnessioneVeloceTable.PASSWORD, password);
+		
+		db.delete(ConnessioneVeloceTable.TABLE_NAME, null, null);
+		
+		db.insert(ConnessioneVeloceTable.TABLE_NAME, null, value);
+	}
+	
+	
+	public void deleteConnessioneVeloce() {
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(ConnessioneVeloceTable.TABLE_NAME, null, null);
+	}
+	
+	
+	public Utente getConnessioneVeloce() {
+		
+		Cursor cursore = getReadableDatabase().query(
+			ConnessioneVeloceTable.TABLE_NAME, 					// nome della tabella
+			ConnessioneVeloceTable.COLUMNS, 						// array dei nomi delle colonne da ritornare
+			null,										// filtro da applicare ai dati 
+			null,										// argomenti su cui filtrare i dati (nel caso in cui nel filtro siano presenti parametri)
+			null, 										// group by da eseguire
+			null, 										// clausola having da usare
+			ConnessioneVeloceTable.USERNAME);						// ordinamento da applicare ai dati
+			
+		if (cursore.getCount() > 0)
+			while (cursore.moveToNext()) {
+				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), "", ""));
+			}
+			
+		return null;
 	}
 	
 	public Cursor geListatUtenti() {

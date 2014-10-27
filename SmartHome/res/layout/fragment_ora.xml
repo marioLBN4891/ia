@@ -1,65 +1,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" 
-    tools:context="ai.smarthome.fragment.OraFragment" >
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin" 
+tools:context="ai.smarthome.fragment.OraFragment" >
 
 	<TextView 
-    	android:id="@+id/text_fragment_ora1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentStart="true"
-    	android:layout_alignParentLeft="true"
-      	android:layout_marginTop="10dp"
-      	android:layout_marginStart="20dp"
-      	android:layout_marginLeft="20dp"
-    	android:text="@string/text_fragment_ora1" />
+    android:id="@+id/text_fragment_ora1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentLeft="true"
+    android:text="@string/text_fragment_ora1" 
+    android:textSize="@dimen/font_text16" />
 	
 	<TextView 
-    	android:id="@+id/orarioText"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@+id/text_fragment_ora1"
-    	android:layout_alignParentStart="true"
-    	android:layout_alignParentLeft="true"
-      	android:layout_marginTop="30dp"
-      	android:layout_marginStart="20dp"
-      	android:layout_marginLeft="20dp"
-    	/>
+    android:id="@+id/orarioText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/text_fragment_ora1"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentLeft="true"
+    android:layout_marginTop="@dimen/margin30"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text16" />
 
 	<TextView 
-    	android:id="@+id/text_fragment_ora2"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@+id/orarioText"
-    	android:layout_alignParentStart="true"
-    	android:layout_alignParentLeft="true"
-      	android:layout_marginTop="30dp"
-      	android:layout_marginStart="20dp"
-      	android:layout_marginLeft="20dp"
-    	android:text="@string/text_fragment_ora2" />
+    android:id="@+id/text_fragment_ora2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/orarioText"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentLeft="true"
+    android:layout_marginTop="@dimen/margin30"
+    android:text="@string/text_fragment_ora2" 
+    android:textSize="@dimen/font_text16" />
 	
 	<TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="150dp"
-        android:layout_height="100dp" 
-        android:layout_below="@+id/text_fragment_ora2" 
-    	android:layout_centerHorizontal="true"
-      	android:layout_marginTop="25dp" />
+    android:id="@+id/timePicker"
+    android:layout_width="150dp"
+    android:layout_height="100dp" 
+    android:layout_below="@+id/text_fragment_ora2" 
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="@dimen/margin25" />
 
-	
-	<Button
-        android:id="@+id/cambiaOrarioButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:onClick="cambiaOrario"
-        android:layout_below="@+id/timePicker" 
-    	android:layout_centerHorizontal="true"
-      	android:layout_marginTop="45dp"
-        android:text="@string/cambiaOrario" />
+	<ImageButton
+    android:id="@+id/cambiaOrarioButton"
+    android:layout_width="@dimen/dimButtonSave"
+    android:layout_height="@dimen/dimButtonSave"
+    android:scaleType="fitXY"
+    android:background="@null"
+    android:layout_alignParentBottom="true"
+	android:layout_centerHorizontal="true"
+    android:contentDescription="@string/cambiaOrario"
+    android:onClick="cambiaOrario"
+    android:src="@drawable/salva" />
 
 </RelativeLayout>

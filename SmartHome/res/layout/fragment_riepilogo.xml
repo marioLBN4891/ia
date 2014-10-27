@@ -1,96 +1,264 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" 
-    tools:context="ai.smarthome.fragment.OraFragment" >
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin" 
+tools:context="ai.smarthome.fragment.OraFragment" >
 
 	<TextView 
-    	android:id="@+id/text_fragment_sim1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_centerHorizontal="true"
-      	android:layout_marginTop="15dp"
-      	android:textAppearance="?android:attr/textAppearanceLarge" 
-    	android:text="@string/text_fragment_sim1" />
+    android:id="@+id/text_fragment_sim1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:textSize="@dimen/font_text20"
+    android:textStyle="bold" 
+    android:text="@string/text_fragment_sim1" />
 	
 	<TextView 
-    	android:id="@+id/text_fragment_sim2"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentStart="true"
-    	android:layout_alignParentLeft="true"
-    	android:layout_below="@+id/text_fragment_sim1"
-      	android:layout_marginTop="20dp"
-      	android:layout_marginStart="20dp"
-      	android:layout_marginLeft="20dp"
-    	android:text="@string/text_fragment_sim2" />
+    android:id="@+id/text_fragment_sim2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/text_fragment_sim1"
+    android:layout_marginTop="@dimen/margin20"
+    android:text="@string/text_fragment_sim2"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
 	
 	<TextView
-      android:id="@+id/dataText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/text_fragment_sim2"
-      android:layout_marginStart="20dp"
-      android:layout_marginLeft="20dp"
-      android:layout_toEndOf="@+id/text_fragment_sim2"
-      android:layout_toRightOf="@+id/text_fragment_sim2" />
+    android:id="@+id/dataText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/text_fragment_sim2"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:layout_toEndOf="@+id/text_fragment_sim2"
+    android:layout_toRightOf="@+id/text_fragment_sim2"
+    android:textSize="@dimen/font_text12" />
    
 	<TextView 
-		android:id="@+id/text_fragment_sim3"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_alignBottom="@+id/dataText"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_toEndOf="@+id/dataText"
-        android:layout_toRightOf="@+id/dataText"
-    	android:text="@string/text_fragment_sim3" />
+	android:id="@+id/text_fragment_sim3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/dataText"
+    android:layout_marginStart="@dimen/margin40"
+    android:layout_marginLeft="@dimen/margin40"
+    android:layout_toEndOf="@+id/dataText"
+    android:layout_toRightOf="@+id/dataText"
+    android:text="@string/text_fragment_sim3"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
 	
 	<TextView
-      android:id="@+id/orarioText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/text_fragment_sim3"
-      android:layout_marginStart="20dp"
-      android:layout_marginLeft="20dp"
-      android:layout_toEndOf="@+id/text_fragment_sim3"
-      android:layout_toRightOf="@+id/text_fragment_sim3" />
+    android:id="@+id/orarioText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/text_fragment_sim3"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:layout_toEndOf="@+id/text_fragment_sim3"
+    android:layout_toRightOf="@+id/text_fragment_sim3"
+    android:textSize="@dimen/font_text12" />
 	
 	<TextView 
-    	android:id="@+id/text_fragment_sim4"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentStart="true"
-    	android:layout_alignParentLeft="true"
-    	android:layout_below="@+id/text_fragment_sim3"
-      	android:layout_marginTop="10dp"
-      	android:layout_marginStart="20dp"
-      	android:layout_marginLeft="20dp"
-    	android:text="@string/text_fragment_sim4" />
+    android:id="@+id/text_fragment_sim4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/text_fragment_sim3"
+    android:layout_marginTop="@dimen/margin10"
+    android:text="@string/text_fragment_sim4"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
 	
 	<TextView
-      android:id="@+id/sensoriText"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/text_fragment_sim4"
-      android:layout_alignParentBottom="false"
-      android:layout_marginStart="20dp"
-      android:layout_marginLeft="20dp"
-      android:layout_toEndOf="@+id/text_fragment_sim4"
-      android:layout_toRightOf="@+id/text_fragment_sim4" />
+    android:id="@+id/climaMeteo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/text_fragment_sim4"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
 	
-	<Button
-        android:id="@+id/starSimulazioneButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:onClick="startSimulazione"
-        android:layout_below="@+id/text_fragment_sim4" 
-    	android:layout_centerHorizontal="true"
-      	android:layout_marginTop="45dp"
-        android:text="@string/startSimulazione" />
+	<TextView
+    android:id="@+id/climaTempEst"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaMeteo"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/climaTempInt"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaTempEst"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/climaUmidita"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaTempInt"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/climaVento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaUmidita"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+		
+	<TextView
+    android:id="@+id/climaVisibilita"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaVento"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+		
+	<TextView 
+    android:id="@+id/text_fragment_sim5"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaVisibilita"
+    android:layout_marginTop="@dimen/margin10"
+    android:text="@string/text_fragment_sim5"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
+	
+	<TextView
+    android:id="@+id/compTv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/text_fragment_sim5"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/compRadio"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/compTv"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/compMacchinaCaffe"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/compRadio"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/compCondizionatore"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/compMacchinaCaffe"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/compBalcone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/compCondizionatore"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/compIlluminazione"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/compBalcone"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView 
+    android:id="@+id/text_fragment_sim6"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/compIlluminazione"
+    android:layout_marginTop="@dimen/margin10"
+    android:text="@string/text_fragment_sim6"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
+	
+	<TextView
+    android:id="@+id/sensTemperatura"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/text_fragment_sim6"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/sensUmidita"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/sensTemperatura"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/sensVento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/sensUmidita"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/sensPresenza"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/sensVento"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/sensSonoro"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/sensPresenza"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_marginLeft="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<ImageButton
+    android:id="@+id/starSimulazioneButton"
+    android:layout_width="@dimen/dimButtonPlay"
+    android:layout_height="@dimen/dimButtonPlay"
+    android:scaleType="fitXY"
+    android:background="@null"
+    android:layout_alignParentBottom="true"
+	android:layout_centerHorizontal="true"
+    android:contentDescription="@string/startSimulazione"
+    android:onClick="startSimulazione"
+    android:src="@drawable/play" />
 
 </RelativeLayout>

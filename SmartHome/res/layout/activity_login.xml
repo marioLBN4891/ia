@@ -1,95 +1,137 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ai.smarthome.LoginActivity" >
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+tools:context="ai.smarthome.LoginActivity" >
 
-    <TextView
-      android:id="@+id/formLoginText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentTop="true"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="25dp"
-      android:text="@string/formLogin"  
-      android:textAppearance="?android:attr/textAppearanceLarge" />
+	<TableLayout
+    android:id="@+id/tableLogin"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/margin15"
+    android:layout_marginStart="@dimen/margin15" >
 
-   <TextView
-      android:id="@+id/usernameText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentStart="true"
-      android:layout_alignParentLeft="true"
-      android:layout_below="@+id/formLoginText"
-      android:layout_marginTop="45dp"
-      android:layout_marginStart="20dp"
-      android:layout_marginLeft="20dp"
-      android:text="@string/username"
-      android:textAppearance="?android:attr/textAppearanceMedium" />
-
-   <EditText
-      android:id="@+id/usernameEditText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/usernameText"
-      android:layout_marginStart="20dp"
-      android:layout_marginLeft="20dp"
-      android:layout_toEndOf="@+id/usernameText"
-      android:layout_toRightOf="@+id/usernameText"
-      android:ems="10" 
-      android:inputType="text">
-
-      <requestFocus />
-   </EditText>
-
-   <TextView
-      android:id="@+id/passwordText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignStart="@+id/usernameText"
-      android:layout_alignLeft="@+id/usernameText"
-      android:layout_below="@+id/usernameText"
-      android:layout_marginTop="25dp"
-      android:text="@string/password"
-      android:textAppearance="?android:attr/textAppearanceMedium" />
-
-   <EditText
-      android:id="@+id/passwordEditText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/passwordText"
-      android:layout_alignStart="@+id/usernameEditText"
-      android:layout_alignLeft="@+id/usernameEditText"
-      android:ems="10"
-      android:inputType="textPassword" />
-
-   <Button
-      android:id="@+id/registrationButton"
-      android:layout_width="100dp"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/passwordEditText"
-      android:layout_marginStart="50dp"
-      android:layout_marginLeft="50dp"
-      android:layout_marginTop="50dp"
-      android:onClick="registrati"
-      android:text="@string/registration" />
-   
-	<Button
-      android:id="@+id/loginButton"
-      android:layout_width="100dp"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/registrationButton"
-      android:layout_centerHorizontal="true"
-      android:layout_marginStart="30dp"
-      android:layout_marginLeft="30dp"
-      android:layout_toEndOf="@+id/registrationButton"
-      android:layout_toRightOf="@+id/registrationButton"
-      android:onClick="accedi"
-      android:text="@string/login" />
+		<TableRow
+    	android:id="@+id/tableRow1"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	 >
 	
-   
+			<TextView
+    		android:id="@+id/formLoginText"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:text="@string/formLogin"  
+    		android:gravity="center_horizontal"
+    		android:textStyle="bold"
+    		android:textSize="@dimen/font_text24" />
+
+		</TableRow>
+		
+		<TableRow
+    	android:id="@+id/tableRow2"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="@dimen/margin10" >
+			
+		    <TextView
+    		android:id="@+id/usernameText"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:text="@string/username"  
+    		android:textStyle="bold"
+    		android:textSize="@dimen/font_text14" />
+		    
+		</TableRow>
+		
+		<TableRow
+    	android:id="@+id/tableRow3"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content" >
+		    
+			<EditText
+    		android:id="@+id/usernameEditText"
+    		android:layout_width="250dp"
+    		android:layout_height="wrap_content"
+    		android:ems="10" 
+    		android:inputType="text"
+    		android:textSize="@dimen/font_text14" >
+			</EditText>
+
+		</TableRow>
+		
+		<TableRow
+    	android:id="@+id/tableRow4"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="@dimen/margin10" >
+			
+		    <TextView
+    		android:id="@+id/passwordText"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:text="@string/password"  
+    		android:textStyle="bold"
+    		android:textSize="@dimen/font_text14" />
+		    
+		</TableRow>
+		
+		<TableRow
+    	android:id="@+id/tableRow5"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content" >
+		    
+    		<EditText
+    		android:id="@+id/passwordEditText"
+    		android:layout_width="300dp"
+    		android:layout_height="wrap_content"
+    		android:ems="10"
+    		android:inputType="textPassword"
+    		android:textSize="@dimen/font_text14" />
+    	
+    	</TableRow>
+		
+		<TableRow
+    	android:id="@+id/tableRow6"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content" >
+    	
+    		<CheckBox
+    		android:id="@+id/checkConnessione"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:text="@string/restaCollegato"
+    		android:textSize="@dimen/font_text10" />
+    	
+    	</TableRow>
+    	
+	</TableLayout>
+    
+	<ImageButton
+    android:id="@+id/loginButton"
+    android:layout_width="@dimen/dimButtonLogin"
+    android:layout_height="@dimen/dimButtonLogin"
+    android:scaleType="fitXY"
+    android:background="@null"
+    android:layout_below="@+id/tableLogin"
+    android:layout_marginTop="@dimen/margin30"
+    android:layout_centerHorizontal="true"
+    android:contentDescription="@string/loginButton"
+    android:src="@drawable/login" />
+	
+	<ImageButton
+	android:id="@+id/registrationButton"
+	android:layout_width="@dimen/dimButtonReg"
+	android:layout_height="@dimen/dimButtonReg"
+	android:background="@null"
+	android:layout_alignParentBottom="true"
+	android:layout_centerHorizontal="true"
+    android:contentDescription="@string/registrationButton"
+	android:scaleType="fitXY"
+	android:src="@drawable/registrati" />
+	
 </RelativeLayout>
