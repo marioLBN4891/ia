@@ -10,6 +10,7 @@ public interface UtentiTable extends BaseColumns
 		String PASSWORD = "password";
 		String COGNOME = "cognome";
 		String NOME = "nome";
+		String MAIL = "mail";
 		
 	 
 		String[] COLUMNS = new String[] {
@@ -17,7 +18,8 @@ public interface UtentiTable extends BaseColumns
 				USERNAME, 
 				PASSWORD,
 				COGNOME,
-				NOME
+				NOME,
+				MAIL
 		};
 	
 }

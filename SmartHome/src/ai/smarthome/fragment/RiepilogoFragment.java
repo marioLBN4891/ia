@@ -2,6 +2,7 @@ package ai.smarthome.fragment;
 
 import ai.smarthome.R;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.util.UtilMeteo;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ public class RiepilogoFragment extends Fragment {
 	
 	public static final String CONFIGURAZIONE = "configurazione";
 
-	private TextView dataText, orarioText, climaMeteo, climaTempEst, climaTempInt, climaUmidita, climaVento, climaVisibilita;
+	private TextView dataText, orarioText, climaMeteo, climaTempEst, climaUmidita, climaVento;
 	private TextView compTv, compRadio, compCondizionatore, compBalcone, compMacchinaCaffe, compIlluminazione;
 	private TextView sensTemperatura, sensUmidita, sensVento, sensPresenza, sensSonoro;
 
@@ -39,16 +40,12 @@ public class RiepilogoFragment extends Fragment {
         
         climaMeteo = (TextView) rootView.findViewById(R.id.climaMeteo);
         climaTempEst = (TextView) rootView.findViewById(R.id.climaTempEst);
-        climaTempInt = (TextView) rootView.findViewById(R.id.climaTempInt);
         climaUmidita = (TextView) rootView.findViewById(R.id.climaUmidita);
         climaVento = (TextView) rootView.findViewById(R.id.climaVento);
-        climaVisibilita = (TextView) rootView.findViewById(R.id.climaVisibilita);
-        setTextMeteo(conf.getClimaMeteo());
-        setTextTempEst(conf.getClimaTemperaturaEsterna());
-        setTextTempInt(conf.getClimaTemperaturaInterna());
-        setTextUmidita(conf.getClimaUmidita());
-        setTextVento(conf.getClimaVento());
-        setTextVisibilita(conf.getClimaVisibilita());
+        UtilMeteo.setTextViewMeteo(climaMeteo, conf.getClimaMeteo());
+        UtilMeteo.setTextViewTempEst(climaTempEst, conf.getClimaTemperaturaEsterna());
+        UtilMeteo.setTextViewUmidita(climaUmidita, conf.getClimaUmidita());
+        UtilMeteo.setTextViewVento(climaVento, conf.getClimaVento());
         
         compTv = (TextView) rootView.findViewById(R.id.compTv);
         compRadio = (TextView) rootView.findViewById(R.id.compRadio);
@@ -77,56 +74,4 @@ public class RiepilogoFragment extends Fragment {
         return rootView;
     }
     
-    
-    private void setTextMeteo(int progress) {
-    	if (progress <= 20) 
-    		climaMeteo.setText("Meteo: MOLTO PIOVOSO");
-		if (progress > 20 && progress <= 35) 
-			climaMeteo.setText("Meteo: PIOVOSO");
-		if (progress > 35 && progress <= 50) 
-			climaMeteo.setText("Meteo: MOLTO COPERTO");
-		if (progress > 50 && progress <= 65) 
-			climaMeteo.setText("Meteo: COPERTO");
-		if (progress > 65 && progress <= 80) 
-			climaMeteo.setText("Meteo: SERENO");
-		if (progress > 80) 
-			climaMeteo.setText("Meteo: SOLEGGIATO");
-	}
-    
-    private void setTextTempEst(int progress) {
-    	int temperatura = 10 + (progress / 4) ;
-    	climaTempEst.setText("Temperatura Esterna: " + temperatura + "° C");
-    }
-    
-    private void setTextTempInt(int progress) {
-    	int temperatura = 10 + (progress / 4) ;
-    	climaTempInt.setText("Temperatura Interna: " + temperatura + "° C");
-    }
-    
-    private void setTextUmidita(int progress) {
-    	if (progress <= 50) 
-			climaUmidita.setText("Umidità: BASSA");
-		if (progress > 50) 
-			climaUmidita.setText("Umidità: ALTA");
-    }
-    
-    private void setTextVento(int progress) {
-    	if (progress == 0) 
-    		climaVento.setText("Vento: ASSENTE");
-		if (progress > 0 && progress <= 33) 
-			climaVento.setText("Vento: DEBOLE");
-		if (progress > 33 && progress <= 66) 
-			climaVento.setText("Vento: MODERATO");
-		if (progress > 66) 
-			climaVento.setText("Vento: FORTE");
-    }
-    
-    private void setTextVisibilita(int progress) {
-    	if (progress <= 33) 
-    		climaVisibilita.setText("Visibilità: BASSA");
-		if (progress > 33 && progress <= 66) 
-			climaVisibilita.setText("Visibilità: NORMALE");
-		if (progress > 80) 
-			climaVisibilita.setText("Visibilità: ALTA");
-    }
 }

@@ -1,10 +1,15 @@
 package ai.smarthome;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 
+import ai.smarthome.async.AsyncMeteo;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.fragment.AvvioVeloceFragment;
 import ai.smarthome.fragment.ComponentiFragment;
 import ai.smarthome.fragment.DataFragment;
 import ai.smarthome.fragment.InfoPersonaliFragment;
@@ -12,6 +17,8 @@ import ai.smarthome.fragment.MeteoFragment;
 import ai.smarthome.fragment.OraFragment;
 import ai.smarthome.fragment.SensoriFragment;
 import ai.smarthome.fragment.RiepilogoFragment;
+import ai.smarthome.util.UtilMeteo;
+import ai.smarthome.util.Utilities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,12 +33,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -66,10 +73,12 @@ import android.widget.Toast;
  * An action should be an operation performed on the current contents of the window,
  * for example enabling or disabling a data overlay on top of the current content.</p>
  */
+
+@SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
     
 	public static final String CONFIGURAZIONE = "configurazione";
-	public static final String UTENTE = "UTENTE";
+	public static final String UTENTE = "utente";
 	private DrawerLayout drawerLayout;
     private ListView drawerListView;
     private ActionBarDrawerToggle drawerToggle;
@@ -78,18 +87,34 @@ public class MainActivity extends Activity {
     private String[] intestazioneOpzioni; 
 
     
-    private Configurazione conf = new Configurazione();
+    private Configurazione conf;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        try {
+			Class.forName("android.os.AsyncTask");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+        	if(bundle.get(CONFIGURAZIONE) != null) 
+        		conf = (Configurazione) bundle.get(CONFIGURAZIONE);
+        	else 
+        		conf = new Configurazione();
+        	if(bundle.get(UTENTE) != null) {
+                conf.setUtente((Utente) bundle.get(UTENTE));
+                bundle.putSerializable(UTENTE, null);
+        	}
+        }
+        
         setContentView(R.layout.activity_main);
         setNavigationDrawer(savedInstanceState);
         
-        Bundle bundle = getIntent().getExtras();
-        if(bundle.get(UTENTE)!= null) {
-            conf.setUtente((Utente)bundle.get(UTENTE));
-        }
+        
     }
 
     public void setNavigationDrawer(Bundle savedInstanceState) {
@@ -97,7 +122,9 @@ public class MainActivity extends Activity {
         intestazioneOpzioni = getResources().getStringArray(R.array.opzioni_array);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerListView = (ListView) findViewById(R.id.left_drawer);
-
+        
+        intestazioneOpzioni[0] = "Benvenuto\n" + conf.getUtente().getNome() + " " + conf.getUtente().getCognome();
+        
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START); // set a custom shadow that overlays the main content when the drawer opens
         drawerListView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, intestazioneOpzioni));  // set up the drawer's list view with items and click listener
         drawerListView.setOnItemClickListener(new DrawerItemClickListener());
@@ -125,15 +152,14 @@ public class MainActivity extends Activity {
         };
         drawerLayout.setDrawerListener(drawerToggle);
 
-        if (savedInstanceState == null) {
-            selectItem(0);
-        }
+        if (savedInstanceState == null) 
+            selectItem(1);
+        
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.logout, menu);
+        Utilities.getLogoutMenuOnActivity(this, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -190,13 +216,15 @@ public class MainActivity extends Activity {
         conf.setPosizione(position);
         args.putSerializable(CONFIGURAZIONE, conf);
         
-        if (position == 0 ) fragment = new RiepilogoFragment();
-        if (position == 1 ) fragment = new InfoPersonaliFragment();
-        if (position == 2 ) fragment = new DataFragment();
-        if (position == 3 ) fragment = new OraFragment();
-        if (position == 4 ) fragment = new MeteoFragment();
-        if (position == 5 ) fragment = new ComponentiFragment();
-        if (position == 6 ) fragment = new SensoriFragment();
+        if (position == 0 ) return;
+        if (position == 1 ) fragment = new AvvioVeloceFragment();
+        if (position == 2 ) fragment = new InfoPersonaliFragment();
+        if (position == 3 ) fragment = new RiepilogoFragment();
+        if (position == 4 ) fragment = new DataFragment();
+        if (position == 5 ) fragment = new OraFragment();
+        if (position == 6 ) fragment = new MeteoFragment();
+        if (position == 7 ) fragment = new ComponentiFragment();
+        if (position == 8 ) fragment = new SensoriFragment();
         
         fragment.setArguments(args);
 
@@ -236,14 +264,63 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this).setIcon(R.drawable.exit).setTitle("Esci")
-                .setMessage("Chiudere l'applicazione?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                }).setNegativeButton("No", null).show();
+        Utilities.chiudiApplicazione(this);
+    }
+    
+    public void cambiaInfoPersonali(View view) {
+    	
+    	EditText mail = (EditText) findViewById(R.id.mailEditText); 
+    	EditText vecchiaPass = (EditText) findViewById(R.id.vecchiaPasswordEditText); 
+    	EditText nuovaPass = (EditText) findViewById(R.id.nuovaPasswordEditText); 
+    	EditText nuovaPass2 = (EditText) findViewById(R.id.password2EditText);
+    	DatabaseHelper dbH = new DatabaseHelper(getApplicationContext());
+		
+    	if (!mail.getText().toString().trim().equals(conf.getUtente().getMail())) {
+				if (mail.getText().toString().trim().equals("")) {
+					Toast.makeText(getApplicationContext(), "Email è obbligatorio", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				if (!Utilities.emailValida(mail.getText().toString().trim())) {
+					Toast.makeText(getApplicationContext(), "Email non valida", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				if (dbH .isMailRegistered(mail.getText().toString().trim())) {
+					Toast.makeText(getApplicationContext(), "Email già registrata", Toast.LENGTH_SHORT).show();
+					return;
+				}
+			}
+			
+			if (vecchiaPass.getText().toString().trim().equals("") || vecchiaPass.getText().toString().trim().length() < 5 || Utilities.checkSpace(vecchiaPass.getText().toString())) {
+				Toast.makeText(getApplicationContext(), "Password attuale è un campo obbligatorio", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (!vecchiaPass.getText().toString().trim().equals(conf.getUtente().getPassword())) {
+				Toast.makeText(getApplicationContext(), "Password attuale non valida", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (nuovaPass.getText().toString().trim().equals("") || nuovaPass.getText().toString().trim().length() < 5 || Utilities.checkSpace(nuovaPass.getText().toString())) {
+				Toast.makeText(getApplicationContext(), "Nuova Password è un campo obbligatorio di almeno 5 caratteri  non vuoti", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (nuovaPass2.getText().toString().trim().equals("") || nuovaPass2.getText().toString().trim().length() < 5 || Utilities.checkSpace(nuovaPass2.getText().toString())) {
+				Toast.makeText(getApplicationContext(), "Inserire nuovamente la nuova password", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (!nuovaPass2.getText().toString().equals(nuovaPass.getText().toString())) {
+				Toast.makeText(getApplicationContext(), "Password digitata non corretta", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			dbH.updateUtente(conf.getUtente().getUsername(), nuovaPass.getText().toString().trim(), mail.getText().toString().trim());
+			dbH.printLogUtenti();
+			
+			Toast.makeText(getApplicationContext(), "Modifiche avvenute con successo", Toast.LENGTH_SHORT).show();
+			conf.getUtente().setMail(mail.getText().toString().trim());
+			conf.getUtente().setMail(nuovaPass.getText().toString().trim());
+			
+			vecchiaPass.setText("");
+		    nuovaPass.setText("");
+		    nuovaPass2.setText("");
     }
     
     public void cambiaOrario(View view) {
@@ -272,13 +349,12 @@ public class MainActivity extends Activity {
     
     public void startSimulazione(View view) {
     	
-    	ArrayList<String> lista = conf.toPrologRules("t0");
-    	for(String stringa : lista) {
-    		Log.d("PROLOG", stringa);
-    	}
+ //   	ArrayList<String> lista = conf.toPrologRules("t0");
+ //   	for(String stringa : lista) 
+ //   		Log.i("PROLOG", stringa);
     	
     	Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
-    	intent.putExtra("configurazione", conf);
+    	intent.putExtra(CONFIGURAZIONE, conf);
     	startActivity(intent);
     }
     
@@ -289,15 +365,15 @@ public class MainActivity extends Activity {
         Switch vento = (Switch)findViewById(R.id.sens_vento);
         Switch presenza = (Switch)findViewById(R.id.sens_presenza);
         Switch sonoro = (Switch)findViewById(R.id.sens_sonoro);
+        
         conf.setSensoreTemperatura(temperatura.isChecked());
         conf.setSensoreUmidita(umidita.isChecked());
         conf.setSensoreVento(vento.isChecked());
         conf.setSensorePresenza(presenza.isChecked());
         conf.setSensoreSonoro(sonoro.isChecked());
+        
     	Toast.makeText(getApplicationContext(), "Sensori modificati con successo", Toast.LENGTH_SHORT).show();
-    	
     }
-    
     
     public void cambiaComponenti(View view) {
     	
@@ -307,34 +383,114 @@ public class MainActivity extends Activity {
         Switch balcone = (Switch)findViewById(R.id.balcone);
         Switch macchinaCaffe = (Switch)findViewById(R.id.macchinaCaffe);
         Switch illuminazione = (Switch)findViewById(R.id.illuminazione);
+        
         conf.setComponenteTelevisione(televisione.isChecked());
         conf.setComponenteRadio(radio.isChecked());
         conf.setComponenteCondizionatore(condizionatore.isChecked());
         conf.setComponenteBalcone(balcone.isChecked());
         conf.setComponenteMacchinaCaffe(macchinaCaffe.isChecked());
         conf.setComponenteIlluminazione(illuminazione.isChecked());
+        
     	Toast.makeText(getApplicationContext(), "Componenti modificati con successo", Toast.LENGTH_SHORT).show();
-    	
     }
-   
    
     public void cambiaMeteo(View view) {
     	
     	SeekBar seekMeteo = (SeekBar)findViewById(R.id.seekMeteo);
     	SeekBar seekTempEst = (SeekBar)findViewById(R.id.seekTemperaturaEsterna);
-    	SeekBar seekTempInt = (SeekBar)findViewById(R.id.seekTemperaturaInterna);
     	SeekBar seekUmidita = (SeekBar)findViewById(R.id.seekUmidita);
     	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
-    	SeekBar seekVisibilita = (SeekBar)findViewById(R.id.seekVisibilita);
+    	
     	conf.setClimaMeteo(seekMeteo.getProgress());
     	conf.setClimaTemperaturaEsterna(seekTempEst.getProgress());
-        conf.setClimaTemperaturaInterna(seekTempInt.getProgress());
         conf.setClimaUmidita(seekUmidita.getProgress());
         conf.setClimaVento(seekVento.getProgress());
-        conf.setClimaVisibilita(seekVisibilita.getProgress());
+        
         Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
-    	
     }
-     
     
+    public void cambiaMeteoSole(View view) {
+ 		UtilMeteo.setConfMeteo(conf, 90, 90, 90, 10);
+ 		Date data = new Date();
+ 		data.setMonth(Calendar.AUGUST);
+ 		
+ 		conf.setDataMilliTime(data.getTime());
+ 		setClimaMeteoAvvioVeloce();
+ 	}
+ 	
+    
+    public void cambiaMeteoSereno(View view) {
+ 		UtilMeteo.setConfMeteo(conf, 70, 70, 60, 30); 
+ 		Date data = new Date();
+ 		data.setMonth(Calendar.MAY);
+ 		conf.setDataMilliTime(data.getTime());
+ 		setClimaMeteoAvvioVeloce();
+ 	}
+ 		
+    
+    public void cambiaMeteoNuvole(View view) {
+ 		UtilMeteo.setConfMeteo(conf, 40, 40, 50, 10);
+ 		Date data = new Date();
+ 		data.setMonth(Calendar.NOVEMBER);
+ 		conf.setDataMilliTime(data.getTime());
+ 		setClimaMeteoAvvioVeloce();
+ 	}
+ 	
+    
+	public void cambiaMeteoPioggia(View view) {
+    	UtilMeteo.setConfMeteo(conf, 20, 10, 80, 30);
+ 		Date data = new Date();
+ 		data.setMonth(Calendar.JANUARY);
+ 		conf.setDataMilliTime(data.getTime());
+ 		setClimaMeteoAvvioVeloce();
+ 	}
+    
+	 
+    public void cambiaMeteoAttuale(View view) {
+    	AsyncMeteo asyncMeteo = new AsyncMeteo(this);
+		asyncMeteo.execute();
+	}
+    
+    
+    public void setClimaMeteoAvvioVeloce(Map<String, Integer> parametri) {
+    	
+    	UtilMeteo.setConfMeteo(conf, parametri.get("meteo"), parametri.get("tempEst"), parametri.get("umidita"), parametri.get("vento"));
+		Date data = new Date();
+		conf.setDataMilliTime(data.getTime());
+		
+    	TextView dataText = (TextView) findViewById(R.id.dataText);
+        dataText.setText(conf.getDataToString());
+        
+        TextView orarioText = (TextView) findViewById(R.id.orarioText);
+        orarioText.setText(conf.getOraToString());
+        
+        TextView climaMeteo = (TextView) findViewById(R.id.climaMeteo);
+        TextView climaTempEst = (TextView) findViewById(R.id.climaTempEst);
+        TextView climaUmidita = (TextView) findViewById(R.id.climaUmidita);
+        TextView climaVento = (TextView) findViewById(R.id.climaVento);
+        UtilMeteo.setTextViewMeteo(climaMeteo, conf.getClimaMeteo());
+        UtilMeteo.setTextViewTempEst(climaTempEst, conf.getClimaTemperaturaEsterna());
+        UtilMeteo.setTextViewUmidita(climaUmidita, conf.getClimaUmidita());
+        UtilMeteo.setTextViewVento(climaVento, conf.getClimaVento());
+    }
+    
+    public void setClimaMeteoAvvioVeloce() {
+    	
+    	TextView dataText = (TextView) findViewById(R.id.dataText);
+        dataText.setText(conf.getDataToString());
+        
+        TextView orarioText = (TextView) findViewById(R.id.orarioText);
+        orarioText.setText(conf.getOraToString());
+        
+        TextView climaMeteo = (TextView) findViewById(R.id.climaMeteo);
+        TextView climaTempEst = (TextView) findViewById(R.id.climaTempEst);
+        TextView climaUmidita = (TextView) findViewById(R.id.climaUmidita);
+        TextView climaVento = (TextView) findViewById(R.id.climaVento);
+        UtilMeteo.setTextViewMeteo(climaMeteo, conf.getClimaMeteo());
+        UtilMeteo.setTextViewTempEst(climaTempEst, conf.getClimaTemperaturaEsterna());
+        UtilMeteo.setTextViewUmidita(climaUmidita, conf.getClimaUmidita());
+        UtilMeteo.setTextViewVento(climaVento, conf.getClimaVento());
+    }
+    
+     
 }

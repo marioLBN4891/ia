@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
 android:paddingBottom="@dimen/activity_vertical_margin"
 android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
@@ -10,7 +10,7 @@ tools:context="ai.smarthome.LoginActivity" >
 
 	<TableLayout
     android:id="@+id/tableLogin"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/margin15"
     android:layout_marginStart="@dimen/margin15" >
@@ -57,7 +57,6 @@ tools:context="ai.smarthome.LoginActivity" >
     		android:id="@+id/usernameEditText"
     		android:layout_width="250dp"
     		android:layout_height="wrap_content"
-    		android:ems="10" 
     		android:inputType="text"
     		android:textSize="@dimen/font_text14" >
 			</EditText>
@@ -89,29 +88,44 @@ tools:context="ai.smarthome.LoginActivity" >
     		android:id="@+id/passwordEditText"
     		android:layout_width="300dp"
     		android:layout_height="wrap_content"
-    		android:ems="10"
     		android:inputType="textPassword"
     		android:textSize="@dimen/font_text14" />
     	
     	</TableRow>
-		
+    	
 		<TableRow
     	android:id="@+id/tableRow6"
-    	android:layout_width="wrap_content"
+    	android:layout_width="fill_parent"
     	android:layout_height="wrap_content" >
-    	
-    		<CheckBox
-    		android:id="@+id/checkConnessione"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:text="@string/restaCollegato"
-    		android:textSize="@dimen/font_text10" />
-    	
-    	</TableRow>
-    	
-	</TableLayout>
-    
-	<ImageButton
+
+   			<LinearLayout
+   			android:layout_width="fill_parent"
+   			android:layout_height="wrap_content"
+   			android:orientation="horizontal" >
+
+   				<CheckBox
+   				android:id="@+id/checkConnessione"
+   				android:layout_width="wrap_content"
+   				android:layout_height="wrap_content"
+   				android:text="@string/restaCollegato"
+   				android:textSize="@dimen/font_text10" />
+
+   				<Button
+   				android:id="@+id/passwordDimenticataButton"
+   				android:layout_width="fill_parent"
+   				android:layout_height="wrap_content"
+   				android:gravity="end"
+   				android:background="@null"
+   				android:text="@string/passwordDimenticata"
+   				android:textColor="@color/blu"
+   				android:textSize="@dimen/font_text10" />
+
+   			</LinearLayout>
+   			
+   		</TableRow>
+   		</TableLayout>
+    		
+   <ImageButton
     android:id="@+id/loginButton"
     android:layout_width="@dimen/dimButtonLogin"
     android:layout_height="@dimen/dimButtonLogin"

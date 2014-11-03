@@ -26,13 +26,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		
-		String sqlUtentiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL, {4} TEXT NOT NULL, {5} TEXT NOT NULL);";
+		String sqlUtentiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL, {4} TEXT NOT NULL, {5} TEXT NOT NULL, {6} TEXT NOT NULL);";
 		String sqlAccessiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} INTEGER NOT NULL, {3} TEXT NOT NULL, FOREIGN KEY({2}) REFERENCES {4}({5}));";
 		String sqlUConnessioneVeloceTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL);";
 		
-		db.execSQL(MessageFormat.format(sqlUtentiTable, UtentiTable.TABLE_NAME, UtentiTable._ID, UtentiTable.USERNAME, UtentiTable.PASSWORD, UtentiTable.COGNOME, UtentiTable.NOME));
+		db.execSQL(MessageFormat.format(sqlUtentiTable, UtentiTable.TABLE_NAME, UtentiTable._ID, UtentiTable.USERNAME, UtentiTable.PASSWORD, UtentiTable.COGNOME, UtentiTable.NOME, UtentiTable.MAIL));
 		db.execSQL(MessageFormat.format(sqlAccessiTable, AccessiTable.TABLE_NAME, AccessiTable._ID, AccessiTable.USERNAME, AccessiTable.ACCESSO, UtentiTable.TABLE_NAME, UtentiTable._ID));
 		db.execSQL(MessageFormat.format(sqlUConnessioneVeloceTable, ConnessioneVeloceTable.TABLE_NAME, ConnessioneVeloceTable._ID, ConnessioneVeloceTable.USERNAME, ConnessioneVeloceTable.PASSWORD));
+		
 		
 	}
 
@@ -41,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		
 	}
 
-	public void setUtente(String username, String password, String cognome, String nome) {
+	public void setUtente(String username, String password, String cognome, String nome, String mail) {
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues value = new ContentValues();
@@ -49,9 +50,20 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		value.put(UtentiTable.PASSWORD, password);
 		value.put(UtentiTable.COGNOME, cognome);
 		value.put(UtentiTable.NOME, nome);
+		value.put(UtentiTable.MAIL, mail);
 		db.insert(UtentiTable.TABLE_NAME, null, value);
+		
 	}
 	
+	public void updateUtente(String username, String password, String mail) {
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues value = new ContentValues();
+		value.put(UtentiTable.PASSWORD, password);
+		value.put(UtentiTable.MAIL, mail);
+		db.update(UtentiTable.TABLE_NAME, value, UtentiTable.USERNAME+" = \""+ username + "\"", null);
+		
+	}		
 	public void setConnessioneVeloce(String username, String password) {
 		
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -60,8 +72,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		value.put(ConnessioneVeloceTable.PASSWORD, password);
 		
 		db.delete(ConnessioneVeloceTable.TABLE_NAME, null, null);
-		
 		db.insert(ConnessioneVeloceTable.TABLE_NAME, null, value);
+		
 	}
 	
 	
@@ -69,6 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(ConnessioneVeloceTable.TABLE_NAME, null, null);
+		
 	}
 	
 	
@@ -85,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 			
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) {
-				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), "", ""));
+				return isUtenteRegistered(cursore.getString(1), cursore.getString(2));
 			}
 			
 		return null;
@@ -101,6 +114,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
 			null, 										// group by da eseguire
 			null, 										// clausola having da usare
 			UtentiTable.USERNAME));						// ordinamento da applicare ai dati
+		
+		
 	}
 	
 	public Utente isUtenteRegistered(String username, String password) {
@@ -108,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		Cursor cursore = getReadableDatabase().query(
 			UtentiTable.TABLE_NAME, 					// nome della tabella
 			UtentiTable.COLUMNS, 						// array dei nomi delle colonne da ritornare
-			UtentiTable.USERNAME+" = \""+ username + "\" AND " + UtentiTable.PASSWORD +" = \""+ password+"\"",										// filtro da applicare ai dati 
+			UtentiTable.USERNAME+" = \""+ username + "\" AND " + UtentiTable.PASSWORD +" = \""+ password +"\"",										// filtro da applicare ai dati 
 			null,										// argomenti su cui filtrare i dati (nel caso in cui nel filtro siano presenti parametri)
 			null, 										// group by da eseguire
 			null, 										// clausola having da usare
@@ -116,7 +131,26 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) {
-				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4)));
+				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4), cursore.getString(5)));
+			}
+		
+		return null;
+	}
+	
+	public Utente sendMailToUtenteRegistered(String username, String mail) {
+		
+		Cursor cursore = getReadableDatabase().query(
+			UtentiTable.TABLE_NAME, 					// nome della tabella
+			UtentiTable.COLUMNS, 						// array dei nomi delle colonne da ritornare
+			UtentiTable.USERNAME+" = \""+ username + "\" AND " + UtentiTable.MAIL +" = \""+ mail +"\"",										// filtro da applicare ai dati 
+			null,										// argomenti su cui filtrare i dati (nel caso in cui nel filtro siano presenti parametri)
+			null, 										// group by da eseguire
+			null, 										// clausola having da usare
+			null);						// ordinamento da applicare ai dati
+		
+		if (cursore.getCount() > 0)
+			while (cursore.moveToNext()) {
+				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4), cursore.getString(5)));
 			}
 		
 		return null;
@@ -127,7 +161,24 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		Cursor cursore = getReadableDatabase().query(
 			UtentiTable.TABLE_NAME, 					// nome della tabella
 			UtentiTable.COLUMNS, 						// array dei nomi delle colonne da ritornare
-			UtentiTable.USERNAME+" = \""+ username+"\"",										// filtro da applicare ai dati 
+			UtentiTable.USERNAME+" = \""+ username +"\"",										// filtro da applicare ai dati 
+			null,										// argomenti su cui filtrare i dati (nel caso in cui nel filtro siano presenti parametri)
+			null, 										// group by da eseguire
+			null, 										// clausola having da usare
+			UtentiTable.USERNAME);						// ordinamento da applicare ai dati
+		
+		if (cursore.getCount() > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isMailRegistered(String mail) {
+		
+		Cursor cursore = getReadableDatabase().query(
+			UtentiTable.TABLE_NAME, 					// nome della tabella
+			UtentiTable.COLUMNS, 						// array dei nomi delle colonne da ritornare
+			UtentiTable.MAIL+" = \""+ mail +"\"",										// filtro da applicare ai dati 
 			null,										// argomenti su cui filtrare i dati (nel caso in cui nel filtro siano presenti parametri)
 			null, 										// group by da eseguire
 			null, 										// clausola having da usare
@@ -144,7 +195,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		
 		try {
     		while (cursore.moveToNext()) 
-    			Log.d("SHE_UtentiTable", cursore.getLong(0) + " " + cursore.getString(1) + "\t " + cursore.getString(2)+ "\t " + cursore.getString(3)+ "\t " + cursore.getString(4));
+    			Log.d("SHE_UtentiTable", cursore.getLong(0) + " " + cursore.getString(1) + "\t " + cursore.getString(2)+ "\t " + cursore.getString(3)+ "\t " + cursore.getString(4)+ "\t " + cursore.getString(5));
     	}  
     	finally {
     		cursore.close();
@@ -160,6 +211,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		value.put(AccessiTable.USERNAME, username);
 		value.put(AccessiTable.ACCESSO, accesso);
 		db.insert(AccessiTable.TABLE_NAME, null, value);
+		
 	}
 	
 	public Cursor getListaAccessi() {

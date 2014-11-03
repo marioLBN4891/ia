@@ -41,10 +41,8 @@ public class Configurazione implements Serializable {
 	
 	private static String[] clima = new String[] {
 		"Temperatura esterna", 
-		"Temperatura interna",
 		"Umidità",
 		"Vento",
-		"Visibilità",
 		"Meteo"
 	};
 	
@@ -176,24 +174,16 @@ public class Configurazione implements Serializable {
 		this.climaDisponibili.put(clima[0], stato);
 	}
 	
-	public void setClimaTemperaturaInterna(int stato) {
+	public void setClimaUmidita(int stato) {
 		this.climaDisponibili.put(clima[1], stato);
 	}
 	
-	public void setClimaUmidita(int stato) {
+	public void setClimaVento(int stato) {
 		this.climaDisponibili.put(clima[2], stato);
 	}
 	
-	public void setClimaVento(int stato) {
-		this.climaDisponibili.put(clima[3], stato);
-	}
-	
-	public void setClimaVisibilita(int stato) {
-		this.climaDisponibili.put(clima[4], stato);
-	}
-	
 	public void setClimaMeteo(int stato) {
-		this.climaDisponibili.put(clima[5], stato);
+		this.climaDisponibili.put(clima[3], stato);
 	}
 	
 	
@@ -265,24 +255,16 @@ public class Configurazione implements Serializable {
 		return this.climaDisponibili.get(clima[0]);
 	}
 	
-	public int getClimaTemperaturaInterna() {
+	public int getClimaUmidita() {
 		return this.climaDisponibili.get(clima[1]);
 	}
 	
-	public int getClimaUmidita() {
+	public int getClimaVento() {
 		return this.climaDisponibili.get(clima[2]);
 	}
 	
-	public int getClimaVento() {
-		return this.climaDisponibili.get(clima[3]);
-	}
-	
-	public int getClimaVisibilita() {
-		return this.climaDisponibili.get(clima[4]);
-	}
-	
 	public int getClimaMeteo() {
-		return this.climaDisponibili.get(clima[5]);
+		return this.climaDisponibili.get(clima[3]);
 	}
 	
 	
@@ -350,6 +332,9 @@ public class Configurazione implements Serializable {
 		Date data = new Date();
     	data.setTime(this.dataMilliTime);
     	
+    	Calendar dataAttuale = Calendar.getInstance();
+    	dataAttuale.set(data.getYear(), data.getMonth(), data.getDate());
+    	
     	Calendar inizioanno = Calendar.getInstance();
     	Calendar primavera = Calendar.getInstance();
     	Calendar estate = Calendar.getInstance();
@@ -363,19 +348,19 @@ public class Configurazione implements Serializable {
     	inverno.set(data.getYear(), 12, 21);
     	fineanno.set(data.getYear(), 12, 31);
     	
-    	if (data.compareTo(inizioanno.getTime()) >= 0 && data.compareTo(primavera.getTime()) < 0) 
+    	if (dataAttuale.after(inizioanno) && dataAttuale.before(primavera)) 
     		regola = "inverno("+tempo+")";
     		
-    	if (data.compareTo(primavera.getTime()) >= 0 && data.compareTo(estate.getTime()) < 0) 
+    	if (dataAttuale.after(primavera) && dataAttuale.before(estate)) 
         	regola = "primavera("+tempo+")";
         
-        if (data.compareTo(estate.getTime()) >= 0 && data.compareTo(autunno.getTime()) < 0) 
+        if (dataAttuale.after(estate) && dataAttuale.before(autunno)) 
         	regola = "estate("+tempo+")";
         
-        if (data.compareTo(autunno.getTime()) >= 0 && data.compareTo(inverno.getTime()) < 0) 
+        if (dataAttuale.after(autunno) && dataAttuale.before(inverno)) 
            	regola = "autunno("+tempo+")";
         
-        if (data.compareTo(inverno.getTime()) >= 0 && data.compareTo(fineanno.getTime()) <= 0) 
+        if (dataAttuale.after(inverno) && dataAttuale.before(fineanno)) 
            	regola = "inverno("+tempo+")";   	
             
        return regola;
@@ -383,7 +368,6 @@ public class Configurazione implements Serializable {
 	
 	
 	private String regolaPrologOra(String tempo) {
-		
 		String regola = "ora("+tempo+", "+this.hour+")";
 		return regola;
 	}
@@ -392,30 +376,21 @@ public class Configurazione implements Serializable {
 	private String regolaPrologComponenti(String tempo, String componente, boolean stato) {
 		
 		String regola = "";
-		if (componente.equals("Televisione") && stato)
-			regola = "tvAccesa("+tempo+")";
-		else
-			regola = "tvSpenta("+tempo+")";
-		
-		if (componente.equals("Radio") && stato) 
-			regola =  "radioAccesa("+tempo+")";
-		else 
-			regola = "radioSpenta("+tempo+")";
-		
-		if (componente.equals("Condizionatore") && stato)
-			regola =  "condizionatoreAcceso("+tempo+")";
-		else
-			regola = "condizionatoreSpento("+tempo+")"; 
-		
-		if (componente.equals("Balcone") && stato) 
-			regola =  "balconeApertoCompleto("+tempo+")";
-		else
-			regola = "balconeChiuso("+tempo+")";
-		
-		if (componente.equals("Macchina del Caffè") && stato) 
-			regola =  "macchinaCaffeAccesa("+tempo+")";
-		else
-			regola = "macchinaCaffeAccesa("+tempo+")";
+		if (stato) {
+			if (componente.equals("Televisione")) 			regola = "tvAccesa("+tempo+")";
+			if (componente.equals("Radio")) 				regola =  "radioAccesa("+tempo+")";
+			if (componente.equals("Condizionatore")) 		regola =  "condizionatoreAcceso("+tempo+")";
+			if (componente.equals("Balcone"))				regola =  "balconeApertoCompleto("+tempo+")";
+			if (componente.equals("Macchina del Caffè"))	regola =  "macchinaCaffeAccesa("+tempo+")";
+			if (componente.equals("Illuminazione"))			regola =  "illuminazioneAccesa("+tempo+")";
+		}
+		else {
+			if (componente.equals("Televisione")) 			regola = "tvSpenta("+tempo+")";
+			if (componente.equals("Radio"))					regola = "radioSpenta("+tempo+")";
+			if (componente.equals("Condizionatore")) 		regola = "condizionatoreSpento("+tempo+")"; 
+			if (componente.equals("Balcone")) 				regola = "balconeChiuso("+tempo+")";
+			if (componente.equals("Illuminazione")) 		regola = "illuminazioneSpenta("+tempo+")";
+		}
 		
 		return regola;
 	}
@@ -432,9 +407,6 @@ public class Configurazione implements Serializable {
 		
 		if (clima.equals("Vento"))
 			regola = "vento("+tempo+", "+valore+")";
-		
-		if (clima.equals("Visibilità"))
-			regola = "visibilita("+tempo+", "+valore+")";
 		
 		if (clima.equals("Meteo"))
 			regola = getMeteo(tempo, valore);
@@ -453,7 +425,9 @@ public class Configurazione implements Serializable {
     		return "meteoPioggia("+tempo+")";
 		if (valore > 35 && valore <= 65) 
 			return "meteoNuvole("+tempo+")";
-		if (valore > 65) 
+		if (valore > 65 && valore <= 80) 
+			return "meteoSereno("+tempo+")";
+		if (valore > 80) 
 			return "meteoSole("+tempo+")";
 		return null;
 		

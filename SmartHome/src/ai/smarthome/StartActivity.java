@@ -1,10 +1,10 @@
 package ai.smarthome;
 
 import android.app.Activity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,6 +17,9 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
  
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+	    StrictMode.setThreadPolicy(policy);
+	  
         new Handler().postDelayed(new Runnable() {
  
             @Override

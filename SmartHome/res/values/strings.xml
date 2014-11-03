@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    
     <string name="app_name">Smart Home Environment</string>
-    
     <string name="cdl">Laurea Magistrale in Informatica</string>
     <string name="esame">Esame di Intelligenza Artificiale</string>
     <string name="progetto">Smart Home Environment\nC@SA</string>
     <string name="sviluppato">Developed by Labianca M. - All rights reserved © 2014</string>
-    
     <string name="action_settings">Configurazioni</string>
-    
     <string name="activityLogin">Accesso</string>
-    <string name="formLogin">C@SA: Login</string>
+    <string name="formLogin">C@SA</string>
     <string name="username">Username:</string>
     <string name="password">Password:</string>
     <string name="restaCollegato">Resta collegato</string>
+    <string name="passwordDimenticata"><u>Password dimenticata?</u></string>
     <string name="loginButton">Entra</string>
     <string name="registrationButton">Registrati</string>
     <string name="logout">Logout</string>
@@ -24,35 +21,46 @@
     <string name="activityRegistration">Registrazione</string>
     <string name="cognome">Cognome:</string>
     <string name="nome">Nome:</string>
+    <string name="mail">Email:</string>
     <string name="password2">Ripeti password:</string>
-    
-    
     <string name="activityMain">Opzioni</string>
 
-    
+    <string name="activityPassword">Password dimenticata</string>
+    <string name="formPassword">Recupera le tue credenziali per poter accedere alle funzionalità del sistema C@SA.\nInserisci username e email utilizzata per la registrazione. Il sistema invierà una mail contenente i dati di accesso nella tua casella di posta elettronica.</string>
+    <string name="sendMailButton">Invia Mail</string>
     
     <string-array name="opzioni_array">
-        <item>Riepilogo</item>
-        <item>Info personali</item>
-        <item>Data</item>
-        <item>Ora</item>
-        <item>Meteo</item>
-        <item>Componenti</item>
-        <item>Sensori</item>
+        <item>Benvenuto</item>
+        <item>Avvio veloce</item>
+        <item>Info utente</item>
+        <item>Riepilogo Impostazioni</item>
+        <item>Cambia Data</item>
+        <item>Cambia Ora</item>
+        <item>Cambia Meteo</item>
+        <item>Cambia Componenti</item>
+        <item>Cambia Sensori</item>
     </string-array>
 
     <string name="drawer_open">Apri menù di navigazione</string>
     <string name="drawer_close">Chiudi menù di navigazione</string>
     <string name="actionInquiry">Domanda</string>
     <string name="activityInquiry">Domanda</string>
-    <string name="hello_world">Hello world!</string>
+    
+    <string name="text_fragment_infopersonali">Informazioni personali dell\'utente.\nQuesta sezione permette di modifica email e password e avere un riepilogo dei propri dati.</string>
+    <string name="utente">Utente:</string>
+    <string name="modificaMail">Modifica email:</string>
+    <string name="posizione">Posizione attuale:</string>
+    <string name="modificaPassword">Modifica password</string>
+    <string name="vecchiaPassword">Password attuale:</string>
+    <string name="nuovaPassword">Nuova password:</string>
+    <string name="infoPersonaliButton">Cambia Info Personali</string>
+    
     <string name="text_fragment_ora1">Modifica l\'orario di partenza della simulazione.\nUtilizza l\'orario corrente o fissa un orario qualsiasi a tua discrezione.</string>
     <string name="text_fragment_ora2">Seleziona un nuovo orario:</string>
     <string name="cambiaOrario">Salva Orario</string>
     <string name="text_fragment_data1">Modifica la data di partenza della simulazione.\nUtilizza la data corrente o scegli una data qualsiasi dal calendario.</string>
     <string name="text_fragment_data2">Seleziona una nuova data:</string>
     <string name="cambiaData">Salva Data</string>
-    
     <string name="text_fragment_sim1">Impostazioni simulazione</string>
     <string name="text_fragment_sim2">Data:</string>
     <string name="text_fragment_sim3">Ora:</string>
@@ -60,9 +68,7 @@
     <string name="text_fragment_sim5">Componenti:</string>
     <string name="text_fragment_sim6">Sensori:</string>
     <string name="startSimulazione">Avvia Simulazione</string>
-    
-    <string name="activitySimulazione">Avvio Simulazione</string> 
-    
+    <string name="activitySimulazione">Simulazione</string>
     <string name="text_fragment_sensori1">Modifica lo stato di funzionamento dei sensori presenti nell\'ambiente domestico.\nAttiva o disattiva i sensori.\n-La funzionalità è momentaneamente disabilitata -</string>
     <string name="sens_temperatura">Rilevamento temperatura</string>
     <string name="sens_umidita">Rilevamento umidità</string>
@@ -70,7 +76,6 @@
     <string name="sens_presenza">Rilevamento presenza</string>
     <string name="sens_sonoro">Rilevamento sonoro</string>
     <string name="cambiaSensori">Modifica Impostazioni</string>
-    
     <string name="text_fragment_componenti1">Modifica lo stato di funzionamento dei componenti presenti nell\'ambiente domestico.\nCambia lo stato dei componenti.</string>
     <string name="televisione">Televisione</string>
     <string name="radio">Radio</string>
@@ -79,8 +84,6 @@
     <string name="macchinaCaffe">Macchina del caffè</string>
     <string name="illuminazione">Illuminazione</string>
     <string name="cambiaComponenti">Modifica Impostazioni</string>
-    
-    
     <string name="text_fragment_meteo1">Modifica le condizioni climatiche e metereologiche presenti all\'interno e all\'esterno dell\'ambiente domestico.\nCambia lo stato del clima.</string>
     <string name="meteo">Meteo:</string>
     <string name="umidita">Umidità:</string>
@@ -89,6 +92,10 @@
     <string name="temperaturaInterna">Temperatura interna:</string>
     <string name="temperaturaEsterna">Temperatura esterna:</string>
     <string name="cambiaMeteo">Modifica Impostazioni</string>
+    <string name="cucina_text">immagine cucina</string>
     
-	<string name="cucina_text">immagine cucina</string>
+    <string name="text_fragment_avvioveloce">Seleziona una configurazione predefinita per avviare la simulazione oppure definisci una configurazione personalizzata modificando i parametri disponibili nelle altre sezioni.</string>
+    <string name="text_fragment_avvioveloce2">Oppure utilizza le previsioni meteo della tua posizione attuale:</string>
+    
+    <string name="confVeloceMeteo">configurazione veloce meteo</string>
 </resources>

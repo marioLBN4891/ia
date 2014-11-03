@@ -4,11 +4,11 @@ import java.util.Date;
 
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.Utilities;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,13 +31,13 @@ public class LoginActivity extends Activity {
 	    
 	    username = (EditText)findViewById(R.id.usernameEditText);
 	    password = (EditText)findViewById(R.id.passwordEditText);
-	    
 	    dbH = new DatabaseHelper(this);
 	    
 	    fastLogin();
 	    
 	    addListenerOnLoginButton();
 	    addListenerOnRegistrationButton();
+	    addListenerOnPasswordReminderButton();
 	
 	    
 	}
@@ -80,13 +80,27 @@ public class LoginActivity extends Activity {
 		findViewById(R.id.registrationButton).setOnClickListener(new OnClickListener() {
  			@Override
 			public void onClick(View arg0) {
- 				Intent i = new Intent(LoginActivity.this, RegistrationActivity.class);
+ 				Intent i = new Intent(LoginActivity.this, RegistrazioneActivity.class);
 		        startActivity(i);
 			}
  		});
  
 	}
-
+	
+	
+	public void addListenerOnPasswordReminderButton() {
+		 
+		findViewById(R.id.passwordDimenticataButton).setOnClickListener(new OnClickListener() {
+ 			@Override
+			public void onClick(View arg0) {
+ 				Intent i = new Intent(LoginActivity.this, PasswordActivity.class);
+ 		        startActivity(i);
+ 		    }
+ 		});
+ 
+	}
+		
+	
 	
 	public void fastLogin() {
 		
@@ -94,6 +108,7 @@ public class LoginActivity extends Activity {
         if (user != null) {
         	dbH.setAccesso(user.getId(), new Date().toString());
         	Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        	Log.d("aab", user.getCognome() +" "+ user.getNome());
         	i.putExtra(UTENTE, user);
             startActivity(i);
             finish();
@@ -102,7 +117,6 @@ public class LoginActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -113,13 +127,6 @@ public class LoginActivity extends Activity {
 	
 	@Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this).setIcon(R.drawable.exit).setTitle("Esci")
-                .setMessage("Chiudere l'applicazione?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                }).setNegativeButton("No", null).show();
-    }
+		Utilities.chiudiApplicazione(this);
+	}
 }

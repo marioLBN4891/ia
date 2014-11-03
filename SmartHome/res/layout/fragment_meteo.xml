@@ -13,7 +13,6 @@ tools:context="ai.smarthome.fragment.MeteoFragment" >
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
     android:text="@string/text_fragment_meteo1" 
     android:textSize="@dimen/font_text16" />
 	
@@ -23,10 +22,8 @@ tools:context="ai.smarthome.fragment.MeteoFragment" >
     android:layout_height="wrap_content"
     android:layout_below="@+id/text_fragment_meteo1" 
     android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
     android:layout_marginTop="@dimen/margin15"
     android:layout_marginStart="@dimen/margin20"
-    android:layout_marginLeft="@dimen/margin20" 
     android:text="@string/meteo"
     android:textStyle="bold"
     android:textSize="@dimen/font_text14" />
@@ -45,10 +42,8 @@ tools:context="ai.smarthome.fragment.MeteoFragment" >
     android:layout_height="wrap_content"
     android:layout_below="@+id/seekMeteo" 
     android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
     android:layout_marginTop="@dimen/margin5"
     android:layout_marginStart="@dimen/margin20"
-    android:layout_marginLeft="@dimen/margin20" 
     android:text="@string/temperaturaEsterna"
     android:textStyle="bold"
     android:textSize="@dimen/font_text14" />
@@ -62,37 +57,13 @@ tools:context="ai.smarthome.fragment.MeteoFragment" >
 	android:progress="50" />
 	
 	<TextView 
-    android:id="@+id/textTemperaturaInterna"
+    android:id="@+id/textUmidita"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_below="@+id/seekTemperaturaEsterna" 
     android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
     android:layout_marginTop="@dimen/margin5"
     android:layout_marginStart="@dimen/margin20"
-    android:layout_marginLeft="@dimen/margin20" 
-    android:text="@string/temperaturaInterna"
-    android:textStyle="bold"
-    android:textSize="@dimen/font_text14" />
-	
-	<SeekBar
-	android:id="@+id/seekTemperaturaInterna"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_below="@+id/textTemperaturaInterna"
-	android:max="100"
-	android:progress="50" />
-	
-	<TextView 
-    android:id="@+id/textUmidita"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/seekTemperaturaInterna" 
-    android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
-    android:layout_marginTop="@dimen/margin5"
-    android:layout_marginStart="@dimen/margin20"
-    android:layout_marginLeft="@dimen/margin20" 
     android:text="@string/umidita"
     android:textStyle="bold"
     android:textSize="@dimen/font_text14" />
@@ -111,10 +82,8 @@ tools:context="ai.smarthome.fragment.MeteoFragment" >
     android:layout_height="wrap_content"
     android:layout_below="@+id/seekUmidita" 
     android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
     android:layout_marginTop="@dimen/margin5"
     android:layout_marginStart="@dimen/margin20"
-    android:layout_marginLeft="@dimen/margin20" 
     android:text="@string/vento"
     android:textStyle="bold"
     android:textSize="@dimen/font_text14" />
@@ -124,28 +93,6 @@ tools:context="ai.smarthome.fragment.MeteoFragment" >
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_below="@+id/textVento"
-	android:max="100"
-	android:progress="50" />
-	
-	<TextView 
-    android:id="@+id/textVisibilita"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/seekVento" 
-    android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
-    android:layout_marginTop="@dimen/margin5"
-    android:layout_marginStart="@dimen/margin20"
-    android:layout_marginLeft="@dimen/margin20" 
-    android:text="@string/visibilita"
-    android:textStyle="bold"
-    android:textSize="@dimen/font_text14" />
-	
-	<SeekBar
-	android:id="@+id/seekVisibilita"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_below="@+id/textVisibilita"
 	android:max="100"
 	android:progress="50" />
 	

@@ -10,14 +10,16 @@ public class Utente implements Serializable {
 	private String PASSWORD;
 	private String COGNOME;
 	private String NOME;
+	private String MAIL;
 	
 
-	public Utente (String id, String username, String password, String cognome, String nome) {
+	public Utente (String id, String username, String password, String cognome, String nome, String mail) {
 		this.ID = id;
 		this.USERNAME = username;
 		this.PASSWORD = password;
 		this.COGNOME = cognome;
 		this.NOME = nome;
+		this.MAIL = mail;
 		
 	}
 	
@@ -41,6 +43,10 @@ public class Utente implements Serializable {
 		this.NOME = nome;
 	}
 	
+	public void setMail(String mail) {
+		this.MAIL = mail;
+	}
+	
 	public String getId() {
 		return this.ID;
 	}
@@ -61,4 +67,7 @@ public class Utente implements Serializable {
 		return this.NOME;
 	}
 	
+	public String getMail() {
+		return this.MAIL;
+	}
 }
