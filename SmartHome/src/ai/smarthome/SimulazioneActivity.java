@@ -1,6 +1,5 @@
 package ai.smarthome;
 
-
 import ai.smarthome.database.wrapper.Configurazione;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +17,7 @@ public class SimulazioneActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_simulazione);
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);

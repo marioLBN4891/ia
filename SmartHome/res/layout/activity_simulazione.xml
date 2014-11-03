@@ -3,96 +3,84 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="fill_parent" 
-            android:layout_height="200dp"
-            android:src="@drawable/cucina" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="250dp"
+        android:src="@drawable/cucina" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <Button
                 android:id="@+id/button1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Apri" />
+                android:text="Button" />
 
             <Button
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chiudi" />
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Accendi" />
+                android:text="Button" />
 
             <Button
                 android:id="@+id/button5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Spegni" />
+                android:text="Button" />
 
-        </LinearLayout>
+        </TableRow>
 
-    </LinearLayout>
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <Button
                 android:id="@+id/button4"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="Prendi" />
-
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                 android:textSize="15sp"
                 android:text="Button" />
 
-            <Button
-                android:id="@+id/button7"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="Button" />
+        </TableRow>
+    </TableLayout>
 
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                 android:textSize="15sp"
-                android:text="Button" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    
 
 </LinearLayout>
