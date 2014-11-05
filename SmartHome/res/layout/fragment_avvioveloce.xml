@@ -1,0 +1,195 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
+
+    <TextView 
+    android:id="@+id/text_fragment_avvioveloce"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:text="@string/text_fragment_avvioveloce" 
+    android:textSize="@dimen/font_text16" />
+    
+	<TableLayout
+    android:id="@+id/tableAvvioVeloce"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:layout_marginTop="@dimen/margin20"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/text_fragment_avvioveloce">
+
+		<TableRow
+    	android:id="@+id/tableRow1"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="@dimen/margin5" >
+
+        	<ImageButton
+    		android:id="@+id/meteoSoleButton"
+    		android:layout_width="@dimen/dimButtonConf"
+   		 	android:layout_height="@dimen/dimButtonConf"
+    		android:scaleType="fitXY"
+    		android:padding="@dimen/margin5"
+    		android:contentDescription="@string/confVeloceMeteo"
+    		android:src="@drawable/meteo_sole"
+    		android:onClick="cambiaMeteoSole" />
+			
+			<ImageButton
+    		android:id="@+id/meteoSerenoButton"
+    		android:layout_width="@dimen/dimButtonConf"
+    		android:layout_height="@dimen/dimButtonConf"
+    		android:scaleType="fitXY"
+    		android:padding="@dimen/margin5"
+    		android:contentDescription="@string/confVeloceMeteo"
+    		android:src="@drawable/meteo_sereno"
+    		android:onClick="cambiaMeteoSereno" />
+		
+			<ImageButton
+    		android:id="@+id/meteoNuvoleButton"
+    		android:layout_width="@dimen/dimButtonConf"
+    		android:layout_height="@dimen/dimButtonConf"
+    		android:scaleType="fitXY"
+    		android:padding="@dimen/margin5"
+   		 	android:contentDescription="@string/confVeloceMeteo"
+    		android:src="@drawable/meteo_nuvole"
+    		android:onClick="cambiaMeteoNuvole" />
+	
+			<ImageButton
+    		android:id="@+id/meteoPioggiaButton"
+    		android:layout_width="@dimen/dimButtonConf"
+    		android:layout_height="@dimen/dimButtonConf"
+    		android:scaleType="fitXY"
+    		android:padding="@dimen/margin5"
+    		android:contentDescription="@string/confVeloceMeteo"
+    		android:src="@drawable/meteo_pioggia"
+    		android:onClick="cambiaMeteoPioggia" />
+			
+		</TableRow>
+		
+	</TableLayout>
+	
+	<TextView 
+    android:id="@+id/text_fragment_avvioveloce2"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/margin40"
+    android:layout_below="@+id/tableAvvioVeloce"
+    android:text="@string/text_fragment_avvioveloce2"  
+    android:textSize="@dimen/font_text16" />
+	
+	<ImageButton
+    android:id="@+id/meteoAttualeButton"
+    android:layout_width="@dimen/dimButtonConf"
+    android:layout_height="@dimen/dimButtonConf"
+    android:layout_centerHorizontal="true"
+    android:scaleType="fitXY"
+    android:padding="@dimen/margin5"
+    android:layout_marginTop="@dimen/margin20"
+    android:layout_below="@+id/tableAvvioVeloce"
+    android:layout_toEndOf="@+id/text_fragment_avvioveloce2"
+    android:contentDescription="@string/confVeloceMeteo"
+    android:onClick="cambiaMeteoAttuale"
+    android:src="@drawable/meteo_oggi" />
+		
+	<TextView 
+    android:id="@+id/text_fragment_sim2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/text_fragment_avvioveloce2"
+    android:layout_marginTop="@dimen/margin20"
+    android:text="@string/text_fragment_sim2"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
+	
+	<TextView
+    android:id="@+id/dataText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/text_fragment_sim2"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_toEndOf="@+id/text_fragment_sim2"
+    android:textSize="@dimen/font_text12" />
+   
+	<TextView 
+	android:id="@+id/text_fragment_sim3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/dataText"
+    android:layout_marginStart="@dimen/margin40"
+    android:layout_toEndOf="@+id/dataText"
+    android:text="@string/text_fragment_sim3"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
+	
+	<TextView
+    android:id="@+id/orarioText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/text_fragment_sim3"
+    android:layout_marginStart="@dimen/margin20"
+    android:layout_toEndOf="@+id/text_fragment_sim3"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView 
+    android:id="@+id/text_fragment_sim4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/text_fragment_sim3"
+    android:layout_marginTop="@dimen/margin10"
+    android:text="@string/text_fragment_sim4"
+    android:textStyle="bold"
+    android:textSize="@dimen/font_text14" />
+	
+	<TextView
+    android:id="@+id/climaMeteo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/text_fragment_sim4"
+    android:layout_marginStart="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/climaTempEst"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaMeteo"
+    android:layout_marginStart="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/climaUmidita"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaTempEst"
+    android:layout_marginStart="@dimen/margin20" 
+    android:textSize="@dimen/font_text12" />
+	
+	<TextView
+    android:id="@+id/climaVento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/climaUmidita"
+    android:layout_marginStart="@dimen/margin20"
+    android:textSize="@dimen/font_text12" />
+		
+	<ImageButton
+    android:id="@+id/starSimulazioneButton"
+    android:layout_width="@dimen/dimButtonPlay"
+    android:layout_height="@dimen/dimButtonPlay"
+    android:scaleType="fitXY"
+    android:background="@null"
+    android:layout_alignParentBottom="true"
+	android:layout_centerHorizontal="true"
+    android:contentDescription="@string/startSimulazione"
+    android:onClick="startSimulazione"
+    android:src="@drawable/play" />
+	
+</RelativeLayout>
