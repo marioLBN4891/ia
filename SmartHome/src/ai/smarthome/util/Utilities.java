@@ -22,6 +22,7 @@ public class Utilities {
         }).setNegativeButton("No", null).show();
 	}
 
+	
 	public static void getMainMenuOnActivity(final Context context, Menu menu) {
 		((Activity)context).getMenuInflater().inflate(R.menu.main, menu);
 	}

@@ -6,12 +6,12 @@ public interface ConnessioneVeloceTable extends BaseColumns
 	{
 		String TABLE_NAME = "connessioneVeloce";
 	 
-		String USERNAME = "username";
+		String MAIL = "MAIL";
 		String PASSWORD = "password";
 		
 		String[] COLUMNS = new String[] {
 				_ID, 
-				USERNAME, 
+				MAIL, 
 				PASSWORD
 		};
 	

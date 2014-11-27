@@ -1,22 +1,24 @@
-package ai.smarthome;
+package ai.smarthome.activity;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import com.facebook.Session;
+
+import ai.smarthome.R;
+import ai.smarthome.activity.fragmentMain.AvvioVeloceFragment;
+import ai.smarthome.activity.fragmentMain.ComponentiFragment;
+import ai.smarthome.activity.fragmentMain.DataFragment;
+import ai.smarthome.activity.fragmentMain.InfoPersonaliFragment;
+import ai.smarthome.activity.fragmentMain.MeteoFragment;
+import ai.smarthome.activity.fragmentMain.OraFragment;
+import ai.smarthome.activity.fragmentMain.RiepilogoFragment;
+import ai.smarthome.activity.fragmentMain.SensoriFragment;
 import ai.smarthome.async.AsyncMeteo;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.database.wrapper.Utente;
-import ai.smarthome.fragment.AvvioVeloceFragment;
-import ai.smarthome.fragment.ComponentiFragment;
-import ai.smarthome.fragment.DataFragment;
-import ai.smarthome.fragment.InfoPersonaliFragment;
-import ai.smarthome.fragment.MeteoFragment;
-import ai.smarthome.fragment.OraFragment;
-import ai.smarthome.fragment.SensoriFragment;
-import ai.smarthome.fragment.RiepilogoFragment;
 import ai.smarthome.util.UtilMeteo;
 import ai.smarthome.util.Utilities;
 import android.annotation.SuppressLint;
@@ -27,11 +29,11 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -85,13 +87,15 @@ public class MainActivity extends Activity {
 
     private CharSequence intestazioneDrawer, intestazioneActivity;
     private String[] intestazioneOpzioni; 
-
     
+    private SQLiteDatabase db;
     private Configurazione conf;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        db = new DatabaseHelper(this).getWritableDatabase();
         
         try {
 			Class.forName("android.os.AsyncTask");
@@ -113,9 +117,7 @@ public class MainActivity extends Activity {
         
         setContentView(R.layout.activity_main);
         setNavigationDrawer(savedInstanceState);
-        
-        
-    }
+   }
 
     public void setNavigationDrawer(Bundle savedInstanceState) {
     	intestazioneActivity = intestazioneDrawer = getTitle();
@@ -140,12 +142,14 @@ public class MainActivity extends Activity {
                 R.string.drawer_open,  					/* "open drawer" description for accessibility */
                 R.string.drawer_close  					/* "close drawer" description for accessibility */
                 ) {
-            public void onDrawerClosed(View view) {
+            @Override
+			public void onDrawerClosed(View view) {
                 getActionBar().setTitle(intestazioneActivity);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
-            public void onDrawerOpened(View drawerView) {
+            @Override
+			public void onDrawerOpened(View drawerView) {
                 getActionBar().setTitle(intestazioneDrawer);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
@@ -181,14 +185,15 @@ public class MainActivity extends Activity {
         // Handle action buttons
         switch(item.getItemId()) {
         case R.id.logout:
-        	final DatabaseHelper dbH = new DatabaseHelper(this);
         	new AlertDialog.Builder(this).setIcon(R.drawable.logout).setTitle("Logout")
             .setMessage("Vuoi disconnetterti?")
             .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                	dbH.deleteConnessioneVeloce();
-                	Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                	Session.getActiveSession().closeAndClearTokenInformation();
+                	
+                	Utente.deleteConnessioneVeloce(db);
+                	Intent intent = new Intent(MainActivity.this, AccessoActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -273,8 +278,7 @@ public class MainActivity extends Activity {
     	EditText vecchiaPass = (EditText) findViewById(R.id.vecchiaPasswordEditText); 
     	EditText nuovaPass = (EditText) findViewById(R.id.nuovaPasswordEditText); 
     	EditText nuovaPass2 = (EditText) findViewById(R.id.password2EditText);
-    	DatabaseHelper dbH = new DatabaseHelper(getApplicationContext());
-		
+    	
     	if (!mail.getText().toString().trim().equals(conf.getUtente().getMail())) {
 				if (mail.getText().toString().trim().equals("")) {
 					Toast.makeText(getApplicationContext(), "Email è obbligatorio", Toast.LENGTH_SHORT).show();
@@ -284,7 +288,7 @@ public class MainActivity extends Activity {
 					Toast.makeText(getApplicationContext(), "Email non valida", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				if (dbH .isMailRegistered(mail.getText().toString().trim())) {
+				if (Utente .isMailRegistered(db, mail.getText().toString().trim())) {
 					Toast.makeText(getApplicationContext(), "Email già registrata", Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -311,8 +315,7 @@ public class MainActivity extends Activity {
 				return;
 			}
 			
-			dbH.updateUtente(conf.getUtente().getUsername(), nuovaPass.getText().toString().trim(), mail.getText().toString().trim());
-			dbH.printLogUtenti();
+			Utente.updateUtente(db, mail.getText().toString().trim(), nuovaPass.getText().toString().trim());
 			
 			Toast.makeText(getApplicationContext(), "Modifiche avvenute con successo", Toast.LENGTH_SHORT).show();
 			conf.getUtente().setMail(mail.getText().toString().trim());
@@ -447,6 +450,7 @@ public class MainActivity extends Activity {
     
 	 
     public void cambiaMeteoAttuale(View view) {
+    	Toast.makeText(getApplicationContext(), "Caricamento meteo in corso...", Toast.LENGTH_SHORT).show();
     	AsyncMeteo asyncMeteo = new AsyncMeteo(this);
 		asyncMeteo.execute();
 	}
@@ -492,5 +496,4 @@ public class MainActivity extends Activity {
         UtilMeteo.setTextViewVento(climaVento, conf.getClimaVento());
     }
     
-     
 }

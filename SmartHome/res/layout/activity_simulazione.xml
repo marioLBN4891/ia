@@ -1,86 +1,74 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:stretchColumns="2" >
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
+ 	<TableRow >
+  
+    	<ImageView
+     	android:id="@+id/imageView1"
+         android:scaleType="fitXY"
+         android:layout_weight="1"
+        android:contentDescription="@string/cucina_text"
         android:src="@drawable/cucina" />
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-        </TableRow>
-    </TableLayout>
-
     
+    </TableRow>
 
-</LinearLayout>
+    <TableRow>
+         
+        <Button
+        android:id="@+id/buttonApri"
+        android:text="@string/apri"
+        android:onClick="exeApri" />
+            
+        <Button
+        android:id="@+id/buttonChiudi"
+        android:text="@string/chiudi"
+        android:onClick="exeChiudi" />
+            
+	</TableRow>
+
+    <TableRow> 
+
+    	<Button
+        android:id="@+id/buttonAccendi"
+        android:text="@string/accendi"
+        android:onClick="exeAccendi" />
+
+        <Button
+        android:id="@+id/buttonSpegni"
+        android:text="@string/spegni"
+        android:onClick="exeSpegni" />
+
+	</TableRow>
+
+    <TableRow>
+
+        <Button
+        android:id="@+id/buttonPrendi"
+        android:text="@string/prendi"
+        android:onClick="exePrendi" />
+            
+        <Button
+        android:id="@+id/buttonLascia"
+        android:text="@string/lascia"
+        android:onClick="exeLascia" />
+
+	</TableRow>
+
+    <TableRow>
+
+    	<Button
+        android:id="@+id/buttonConsenti"
+        android:text="@string/consenti"
+        android:onClick="exeConsenti" />
+           
+        <Button
+        android:id="@+id/buttonRifiuta"
+        android:text="@string/rifiuta" 
+        android:onClick="exeRifiuta" />
+
+	</TableRow>
+        
+</TableLayout>

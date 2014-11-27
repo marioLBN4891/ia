@@ -1,4 +1,4 @@
-package ai.smarthome.fragment;
+package ai.smarthome.activity.fragmentMain;
 
 import ai.smarthome.R;
 import ai.smarthome.database.wrapper.Configurazione;

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    
+    <string name="facebook_app_id">487118931333654</string>
+     
     <string name="app_name">Smart Home Environment</string>
     <string name="cdl">Laurea Magistrale in Informatica</string>
     <string name="esame">Esame di Intelligenza Artificiale</string>
     <string name="progetto">Smart Home Environment\nC@SA</string>
     <string name="sviluppato">Developed by Labianca M. - All rights reserved © 2014</string>
     <string name="action_settings">Configurazioni</string>
-    <string name="activityLogin">Accesso</string>
-    <string name="formLogin">C@SA</string>
+    <string name="activityAccesso">Accesso</string>
+    <string name="login">Login</string>
     <string name="username">Username:</string>
     <string name="password">Password:</string>
     <string name="restaCollegato">Resta collegato</string>
@@ -18,7 +21,7 @@
     <string name="logout">Logout</string>
     
     <string name="formRegistrazione">Registrati al sistema per poter accedere alle funzionalità del sistema C@SA.\nProcedi con la compilazione dei campi sottostanti ed effettua l\'accesso nella pagina di login.</string>
-    <string name="activityRegistration">Registrazione</string>
+    <string name="registrazione">Registrazione</string>
     <string name="cognome">Cognome:</string>
     <string name="nome">Nome:</string>
     <string name="mail">Email:</string>
@@ -98,4 +101,14 @@
     <string name="text_fragment_avvioveloce2">Oppure utilizza le previsioni meteo della tua posizione attuale:</string>
     
     <string name="confVeloceMeteo">configurazione veloce meteo</string>
+    
+    <string name="apri">Apri</string>
+    <string name="chiudi">Chiudi</string>
+    <string name="accendi">Accendi</string>
+    <string name="spegni">Spegni</string>
+    <string name="prendi">Prendi</string>
+    <string name="lascia">Lascia</string>
+    <string name="consenti">Consenti</string>
+    <string name="rifiuta">Rifiuta</string>
+    
 </resources>

@@ -1,10 +1,12 @@
-package ai.smarthome;
+package ai.smarthome.activity;
 
+import ai.smarthome.R;
 import ai.smarthome.async.AsyncPasswordReminderMail;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Utilities;
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +17,8 @@ import android.widget.Toast;
 
 public class PasswordActivity extends Activity {
 
-	private EditText  username;
 	private EditText  mail;
-	private DatabaseHelper dbH;
+	private SQLiteDatabase db;
 	private Utente utente;
 	
 	@Override
@@ -25,12 +26,11 @@ public class PasswordActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_password);
 		
+		db = new DatabaseHelper(this).getWritableDatabase();
+		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		username = (EditText)findViewById(R.id.usernameEditText);
 		mail = (EditText)findViewById(R.id.mailEditText);
-	    dbH = new DatabaseHelper(this);
-	    
 	    addListenerOnSendMailButton();
 	}
 
@@ -40,10 +40,6 @@ public class PasswordActivity extends Activity {
  		@Override
  			public void onClick(View arg0) {
  
- 				if (username.getText().toString().trim().equals("") && username.getText().toString().trim().length() < 5 && Utilities.checkSpace(username.getText().toString())) {
- 					Toast.makeText(getApplicationContext(), "Username è un campo obbligatorio di almeno 5 caratteri", Toast.LENGTH_SHORT).show();
- 					return;
- 				}
  				if (mail.getText().toString().trim().equals("")) {
  					Toast.makeText(getApplicationContext(), "Email è obbligatorio", Toast.LENGTH_SHORT).show();
  					return;
@@ -52,12 +48,11 @@ public class PasswordActivity extends Activity {
  					Toast.makeText(getApplicationContext(), "Email non valida", Toast.LENGTH_SHORT).show();
  					return;
  				}
- 				if (!dbH.isUsernameRegistered(username.getText().toString().trim()) || !dbH.isMailRegistered(mail.getText().toString().trim())) {
- 					Toast.makeText(getApplicationContext(), "Username/email non validi", Toast.LENGTH_SHORT).show();
+ 				if (!Utente.isMailRegistered(db, mail.getText().toString().trim())) {
+ 					Toast.makeText(getApplicationContext(), "Email non registrata", Toast.LENGTH_SHORT).show();
  					return;
  				}
 			
- 				utente = dbH.sendMailToUtenteRegistered(username.getText().toString().trim(), mail.getText().toString().trim());
  				
  				Toast.makeText(getApplicationContext(), "Invio mail in corso", Toast.LENGTH_SHORT).show();
  		        

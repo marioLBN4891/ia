@@ -1,21 +1,15 @@
 package ai.smarthome.async;
 
-import java.io.IOException;
 import java.util.Map;
 
-import ai.smarthome.MainActivity;
 import ai.smarthome.R;
-import ai.smarthome.util.Geolocalization;
-import ai.smarthome.util.exception.GeolocalizationException;
+import ai.smarthome.activity.MainActivity;
 import ai.smarthome.util.rest.Rest;
 import android.os.AsyncTask;
-import android.os.Looper;
-import android.os.MessageQueue;
-import android.os.MessageQueue.IdleHandler;
 import android.widget.Toast;
 
 
-public class AsyncMeteo extends AsyncTask<Void, Void, Map<String, Integer>> {
+public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 
 	private final MainActivity mainActivity;
 	private String posizione;
@@ -34,13 +28,12 @@ public class AsyncMeteo extends AsyncTask<Void, Void, Map<String, Integer>> {
 		mainActivity.findViewById(R.id.meteoPioggiaButton).setClickable(false);
 		mainActivity.findViewById(R.id.meteoNuvoleButton).setClickable(false);
 		mainActivity.findViewById(R.id.starSimulazioneButton).setClickable(false);
-		
 	}
 
 
 	@Override
-	protected void onPostExecute(Map<String, Integer> result) {
-		super.onPostExecute(result);
+	protected void onPostExecute(Map<String, Integer> parametri) {
+		super.onPostExecute(parametri);
 		mainActivity.findViewById(R.id.meteoAttualeButton).setClickable(true);
 		mainActivity.findViewById(R.id.meteoSoleButton).setClickable(true);
 		mainActivity.findViewById(R.id.meteoSerenoButton).setClickable(true);
@@ -48,45 +41,44 @@ public class AsyncMeteo extends AsyncTask<Void, Void, Map<String, Integer>> {
 		mainActivity.findViewById(R.id.meteoNuvoleButton).setClickable(true);
 		mainActivity.findViewById(R.id.starSimulazioneButton).setClickable(true);
 		
-		mainActivity.setClimaMeteoAvvioVeloce(result);
-		
+		mainActivity.setClimaMeteoAvvioVeloce(parametri);
 	}
 
 
 	@Override
 	protected Map<String, Integer> doInBackground(Void... params) {
-	    Looper.prepare();	// Prepare looper
-        MessageQueue queue = Looper.myQueue();	                 // Register Queue listener hook
-        queue.addIdleHandler(new IdleHandler() {
-        	int mReqCount = 0;
+	 //   Looper.prepare();	// Prepare looper
+     //   MessageQueue queue = Looper.myQueue();	                 // Register Queue listener hook
+     //   queue.addIdleHandler(new IdleHandler() {
+     //   	int mReqCount = 0;
 
-            @Override
-            public boolean queueIdle() {
-            	if (++mReqCount == 2) {
-            		Looper.myLooper().quit();     // Quit looper
-                    return false;
-                } else
-                	return true;
-                }
-        });
+     //       @Override
+     //       public boolean queueIdle() {
+     //       	if (++mReqCount == 2) {
+     //       		Looper.myLooper().quit();     // Quit looper
+     //               return false;
+     //           } else
+     //           	return true;
+     //           }
+     //   });
          
         String city;
         Map<String, Integer> parametri = null;
-		try {
-			city = Geolocalization.getCittaCorrenteToString(mainActivity.getApplicationContext());
-			posizione = Geolocalization.getPosizioneCorrenteToString(mainActivity.getApplicationContext());
+   //     try {
+			city = "Bari"; //Geolocalization.getCittaCorrenteToString(mainActivity.getApplicationContext());
+			posizione = "Bari"; // Geolocalization.getPosizioneCorrenteToString(mainActivity.getApplicationContext());
 			parametri = Rest.getMeteoLocale(mainActivity.getApplicationContext(), city);
-			Toast.makeText(mainActivity.getApplicationContext(), "Meteo: "+ posizione, Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			e.printStackTrace();
-			Toast.makeText(mainActivity.getApplicationContext(), "Servizio Meteo non disponibile", Toast.LENGTH_SHORT).show();
-		} catch (GeolocalizationException e) {
-			e.printStackTrace();
-			Toast.makeText(mainActivity.getApplicationContext(), "Servizio Meteo non disponibile", Toast.LENGTH_SHORT).show();
-		}
-		Looper.loop();  // Start looping Message Queue- Blocking call
-    	
+			publishProgress("Meteo: "+ posizione);
+		          
+	  	
         return parametri;
+	}
+
+
+	@Override
+	protected void onProgressUpdate(String... values) {
+		super.onProgressUpdate(values);
+		Toast.makeText(mainActivity.getApplicationContext(), values[0], Toast.LENGTH_SHORT).show();
 	}
 	
 	

@@ -5,8 +5,8 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
-import ai.smarthome.PasswordActivity;
 import ai.smarthome.R;
+import ai.smarthome.activity.PasswordActivity;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.PasswordReminderMail;
 import ai.smarthome.util.exception.PasswordReminderException;
@@ -60,7 +60,7 @@ public class AsyncPasswordReminderMail extends AsyncTask<Void, Void, Void> {
         });
         Map<String, String> parametri = Rest.getParametriMail();
         try {
-			PasswordReminderMail.sendPasswordReminderMail(utente.getMail(), utente.getUsername(), utente.getPassword(), parametri);
+			PasswordReminderMail.sendPasswordReminderMail(utente.getMail(), utente.getPassword(), parametri);
 			Toast.makeText(passwordActivity.getApplicationContext(), "Mail inviata con successo", Toast.LENGTH_SHORT).show();
 		} catch (AddressException e) {
 			Toast.makeText(passwordActivity.getApplicationContext(), "Impossibile inviare mail", Toast.LENGTH_SHORT).show();

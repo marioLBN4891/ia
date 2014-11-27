@@ -6,7 +6,7 @@ android:paddingBottom="@dimen/activity_vertical_margin"
 android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
 android:paddingTop="@dimen/activity_vertical_margin"
-tools:context="ai.smarthome.RegistrazioneActivity" >
+tools:context="ai.smarthome.activity.RegistrazioneActivity" >
 
 	<TextView
     android:id="@+id/formRegistrazioneText"
@@ -15,13 +15,13 @@ tools:context="ai.smarthome.RegistrazioneActivity" >
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true"
     android:text="@string/formRegistrazione"
-    android:textSize="@dimen/font_text16" />
+    android:textSize="@dimen/font_text14" />
 
     <TableLayout 
     android:id="@+id/tableRegistration"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" 
-    android:layout_marginTop="@dimen/margin25"
+    android:layout_marginTop="@dimen/margin15"
     android:layout_below="@+id/formRegistrazioneText">
 
 		<TableRow
@@ -178,6 +178,7 @@ tools:context="ai.smarthome.RegistrazioneActivity" >
     android:background="@null"
     android:contentDescription="@string/registrationButton"
     android:scaleType="fitXY"
+    android:onClick="saveReg"
     android:src="@drawable/save_reg" />
     
 </RelativeLayout>

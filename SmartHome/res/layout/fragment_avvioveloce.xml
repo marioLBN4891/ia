@@ -6,13 +6,12 @@ android:paddingBottom="@dimen/activity_vertical_margin"
 android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
 android:paddingTop="@dimen/activity_vertical_margin"
-tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
+tools:context="ai.smarthome.activity.fragmentMain.AvvioVeloceFragment" >
 
     <TextView 
     android:id="@+id/text_fragment_avvioveloce"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
     android:text="@string/text_fragment_avvioveloce" 
     android:textSize="@dimen/font_text16" />
     
@@ -25,9 +24,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_below="@+id/text_fragment_avvioveloce">
 
 		<TableRow
-    	android:id="@+id/tableRow1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
     	android:layout_marginTop="@dimen/margin5" >
 
         	<ImageButton
@@ -92,7 +88,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:padding="@dimen/margin5"
     android:layout_marginTop="@dimen/margin20"
     android:layout_below="@+id/tableAvvioVeloce"
-    android:layout_toEndOf="@+id/text_fragment_avvioveloce2"
     android:contentDescription="@string/confVeloceMeteo"
     android:onClick="cambiaMeteoAttuale"
     android:src="@drawable/meteo_oggi" />
@@ -101,7 +96,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:id="@+id/text_fragment_sim2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
     android:layout_below="@+id/text_fragment_avvioveloce2"
     android:layout_marginTop="@dimen/margin20"
     android:text="@string/text_fragment_sim2"
@@ -113,8 +107,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/text_fragment_sim2"
-    android:layout_marginStart="@dimen/margin20"
-    android:layout_toEndOf="@+id/text_fragment_sim2"
     android:textSize="@dimen/font_text12" />
    
 	<TextView 
@@ -122,8 +114,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/dataText"
-    android:layout_marginStart="@dimen/margin40"
-    android:layout_toEndOf="@+id/dataText"
     android:text="@string/text_fragment_sim3"
     android:textStyle="bold"
     android:textSize="@dimen/font_text14" />
@@ -133,15 +123,12 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/text_fragment_sim3"
-    android:layout_marginStart="@dimen/margin20"
-    android:layout_toEndOf="@+id/text_fragment_sim3"
     android:textSize="@dimen/font_text12" />
 	
 	<TextView 
     android:id="@+id/text_fragment_sim4"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
     android:layout_below="@+id/text_fragment_sim3"
     android:layout_marginTop="@dimen/margin10"
     android:text="@string/text_fragment_sim4"
@@ -153,7 +140,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@+id/text_fragment_sim4"
-    android:layout_marginStart="@dimen/margin20"
     android:textSize="@dimen/font_text12" />
 	
 	<TextView
@@ -161,7 +147,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@+id/climaMeteo"
-    android:layout_marginStart="@dimen/margin20"
     android:textSize="@dimen/font_text12" />
 	
 	<TextView
@@ -169,7 +154,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@+id/climaTempEst"
-    android:layout_marginStart="@dimen/margin20" 
     android:textSize="@dimen/font_text12" />
 	
 	<TextView
@@ -177,7 +161,6 @@ tools:context="ai.smarthome.fragment.AvvioVeloceFragment" >
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@+id/climaUmidita"
-    android:layout_marginStart="@dimen/margin20"
     android:textSize="@dimen/font_text12" />
 		
 	<ImageButton

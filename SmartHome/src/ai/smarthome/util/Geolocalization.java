@@ -25,18 +25,22 @@ public class Geolocalization {
     	LocationManager locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         
     	LocationListener locListener = new LocationListener() {
-             public void onLocationChanged(Location location) {
+             @Override
+			public void onLocationChanged(Location location) {
             	 if (location != null) {
                 }
              }
 
-             public void onProviderDisabled(String provider) {
+             @Override
+			public void onProviderDisabled(String provider) {
              }
 
-             public void onProviderEnabled(String provider) {
+             @Override
+			public void onProviderEnabled(String provider) {
              }
 
-             public void onStatusChanged(String provider, int status, Bundle extras) {
+             @Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {
              }
         };
        
@@ -107,7 +111,7 @@ public class Geolocalization {
         	//System.out.println("---------------------------------------------------------------------");
             if(!iterator.hasNext())
                 break;
-            String s = (String)iterator.next();
+            String s = iterator.next();
             //if(i != 0 && !locationmanager.isProviderEnabled(s))
             if(i != false && !locationmanager.isProviderEnabled(s))
                 continue;

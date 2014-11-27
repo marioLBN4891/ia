@@ -19,12 +19,10 @@ import ai.smarthome.util.exception.PasswordReminderException;
 
 public class PasswordReminderMail extends javax.mail.Authenticator { 
   
-	public static boolean sendPasswordReminderMail(final String to, final String username, final String password, final Map<String,String> parametri) throws AddressException, MessagingException, PasswordReminderException { 
+	public static boolean sendPasswordReminderMail(final String to, final String password, final Map<String,String> parametri) throws AddressException, MessagingException, PasswordReminderException { 
 	
 		if (to == null)
 			throw new PasswordReminderException("PasswordReminderExcpetion: variable \"to\" undefined");
-		if (username == null)
-			throw new PasswordReminderException("PasswordReminderExcpetion: variable \"username\" undefined");
 		if (password == null)
 			throw new PasswordReminderException("PasswordReminderExcpetion: variable \"password\" undefined");
 		if (parametri == null)
@@ -38,7 +36,7 @@ public class PasswordReminderMail extends javax.mail.Authenticator {
 		final String PORTA_SF = "porta_sf";
 		
 		final String MAIL_INTESTAZIONE = "Recupero credenziali Smart Home Environment - C@SA";
-		final String MAIL_BODY = "Username: "+username+"\nPassword: "+password;
+		final String MAIL_BODY = "Mail: "+to+"\nPassword: "+password;
 		
 		String _host = parametri.get(SMTP);
 		String _port = parametri.get(PORTA_SMTP);

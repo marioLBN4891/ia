@@ -6,8 +6,8 @@ android:versionCode="1"
 android:versionName="1.0" >
 
     <uses-sdk
-    android:minSdkVersion="17"
-    android:targetSdkVersion="20" />
+    android:minSdkVersion="16"
+    android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -19,15 +19,10 @@ android:versionName="1.0" >
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
     android:theme="@style/AppTheme" 
-    android:supportsRtl="true"
     android:largeHeap="true">
     
         <activity
-        android:name=".MainActivity"
-        android:label="@string/activityMain" />
-        
-        <activity
-        android:name=".StartActivity"
+        android:name=".activity.StartActivity"
         android:label="@string/app_name"
         android:theme="@style/SplashTheme" >
             <intent-filter>
@@ -37,45 +32,41 @@ android:versionName="1.0" >
         </activity>
         
         <activity
-        android:name=".LoginActivity"
-        android:label="@string/activityLogin"  />
-        
-        <activity
-        android:name=".RegistrazioneActivity"
-        android:label="@string/activityRegistration"
-        android:parentActivityName=".LoginActivity" >
-            <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".LoginActivity" />
+        android:name=".activity.AccessoActivity"
+        android:label="@string/activityAccesso" >
         </activity>
         
-        <activity
-        android:name=".InquiryActivity"
-        android:label="@string/activityInquiry"
-        android:parentActivityName=".MainActivity" >
-            <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-           	android:value=".SimulazioneActivity" />
-        </activity>
+        <activity 
+        android:name="com.facebook.LoginActivity"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        android:label="@string/app_name" />
+        	<meta-data 
+        	android:name="com.facebook.sdk.ApplicationId" 
+        	android:value="@string/facebook_app_id" />
+        
         
         <activity
-        android:name=".SimulazioneActivity"
-        android:label="@string/activitySimulazione"
-        android:parentActivityName=".MainActivity" >
-        	<meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
-        </activity>
-        
-        <activity
-        android:name=".PasswordActivity"
+        android:name=".activity.PasswordActivity"
         android:label="@string/activityPassword" 
-        android:parentActivityName=".LoginActivity" >
+        android:parentActivityName=".activity.AccessoActivity" >
         	<meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value=".LoginActivity" />
+            android:value=".activity.AccessoActivity" />
         </activity>
-    
+        
+        <activity
+        android:name=".activity.MainActivity"
+        android:label="@string/activityMain" />
+        
+        <activity
+        android:name=".activity.SimulazioneActivity"
+        android:label="@string/activitySimulazione"
+        android:parentActivityName=".activity.MainActivity" >
+        	<meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".activity.MainActivity" />
+        </activity>
+        
     </application>
 
 </manifest>

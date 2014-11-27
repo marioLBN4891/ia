@@ -1,4 +1,4 @@
-package ai.smarthome.fragment;
+package ai.smarthome.activity.fragmentMain;
 
 import ai.smarthome.R;
 import ai.smarthome.database.wrapper.Configurazione;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class InfoPersonaliFragment extends Fragment {
 
 	public static final String CONFIGURAZIONE = "configurazione";
-    private TextView utente, username;
+    private TextView utente;
     private EditText mail;
     
     View rootView;
@@ -29,9 +29,9 @@ public class InfoPersonaliFragment extends Fragment {
         
         
         utente = (TextView) rootView.findViewById(R.id.utenteEditText);
-        username = (TextView) rootView.findViewById(R.id.usernameEditText);
+       
         utente.setText(conf.getUtente().getCognome() + " " + conf.getUtente().getNome());
-        username.setText(conf.getUtente().getUsername());
+     
         
         mail = (EditText) rootView.findViewById(R.id.mailEditText);
         mail.setText(conf.getUtente().getMail());
