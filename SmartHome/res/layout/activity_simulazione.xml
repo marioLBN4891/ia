@@ -1,74 +1,37 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:orientation="horizontal"
-android:stretchColumns="2" >
+<RelativeLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:orientation="vertical" >
 
- 	<TableRow >
-  
-    	<ImageView
-     	android:id="@+id/imageView1"
-         android:scaleType="fitXY"
-         android:layout_weight="1"
-        android:contentDescription="@string/cucina_text"
-        android:src="@drawable/cucina" />
+    <ImageView
+    android:id="@+id/imageView1"
+    android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+    android:layout_gravity="start"
+    android:contentDescription="@string/cucina_text"
+    android:src="@drawable/cucina" />
     
-    </TableRow>
-
-    <TableRow>
          
         <Button
         android:id="@+id/buttonApri"
         android:text="@string/apri"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+    	android:layout_below="@+id/imageView1"
+    	android:layout_gravity="end"
         android:onClick="exeApri" />
             
         <Button
         android:id="@+id/buttonChiudi"
         android:text="@string/chiudi"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="end"
+    	android:layout_toRightOf="@+id/buttonApri"
         android:onClick="exeChiudi" />
-            
-	</TableRow>
+ 
+    	
 
-    <TableRow> 
-
-    	<Button
-        android:id="@+id/buttonAccendi"
-        android:text="@string/accendi"
-        android:onClick="exeAccendi" />
-
-        <Button
-        android:id="@+id/buttonSpegni"
-        android:text="@string/spegni"
-        android:onClick="exeSpegni" />
-
-	</TableRow>
-
-    <TableRow>
-
-        <Button
-        android:id="@+id/buttonPrendi"
-        android:text="@string/prendi"
-        android:onClick="exePrendi" />
-            
-        <Button
-        android:id="@+id/buttonLascia"
-        android:text="@string/lascia"
-        android:onClick="exeLascia" />
-
-	</TableRow>
-
-    <TableRow>
-
-    	<Button
-        android:id="@+id/buttonConsenti"
-        android:text="@string/consenti"
-        android:onClick="exeConsenti" />
-           
-        <Button
-        android:id="@+id/buttonRifiuta"
-        android:text="@string/rifiuta" 
-        android:onClick="exeRifiuta" />
-
-	</TableRow>
-        
-</TableLayout>
+</RelativeLayout>

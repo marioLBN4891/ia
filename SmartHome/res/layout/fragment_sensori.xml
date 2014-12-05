@@ -9,18 +9,18 @@ android:paddingTop="@dimen/activity_vertical_margin"
 tools:context="ai.smarthome.activity.fragmentMain.SensoriFragment" > 
 
 	<TextView 
-    android:id="@+id/text_fragment_sensori1"
+    android:id="@+id/text_fragment_sensori"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/text_fragment_sensori1" 
-    android:textSize="@dimen/font_text16" />
+    android:text="@string/text_fragment_sensori" 
+    android:textSize="@dimen/font_text14" />
 	
 	<TableLayout
     android:id="@+id/tableSensori"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" 
     android:layout_marginTop="@dimen/margin25"
-    android:layout_below="@+id/text_fragment_sensori1">
+    android:layout_below="@+id/text_fragment_sensori">
 
 		<TableRow
     	android:id="@+id/tableRow1"

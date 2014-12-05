@@ -9,19 +9,19 @@ android:paddingTop="@dimen/activity_vertical_margin"
 tools:context="ai.smarthome.activity.fragmentMain.ComponentiFragment" >
 
 	<TextView 
-    android:id="@+id/text_fragment_componenti1"
+    android:id="@+id/text_fragment_componenti"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
-    android:text="@string/text_fragment_componenti1" 
-    android:textSize="@dimen/font_text16" />
+    android:text="@string/text_fragment_componenti" 
+    android:textSize="@dimen/font_text14" />
 	
 	<TableLayout
     android:id="@+id/tableComponenti"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
+    android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/margin25"
-    android:layout_below="@+id/text_fragment_componenti1">
+    android:layout_below="@+id/text_fragment_componenti">
 
 		<TableRow
     	android:id="@+id/tableRow1"
@@ -153,7 +153,6 @@ tools:context="ai.smarthome.activity.fragmentMain.ComponentiFragment" >
             android:textSize="@dimen/font_text16"
             android:textStyle="bold" />
         	
-	
 			<Switch
 			android:id="@+id/illuminazione"
 			android:layout_width="wrap_content"
@@ -162,6 +161,7 @@ tools:context="ai.smarthome.activity.fragmentMain.ComponentiFragment" >
             android:textOff="Spenta" />
 		
 		</TableRow>
+		
 	</TableLayout>
 	
 	<ImageButton

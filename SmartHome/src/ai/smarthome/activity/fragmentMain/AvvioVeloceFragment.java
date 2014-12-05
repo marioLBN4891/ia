@@ -26,7 +26,7 @@ public class AvvioVeloceFragment extends Fragment {
         String intestazione = getResources().getStringArray(R.array.opzioni_array)[conf.getPosizione()];
         getActivity().setTitle(intestazione);
         
-        TextView text = (TextView) rootView.findViewById(R.id.text_fragment_avvioveloce);
+        TextView text = (TextView) rootView.findViewById(R.id.text_fragment_avvioveloce1);
         String testoAvvio = (String) text.getText();
         text.setText("Ciao " + conf.getUtente().getNome()+"! "+ testoAvvio);
         

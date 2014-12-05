@@ -43,7 +43,9 @@ android:versionName="1.0" >
         	<meta-data 
         	android:name="com.facebook.sdk.ApplicationId" 
         	android:value="@string/facebook_app_id" />
-        
+           <provider 
+           android:authorities="com.facebook.app.NativeAppCallContentProvider487118931333654"
+           android:name="com.facebook.NativeAppCallContentProvider" />
         
         <activity
         android:name=".activity.PasswordActivity"

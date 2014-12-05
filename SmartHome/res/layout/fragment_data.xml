@@ -14,7 +14,7 @@ tools:context="ai.smarthome.activity.fragmentMain.OraFragment" >
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:text="@string/text_fragment_data1"
-    android:textSize="@dimen/font_text16" />
+    android:textSize="@dimen/font_text14" />
 	
 	<TextView 
     android:id="@+id/dataText"
@@ -34,7 +34,7 @@ tools:context="ai.smarthome.activity.fragmentMain.OraFragment" >
      android:layout_alignParentLeft="true"
     android:layout_marginTop="@dimen/margin30"
     android:text="@string/text_fragment_data2" 
-    android:textSize="@dimen/font_text16" />
+    android:textSize="@dimen/font_text14" />
 
 	<FrameLayout
 	android:id="@+id/frameLayout"

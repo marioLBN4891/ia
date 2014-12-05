@@ -27,6 +27,7 @@ public class LoginFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         
 		LoginButton loginBtn = (LoginButton) rootView.findViewById(R.id.fb_login_button);
+		loginBtn.setText("Accedi con Facebook");
         loginBtn.setUserInfoChangedCallback(new UserInfoChangedCallback() {
             @Override
             public void onUserInfoFetched(GraphUser user) {

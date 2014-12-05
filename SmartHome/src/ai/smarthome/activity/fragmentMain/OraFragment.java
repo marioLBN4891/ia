@@ -29,8 +29,8 @@ public class OraFragment extends Fragment {
         TextView orarioText = (TextView)rootView.findViewById(R.id.orarioText);
         TimePicker timePicker = (TimePicker)rootView.findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
-        
-        orarioText.setText(new StringBuilder().append("Orario configurato: ").append(conf.getOraToString()));
+        StringBuilder orario = new StringBuilder().append("Orario configurato: ").append(conf.getOraToString());
+        orarioText.setText(orario);
         timePicker.setCurrentHour(conf.getHour());
     	timePicker.setCurrentMinute(conf.getMinute());
         
