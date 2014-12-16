@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 
 @SuppressLint("SimpleDateFormat")
@@ -35,7 +36,12 @@ public class DataFragment extends Fragment {
         calendarView.setShowWeekNumber(false);
         calendarView.setFirstDayOfWeek(2);
 
-        dataText.setText(new StringBuilder().append("Data configurata: ").append(conf.getDataToString()));
+        TimePicker timePicker = (TimePicker)rootView.findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(true);
+        timePicker.setCurrentHour(conf.getHour());
+    	timePicker.setCurrentMinute(conf.getMinute());
+        
+        dataText.setText(new StringBuilder().append("Configurazione: ").append(conf.getDataToString()).append(conf.getOraToString()));
         calendarView.setDate(conf.getDataMilliTime());
         
         return rootView;

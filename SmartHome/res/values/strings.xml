@@ -35,13 +35,12 @@
     <string-array name="opzioni_array">
         <item>Benvenuto</item>
         <item>Avvio veloce</item>
-        <item>Info utente</item>
         <item>Riepilogo Impostazioni</item>
-        <item>Cambia Data</item>
-        <item>Cambia Ora</item>
+        <item>Cambia Data e Ora</item>
         <item>Cambia Meteo</item>
         <item>Cambia Componenti</item>
         <item>Cambia Sensori</item>
+        <item>Info utente</item>
     </string-array>
 
 	<string name="text_fragment_avvioveloce1">\nSeleziona una configurazione predefinita per avviare la simulazione oppure definisci una configurazione personalizzata modificando i parametri disponibili nelle altre sezioni.</string>
@@ -53,7 +52,7 @@
     <string name="text_fragment_sim4">Clima:</string>
     <string name="text_fragment_sim5">Componenti:</string>
     <string name="text_fragment_sim6">Sensori:</string>
-    <string name="text_fragment_data1">Modifica la data di partenza della simulazione.\nUtilizza la data corrente o scegli una data qualsiasi dal calendario.</string>
+    <string name="text_fragment_data1">Modifica la data e ora di partenza della simulazione.\nUtilizza la data e l\'ora corrente o scegli una data e ora qualsiasi.</string>
     <string name="text_fragment_data2">Seleziona una nuova data:</string>
     <string name="text_fragment_ora1">Modifica l\'orario di partenza della simulazione.\nUtilizza l\'orario corrente o fissa un orario qualsiasi a tua discrezione.</string>
     <string name="text_fragment_ora2">Seleziona un nuovo orario:</string>

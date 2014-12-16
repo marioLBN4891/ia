@@ -12,7 +12,6 @@ import ai.smarthome.activity.fragmentMain.ComponentiFragment;
 import ai.smarthome.activity.fragmentMain.DataFragment;
 import ai.smarthome.activity.fragmentMain.InfoPersonaliFragment;
 import ai.smarthome.activity.fragmentMain.MeteoFragment;
-import ai.smarthome.activity.fragmentMain.OraFragment;
 import ai.smarthome.activity.fragmentMain.RiepilogoFragment;
 import ai.smarthome.activity.fragmentMain.SensoriFragment;
 import ai.smarthome.async.AsyncMeteo;
@@ -223,13 +222,12 @@ public class MainActivity extends Activity {
         
         if (position == 0 ) return;
         if (position == 1 ) fragment = new AvvioVeloceFragment();
-        if (position == 2 ) fragment = new InfoPersonaliFragment();
-        if (position == 3 ) fragment = new RiepilogoFragment();
-        if (position == 4 ) fragment = new DataFragment();
-        if (position == 5 ) fragment = new OraFragment();
-        if (position == 6 ) fragment = new MeteoFragment();
-        if (position == 7 ) fragment = new ComponentiFragment();
-        if (position == 8 ) fragment = new SensoriFragment();
+        if (position == 2 ) fragment = new RiepilogoFragment();
+        if (position == 3 ) fragment = new DataFragment();
+        if (position == 4 ) fragment = new MeteoFragment();
+        if (position == 5 ) fragment = new ComponentiFragment();
+        if (position == 6 ) fragment = new SensoriFragment();
+        if (position == 7 ) fragment = new InfoPersonaliFragment();
         
         fragment.setArguments(args);
 
@@ -326,27 +324,19 @@ public class MainActivity extends Activity {
 		    nuovaPass2.setText("");
     }
     
-    public void cambiaOrario(View view) {
-    	
-    	TextView orarioText = (TextView) findViewById(R.id.orarioText);
-    	TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-    	conf.setHour(timePicker.getCurrentHour());
-    	conf.setMinute(timePicker.getCurrentMinute());
-    	orarioText.setText(new StringBuilder().append("Orario configurato: ").append(conf.getOraToString()));
-    	timePicker.setCurrentHour(conf.getHour());
-		timePicker.setCurrentMinute(conf.getMinute());
-		Toast.makeText(getApplicationContext(), "Orario modificato con successo", Toast.LENGTH_SHORT).show();
-    
-    }
-    
     @SuppressLint("SimpleDateFormat")
 	public void cambiaData(View view) {
     	
     	TextView dataText = (TextView) findViewById(R.id.dataText);
     	CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-    	conf.setDataMilliTime(calendarView.getDate());  
-    	dataText.setText(new StringBuilder().append("Data configurata: ").append(conf.getDataToString()));
-    	Toast.makeText(getApplicationContext(), "Data modificata con successo", Toast.LENGTH_SHORT).show();
+    	conf.setDataMilliTime(calendarView.getDate());
+    	TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
+    	conf.setHour(timePicker.getCurrentHour());
+    	conf.setMinute(timePicker.getCurrentMinute());
+    	timePicker.setCurrentHour(conf.getHour());
+		timePicker.setCurrentMinute(conf.getMinute());
+    	dataText.setText(new StringBuilder().append("Configurazione: ").append(conf.getDataToString()).append(conf.getOraToString()));
+    	Toast.makeText(getApplicationContext(), "Dati modificati con successo", Toast.LENGTH_SHORT).show();
     	
     }
     
