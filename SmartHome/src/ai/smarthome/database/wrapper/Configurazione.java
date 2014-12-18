@@ -15,9 +15,6 @@ public class Configurazione implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int posizioneFragment;
 	private Utente utente;
-	private long dataMilliTime;
-	private int hour;
-	private int minute;
 	private Map<String, Boolean> sensoriDisponibili;
 	private Map<String, Boolean> componentiDisponibili;
 	private Map<String, Integer> climaDisponibili;
@@ -39,40 +36,17 @@ public class Configurazione implements Serializable {
 		"Illuminazione"
 	};
 	
-	private static String[] clima = new String[] {
-		"Temperatura esterna", 
-		"Umidità",
-		"Vento",
-		"Meteo"
-	};
-	
 	public Configurazione () {
 		
 		this.posizioneFragment = 0;
-		
-		Date data = new Date();
-    	this.dataMilliTime = data.getTime();
-		
 		utente = null;
-    	
-		sensoriDisponibili = new HashMap<String, Boolean>();
+    	sensoriDisponibili = new HashMap<String, Boolean>();
 		for(int i=0; i < sensori.length; i++) 
 			this.sensoriDisponibili.put(sensori[i], true);
 		
 		componentiDisponibili = new HashMap<String, Boolean>();
 		for(int i=0; i < componenti.length; i++) 
 			this.componentiDisponibili.put(componenti[i], false);
-		
-		climaDisponibili = new HashMap<String, Integer>();
-		for(int i=0; i < clima.length; i++) 
-			this.climaDisponibili.put(clima[i], 50);
-		
-		
-		final Calendar c = Calendar.getInstance();
-    	this.hour = c.get(Calendar.HOUR_OF_DAY);
-    	this.minute = c.get(Calendar.MINUTE);
-		
-		
 	}
 	
 	// metodi SETTER/GETTER utnte
@@ -94,29 +68,6 @@ public class Configurazione implements Serializable {
 	public int getPosizione() {
 		return this.posizioneFragment;
 	}
-	
-	// metodi SETTER/GETTER data
-	
-	public void setDataMilliTime(long dataMilliTime) {
-		this.dataMilliTime = dataMilliTime;
-	}
-	
-	public long getDataMilliTime() {
-		return this.dataMilliTime;
-	}
-	
-	
-	
-	
-	// metodi SETTER ora 2
-	public void setHour(int hour) {
-		this.hour = hour;
-	}
-	
-	public void setMinute(int minute) {
-		this.minute = minute;
-	}
-	
 	
 	// metodi SETTER sensori 5 
 	
@@ -167,36 +118,6 @@ public class Configurazione implements Serializable {
 	public void setComponenteIlluminazione(boolean stato) {
 		this.componentiDisponibili.put(componenti[5], stato);
 	}
-	
-	// metodi SETTER clima 6
-	
-	public void setClimaTemperaturaEsterna(int stato) {
-		this.climaDisponibili.put(clima[0], stato);
-	}
-	
-	public void setClimaUmidita(int stato) {
-		this.climaDisponibili.put(clima[1], stato);
-	}
-	
-	public void setClimaVento(int stato) {
-		this.climaDisponibili.put(clima[2], stato);
-	}
-	
-	public void setClimaMeteo(int stato) {
-		this.climaDisponibili.put(clima[3], stato);
-	}
-	
-	
-	// metodi GETTER ora 2
-	
-	public int getHour() {
-		return this.hour;
-	}
-	
-	public int getMinute() {
-		return this.minute;
-	}
-	
 	
 	
 	// metodi GETTER sensori 5
@@ -249,39 +170,6 @@ public class Configurazione implements Serializable {
 		return this.componentiDisponibili.get(componenti[5]);
 	}
 	
-	// metodi GETTER clima 6
-	
-	public int getClimaTemperaturaEsterna() {
-		return this.climaDisponibili.get(clima[0]);
-	}
-	
-	public int getClimaUmidita() {
-		return this.climaDisponibili.get(clima[1]);
-	}
-	
-	public int getClimaVento() {
-		return this.climaDisponibili.get(clima[2]);
-	}
-	
-	public int getClimaMeteo() {
-		return this.climaDisponibili.get(clima[3]);
-	}
-	
-	
-	// metodi TO_STRING 
-	
-	public String getOraToString() {
-		return (pad(this.hour)+":"+pad(this.minute));
-	}
-	
-	@SuppressLint("SimpleDateFormat")
-	public String getDataToString() {
-		Date data = new Date();
-    	data.setTime(this.dataMilliTime);
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-    	return sdf.format(data);
-	} 
-	
 	public String getComponentoToString(int idComponente) {
 		boolean stato = componentiDisponibili.get(componenti[idComponente]);
 		return componenti[idComponente]+": "+ getStato(stato);
@@ -293,13 +181,6 @@ public class Configurazione implements Serializable {
 	}
 	
 	// metodi PRIVATE 
-	
-	private static String pad(int c) {
-		if (c >= 10)
-		   return String.valueOf(c);
-		else
-		   return "0" + String.valueOf(c);
-	}
 	
 	private static String getStato(boolean stato) {
 		if (stato)
@@ -313,13 +194,10 @@ public class Configurazione implements Serializable {
 		ArrayList<String> listaRegole = new ArrayList<String>();
 		
 		listaRegole.add(regolaPrologData(tempo));
-		listaRegole.add(regolaPrologOra(tempo));
 		
 		for(int i=0; i < componenti.length; i++) 
 			listaRegole.add(regolaPrologComponenti(tempo, componenti[i], this.componentiDisponibili.get(componenti[i])));
 		
-		for(int i=0; i < clima.length; i++) 
-			listaRegole.add(regolaPrologClima(tempo, clima[i], this.climaDisponibili.get(clima[i])));
 		
 		return listaRegole;
 	}
@@ -330,7 +208,7 @@ public class Configurazione implements Serializable {
 		
 		String regola = "";
 		Date data = new Date();
-    	data.setTime(this.dataMilliTime);
+  //  	data.setTime(this.dataMilliTime);
     	
     	Calendar dataAttuale = Calendar.getInstance();
     	dataAttuale.set(data.getYear(), data.getMonth(), data.getDate());
@@ -366,11 +244,6 @@ public class Configurazione implements Serializable {
        return regola;
 	}
 	
-	
-	private String regolaPrologOra(String tempo) {
-		String regola = "ora("+tempo+", "+this.hour+")";
-		return regola;
-	}
 	
 	
 	private String regolaPrologComponenti(String tempo, String componente, boolean stato) {

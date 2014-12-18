@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    
     <string name="facebook_app_id">487118931333654</string>
      
     <string name="app_name">Smart Home Environment</string>
@@ -109,6 +108,20 @@
     <string name="prendi">Prendi</string>
     <string name="lascia">Lascia</string>
     <string name="consenti">Consenti</string>
-    <string name="rifiuta">Rifiuta</string>
+    <string name="rifiuta">Nega</string>
+    
+    <string name="GPSAlertDialogTitle">Configurazione Gps</string>
+    <string name="GPSAlertDialogMessage">Il dispositivo Gps è spento. Per una migliore qualità del servizio ti invitiamo ad attivarlo.</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Annulla</string>
+    
+    <string name="impMeteo">Impostazioni Meteo</string>
+    <string name="loc">Località</string>
+    <string name="met">Meteo</string>
+    <string name="temp">Temperatura</string>
+    <string name="umid">Umidità</string>
+    <string name="vent">Vento</string>
+    <string name="data">Data</string>
+    <string name="orario">Orario</string>
     
 </resources>

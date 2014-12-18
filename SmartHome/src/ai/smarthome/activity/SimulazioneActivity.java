@@ -1,8 +1,6 @@
 package ai.smarthome.activity;
 
 import ai.smarthome.R;
-import ai.smarthome.R.drawable;
-import ai.smarthome.R.layout;
 import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.util.Utilities;
 import android.app.Activity;
@@ -14,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class SimulazioneActivity extends Activity {
+public class SimulazioneActivity extends Activity  {
 
 	public static final String CONFIGURAZIONE = "configurazione";
 	private Configurazione conf;
@@ -68,34 +66,149 @@ public class SimulazioneActivity extends Activity {
 
 
 	public void exeApri(View view) {
-		
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Apri")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
 	
 	public void exeChiudi(View view) {
-		
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Chiudi")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 	
 	}
 	
 	public void exeAccendi(View view) {
-		
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Accendi")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
-
 	public void exeSpegni(View view) {
-	
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Spegni")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
-
 	public void exePrendi(View view) {
-	
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Prendi")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
-
 	public void exeLascia(View view) {
-	
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Lascia")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
-
 	public void exeConsenti(View view) {
-	
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Consenti")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
-
-	public void exeRifiuta(View view) {
-	
+	public void exeNega(View view) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+ 			.setTitle("Nega")
+ 			//.setSingleChoiceItems(null, -1, null)
+			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					SimulazioneActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+ 		alertDialogBuilder.create().show();
+ 			
 	}
 }

@@ -9,15 +9,287 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import ai.smarthome.util.LogView;
 import android.content.Context;
-import android.util.Log;
+
 
 public class Rest  {
-
+	final private static String serverAddress = "http://192.168.141.1:8080/WebServerProlog/prolog";
 	final static String GETPARAMETRIMAIL = "getParametriMail()";
 	final static String GETMETEOLOCALE= "getMeteoLocale()";
-	final static String OK = "esito OK";
-	final static String KO = "esito KO";
+	
+	
+	public static void apri() {
+		
+		try {
+			URL url = new URL(serverAddress+"/apri");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.apri: ERRORE");
+			}
+			
+			LogView.info("Rest.apri: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.apri: ERRORE");
+			return ;
+		} 
+		
+	}
+	
+	public static void chiudi() {
+		
+		try {
+			URL url = new URL(serverAddress+"/chiudi");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.chiudi: ERRORE");
+			}
+			
+			LogView.info("Rest.chiudi: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.chiudi: ERRORE");
+			return ;
+		} 
+		
+	}
+	
+	public static void accendi() {
+		
+		try {
+			URL url = new URL(serverAddress+"/accendi");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.accendi: ERRORE");
+			}
+			
+			LogView.info("Rest.accendi: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.accendi: ERRORE");
+			return ;
+		} 
+		
+	}
+	
+	public static void spegni() {
+		
+		try {
+			URL url = new URL(serverAddress+"/chiudi");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.spegni: ERRORE");
+			}
+			
+			LogView.info("Rest.spegni: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.spegni: ERRORE");
+			return ;
+		} 
+		
+	}
+	
+	public static void prendi() {
+		
+		try {
+			URL url = new URL(serverAddress+"/prendi");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.prendi: ERRORE");
+			}
+			
+			LogView.info("Rest.prendi: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.prendi: ERRORE");
+			return ;
+		} 
+		
+	}
+
+	public static void lascia() {
+		
+		try {
+			URL url = new URL(serverAddress+"/lascia");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.lascia: ERRORE");
+			}
+			
+			LogView.info("Rest.lascia: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.lascia: ERRORE");
+			return ;
+		} 
+		
+	}
+
+	public static void consenti() {
+		
+		try {
+			URL url = new URL(serverAddress+"/consenti");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.consenti: ERRORE");
+			}
+			
+			LogView.info("Rest.consenti: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.consenti: ERRORE");
+			return ;
+		} 
+		
+	}
+
+	public static void rifiuta() {
+		
+		try {
+			URL url = new URL(serverAddress+"/rifiuta");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) 
+					LogView.info("Rest.rifiuta: ERRORE");
+			}
+			
+			LogView.info("Rest.rifiuta: OK");
+			return ;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.rifiuta: ERRORE");
+			return ;
+		} 
+		
+	}
 	
 	public static Map<String,String> getParametriMail() {
 		
@@ -37,7 +309,7 @@ public class Rest  {
 		parametri.put(PORTA_SF, "465");
 		
 		try {
-			URL url = new URL("http://192.168.141.1:8080/WebServerProlog/prolog/riceviParametriMail");
+			URL url = new URL(serverAddress+"/riceviParametriMail");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -54,7 +326,7 @@ public class Rest  {
 			while ((line = rd.readLine()) != null) {
 				json = new JSONObject(line);
 				if(line.contains("errore")) 
-					Log.i(GETPARAMETRIMAIL, KO);
+					LogView.info("Rest.getParametriMail: ERRORE");
 			}
 			
 			parametri.put(EMAIL_FROM, json.getString(EMAIL_FROM));
@@ -63,13 +335,13 @@ public class Rest  {
 			parametri.put(SMTP, json.getString(SMTP));
 			parametri.put(PORTA_SMTP, json.getString(PORTA_SMTP));
 			parametri.put(PORTA_SF, json.getString(PORTA_SF));
-			Log.i(GETPARAMETRIMAIL, OK);
+			LogView.info("Rest.getParametriMail: OK");
 			return parametri;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.i(GETPARAMETRIMAIL, KO);
-			return parametri;
+			LogView.info("Rest.getParametriMail: ERRORE");
+			return null;
 		} 
 		
 	}
@@ -124,13 +396,13 @@ public class Rest  {
 			int vento = 2 * datiMeteo.getInt("wind");
 			parametri.put("vento", vento);
 			
-			Log.i(GETMETEOLOCALE, OK);
+			LogView.info("Rest.getMeteoLocale: OK");
 			return parametri;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.i(GETMETEOLOCALE, KO);
-			return parametri;
+			LogView.info("Rest.getMeteoLocale: ERRORE");
+			return null;
 		} 
 		
 	}

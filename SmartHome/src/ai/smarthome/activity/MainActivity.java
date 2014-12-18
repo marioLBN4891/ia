@@ -2,7 +2,6 @@ package ai.smarthome.activity;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import com.facebook.Session;
 
@@ -14,10 +13,12 @@ import ai.smarthome.activity.fragmentMain.InfoPersonaliFragment;
 import ai.smarthome.activity.fragmentMain.MeteoFragment;
 import ai.smarthome.activity.fragmentMain.RiepilogoFragment;
 import ai.smarthome.activity.fragmentMain.SensoriFragment;
-import ai.smarthome.async.AsyncMeteo;
+import ai.smarthome.async.AsyncGetMeteo;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.database.wrapper.Meteo;
 import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.LogView;
 import ai.smarthome.util.UtilMeteo;
 import ai.smarthome.util.Utilities;
 import android.annotation.SuppressLint;
@@ -116,6 +117,8 @@ public class MainActivity extends Activity {
         
         setContentView(R.layout.activity_main);
         setNavigationDrawer(savedInstanceState);
+        
+        LogView.info(Meteo.toString(db));
    }
 
     public void setNavigationDrawer(Bundle savedInstanceState) {
@@ -329,13 +332,12 @@ public class MainActivity extends Activity {
     	
     	TextView dataText = (TextView) findViewById(R.id.dataText);
     	CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-    	conf.setDataMilliTime(calendarView.getDate());
+    	UtilMeteo.updateData(db, calendarView.getDate());
     	TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-    	conf.setHour(timePicker.getCurrentHour());
-    	conf.setMinute(timePicker.getCurrentMinute());
-    	timePicker.setCurrentHour(conf.getHour());
-		timePicker.setCurrentMinute(conf.getMinute());
-    	dataText.setText(new StringBuilder().append("Configurazione: ").append(conf.getDataToString()).append(conf.getOraToString()));
+    	UtilMeteo.updateOrario(db, timePicker.getCurrentHour(), timePicker.getCurrentMinute());
+    	timePicker.setCurrentHour(timePicker.getCurrentHour());
+		timePicker.setCurrentMinute(timePicker.getCurrentMinute());
+    	dataText.setText(new StringBuilder().append("Configurazione: ").append(UtilMeteo.getDataToString(calendarView.getDate())).append(UtilMeteo.getOraToString(timePicker.getCurrentHour(), timePicker.getCurrentMinute())));
     	Toast.makeText(getApplicationContext(), "Dati modificati con successo", Toast.LENGTH_SHORT).show();
     	
     }
@@ -394,96 +396,69 @@ public class MainActivity extends Activity {
     	SeekBar seekUmidita = (SeekBar)findViewById(R.id.seekUmidita);
     	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
     	
-    	conf.setClimaMeteo(seekMeteo.getProgress());
-    	conf.setClimaTemperaturaEsterna(seekTempEst.getProgress());
-        conf.setClimaUmidita(seekUmidita.getProgress());
-        conf.setClimaVento(seekVento.getProgress());
-        
+    	UtilMeteo.updateMeteo(db, "-", seekMeteo.getProgress(), seekTempEst.getProgress(), seekUmidita.getProgress(), seekVento.getProgress());
+    	
         Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
     }
     
     public void cambiaMeteoSole(View view) {
- 		UtilMeteo.setConfMeteo(conf, 90, 90, 90, 10);
+ 		UtilMeteo.updateMeteo(db, "-", 90, 90, 90, 10);
  		Date data = new Date();
  		data.setMonth(Calendar.AUGUST);
- 		
- 		conf.setDataMilliTime(data.getTime());
- 		setClimaMeteoAvvioVeloce();
+ 		UtilMeteo.updateData(db, data.getTime());
+ 		setClimaMeteoAvvioVeloce(Meteo.getMeteo(db));
  	}
  	
     
     public void cambiaMeteoSereno(View view) {
- 		UtilMeteo.setConfMeteo(conf, 70, 70, 60, 30); 
+ 		UtilMeteo.updateMeteo(db, "-", 70, 70, 60, 30); 
  		Date data = new Date();
  		data.setMonth(Calendar.MAY);
- 		conf.setDataMilliTime(data.getTime());
- 		setClimaMeteoAvvioVeloce();
+ 		UtilMeteo.updateData(db, data.getTime());
+ 		setClimaMeteoAvvioVeloce(Meteo.getMeteo(db));
  	}
  		
     
     public void cambiaMeteoNuvole(View view) {
- 		UtilMeteo.setConfMeteo(conf, 40, 40, 50, 10);
+ 		UtilMeteo.updateMeteo(db, "-", 40, 40, 50, 10);
  		Date data = new Date();
  		data.setMonth(Calendar.NOVEMBER);
- 		conf.setDataMilliTime(data.getTime());
- 		setClimaMeteoAvvioVeloce();
+ 		UtilMeteo.updateData(db, data.getTime());
+ 		setClimaMeteoAvvioVeloce(Meteo.getMeteo(db));
  	}
  	
     
 	public void cambiaMeteoPioggia(View view) {
-    	UtilMeteo.setConfMeteo(conf, 20, 10, 80, 30);
+    	UtilMeteo.updateMeteo(db, "-", 20, 10, 80, 30);
  		Date data = new Date();
  		data.setMonth(Calendar.JANUARY);
- 		conf.setDataMilliTime(data.getTime());
- 		setClimaMeteoAvvioVeloce();
+ 		UtilMeteo.updateData(db, data.getTime());
+ 		setClimaMeteoAvvioVeloce(Meteo.getMeteo(db));
  	}
     
 	 
     public void cambiaMeteoAttuale(View view) {
     	Toast.makeText(getApplicationContext(), "Caricamento meteo in corso...", Toast.LENGTH_SHORT).show();
-    	AsyncMeteo asyncMeteo = new AsyncMeteo(this);
-		asyncMeteo.execute();
+    	AsyncGetMeteo asyncGetMeteo = new AsyncGetMeteo(this);
+		asyncGetMeteo.execute();
 	}
     
-    
-    public void setClimaMeteoAvvioVeloce(Map<String, Integer> parametri) {
+    public void setClimaMeteoAvvioVeloce(Meteo meteo) {
     	
-    	UtilMeteo.setConfMeteo(conf, parametri.get("meteo"), parametri.get("tempEst"), parametri.get("umidita"), parametri.get("vento"));
-		Date data = new Date();
-		conf.setDataMilliTime(data.getTime());
-		
-    	TextView dataText = (TextView) findViewById(R.id.dataText);
-        dataText.setText(conf.getDataToString());
-        
-        TextView orarioText = (TextView) findViewById(R.id.orarioText);
-        orarioText.setText(conf.getOraToString());
-        
-        TextView climaMeteo = (TextView) findViewById(R.id.climaMeteo);
-        TextView climaTempEst = (TextView) findViewById(R.id.climaTempEst);
-        TextView climaUmidita = (TextView) findViewById(R.id.climaUmidita);
-        TextView climaVento = (TextView) findViewById(R.id.climaVento);
-        UtilMeteo.setTextViewMeteo(climaMeteo, conf.getClimaMeteo());
-        UtilMeteo.setTextViewTempEst(climaTempEst, conf.getClimaTemperaturaEsterna());
-        UtilMeteo.setTextViewUmidita(climaUmidita, conf.getClimaUmidita());
-        UtilMeteo.setTextViewVento(climaVento, conf.getClimaVento());
-    }
-    
-    public void setClimaMeteoAvvioVeloce() {
-    	
-    	TextView dataText = (TextView) findViewById(R.id.dataText);
-        dataText.setText(conf.getDataToString());
-        
-        TextView orarioText = (TextView) findViewById(R.id.orarioText);
-        orarioText.setText(conf.getOraToString());
-        
-        TextView climaMeteo = (TextView) findViewById(R.id.climaMeteo);
-        TextView climaTempEst = (TextView) findViewById(R.id.climaTempEst);
-        TextView climaUmidita = (TextView) findViewById(R.id.climaUmidita);
-        TextView climaVento = (TextView) findViewById(R.id.climaVento);
-        UtilMeteo.setTextViewMeteo(climaMeteo, conf.getClimaMeteo());
-        UtilMeteo.setTextViewTempEst(climaTempEst, conf.getClimaTemperaturaEsterna());
-        UtilMeteo.setTextViewUmidita(climaUmidita, conf.getClimaUmidita());
-        UtilMeteo.setTextViewVento(climaVento, conf.getClimaVento());
+    	TextView localitaText = (TextView) findViewById(R.id.textLoc);
+        TextView dataText = (TextView) findViewById(R.id.textData);
+        TextView orarioText = (TextView) findViewById(R.id.textOrario);
+        TextView climaMeteo = (TextView) findViewById(R.id.textMeteo);
+        TextView climaTempEst = (TextView) findViewById(R.id.textTemperatura);
+        TextView climaUmidita = (TextView) findViewById(R.id.textUmidita);
+        TextView climaVento = (TextView) findViewById(R.id.textVento);
+        UtilMeteo.setTextViewLocalita(localitaText, meteo.getLocalita());
+        UtilMeteo.setTextViewData(dataText, meteo.getData());
+        UtilMeteo.setTextViewOrario(orarioText, meteo.getOra(), meteo.getMinuti());
+        UtilMeteo.setTextViewMeteo(climaMeteo, meteo.getMeteo());
+        UtilMeteo.setTextViewTemperatura(climaTempEst, meteo.getTemperatura());
+        UtilMeteo.setTextViewUmidita(climaUmidita, meteo.getUmidita());
+        UtilMeteo.setTextViewVento(climaVento, meteo.getVento());
     }
     
 }

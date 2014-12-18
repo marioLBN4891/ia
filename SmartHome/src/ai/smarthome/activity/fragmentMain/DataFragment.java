@@ -1,9 +1,13 @@
 package ai.smarthome.activity.fragmentMain;
 
 import ai.smarthome.R;
+import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.database.wrapper.Meteo;
+import ai.smarthome.util.UtilMeteo;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +21,7 @@ import android.widget.TimePicker;
 public class DataFragment extends Fragment {
 	
 	public static final String CONFIGURAZIONE = "configurazione";
+	private SQLiteDatabase db;
 	
     public DataFragment() {
         // Empty constructor required for fragment subclasses
@@ -30,6 +35,10 @@ public class DataFragment extends Fragment {
         String intestazione = getResources().getStringArray(R.array.opzioni_array)[conf.getPosizione()];
         getActivity().setTitle(intestazione);
 		
+        db = new DatabaseHelper(getActivity()).getWritableDatabase();
+        
+        Meteo meteo = Meteo.getMeteo(db);
+        
         TextView dataText = (TextView)rootView.findViewById(R.id.dataText);
         CalendarView calendarView = (CalendarView)rootView.findViewById(R.id.calendarView);
         
@@ -38,11 +47,11 @@ public class DataFragment extends Fragment {
 
         TimePicker timePicker = (TimePicker)rootView.findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
-        timePicker.setCurrentHour(conf.getHour());
-    	timePicker.setCurrentMinute(conf.getMinute());
+        timePicker.setCurrentHour(meteo.getOra());
+    	timePicker.setCurrentMinute(meteo.getMinuti());
         
-        dataText.setText(new StringBuilder().append("Configurazione: ").append(conf.getDataToString()).append(conf.getOraToString()));
-        calendarView.setDate(conf.getDataMilliTime());
+        dataText.setText(new StringBuilder().append("Configurazione: ").append(UtilMeteo.getDataToString(meteo.getData())).append(UtilMeteo.getOraToString(meteo.getOra(), meteo.getMinuti())));
+        calendarView.setDate(meteo.getData());
         
         return rootView;
        }

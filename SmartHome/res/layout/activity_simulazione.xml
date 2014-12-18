@@ -1,37 +1,104 @@
-<RelativeLayout 
+<LinearLayout 
 xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-android:orientation="vertical" >
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:paddingBottom="@dimen/margin5"
+android:paddingLeft="@dimen/margin5"
+android:paddingRight="@dimen/margin5"
+android:paddingTop="@dimen/margin5" >
 
-    <ImageView
-    android:id="@+id/imageView1"
-    android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-    android:layout_gravity="start"
-    android:contentDescription="@string/cucina_text"
-    android:src="@drawable/cucina" />
+    <FrameLayout
+	android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:layout_gravity="center" >
     
-         
+    	<ImageView
+    	android:id="@+id/imageView1"
+    	android:layout_width="match_parent"
+		android:layout_height="300dp"
+    	android:contentDescription="@string/cucina_text"
+    	android:src="@drawable/cucina" />
+    
+    </FrameLayout>
+    
+    <LinearLayout 
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal" >
+    
         <Button
-        android:id="@+id/buttonApri"
-        android:text="@string/apri"
-        android:layout_width="wrap_content"
+    	android:id="@+id/buttonApri"
+    	android:text="@string/apri"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
 		android:layout_height="wrap_content"
-    	android:layout_below="@+id/imageView1"
-    	android:layout_gravity="end"
-        android:onClick="exeApri" />
+    	android:onClick="exeApri" />
             
-        <Button
-        android:id="@+id/buttonChiudi"
-        android:text="@string/chiudi"
-        android:layout_width="wrap_content"
+    	<Button
+   	 	android:id="@+id/buttonChiudi"
+    	android:text="@string/chiudi"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
 		android:layout_height="wrap_content"
-		android:layout_gravity="end"
-    	android:layout_toRightOf="@+id/buttonApri"
-        android:onClick="exeChiudi" />
- 
+		android:onClick="exeChiudi" />
     	
-
-</RelativeLayout>
+    	<Button
+    	android:id="@+id/buttonAccendi"
+    	android:text="@string/accendi"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content"
+    	android:onClick="exeAccendi" />
+            
+    	<Button
+   	 	android:id="@+id/buttonSpegni"
+    	android:text="@string/spegni"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content"
+		android:onClick="exeSpegni" />
+    	
+    </LinearLayout>
+        	
+    <LinearLayout 
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal" >
+    
+        <Button
+    	android:id="@+id/buttonPrendi"
+    	android:text="@string/prendi"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content"
+    	android:onClick="exePrendi" />
+            
+    	<Button
+   	 	android:id="@+id/buttonLascia"
+    	android:text="@string/lascia"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content"
+		android:onClick="exeLascia" />
+    	
+    	<Button
+    	android:id="@+id/buttonConsenti"
+    	android:text="@string/consenti"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content"
+    	android:onClick="exeConsenti" />
+            
+    	<Button
+   	 	android:id="@+id/buttonNega"
+    	android:text="@string/rifiuta"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content"
+		android:onClick="exeRifiuta" />
+    	
+    </LinearLayout>
+ 
+</LinearLayout>

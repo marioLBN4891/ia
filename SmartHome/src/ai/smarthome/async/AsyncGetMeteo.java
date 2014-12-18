@@ -1,21 +1,32 @@
 package ai.smarthome.async;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import ai.smarthome.R;
 import ai.smarthome.activity.MainActivity;
+import ai.smarthome.database.DatabaseHelper;
+import ai.smarthome.database.wrapper.Meteo;
+import ai.smarthome.util.GPSTracker;
+import ai.smarthome.util.UtilMeteo;
 import ai.smarthome.util.rest.Rest;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 
-public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
+public class AsyncGetMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 
 	private final MainActivity mainActivity;
-	private String posizione;
+	private GPSTracker gpsTracker;
+	private String localita;
+	private SQLiteDatabase db;
 	 
-	public AsyncMeteo(MainActivity mainActivity) {
+	public AsyncGetMeteo(MainActivity mainActivity) {
 		this.mainActivity = mainActivity;
+		gpsTracker = new GPSTracker(mainActivity);
+		db = new DatabaseHelper(mainActivity).getWritableDatabase();
 	}
 	
 	
@@ -34,6 +45,15 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 	@Override
 	protected void onPostExecute(Map<String, Integer> parametri) {
 		super.onPostExecute(parametri);
+		
+		final Calendar c = Calendar.getInstance();
+    	int hour = c.get(Calendar.HOUR_OF_DAY);
+    	int minute = c.get(Calendar.MINUTE);
+    	
+    	UtilMeteo.updateData(db, new Date().getTime());
+    	UtilMeteo.updateOrario(db, hour, minute);
+		UtilMeteo.updateMeteo(db, localita, parametri.get("meteo"), parametri.get("tempEst"), parametri.get("umidita"), parametri.get("vento"));
+		
 		mainActivity.findViewById(R.id.meteoAttualeButton).setClickable(true);
 		mainActivity.findViewById(R.id.meteoSoleButton).setClickable(true);
 		mainActivity.findViewById(R.id.meteoSerenoButton).setClickable(true);
@@ -41,37 +61,21 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 		mainActivity.findViewById(R.id.meteoNuvoleButton).setClickable(true);
 		mainActivity.findViewById(R.id.starSimulazioneButton).setClickable(true);
 		
-		mainActivity.setClimaMeteoAvvioVeloce(parametri);
+		mainActivity.setClimaMeteoAvvioVeloce(Meteo.getMeteo(db));
 	}
 
 
 	@Override
 	protected Map<String, Integer> doInBackground(Void... params) {
-	 //   Looper.prepare();	// Prepare looper
-     //   MessageQueue queue = Looper.myQueue();	                 // Register Queue listener hook
-     //   queue.addIdleHandler(new IdleHandler() {
-     //   	int mReqCount = 0;
-
-     //       @Override
-     //       public boolean queueIdle() {
-     //       	if (++mReqCount == 2) {
-     //       		Looper.myLooper().quit();     // Quit looper
-     //               return false;
-     //           } else
-     //           	return true;
-     //           }
-     //   });
-         
-        String city;
-        Map<String, Integer> parametri = null;
-   //     try {
-			city = "Bari"; //Geolocalization.getCittaCorrenteToString(mainActivity.getApplicationContext());
-			posizione = "Bari"; // Geolocalization.getPosizioneCorrenteToString(mainActivity.getApplicationContext());
-			parametri = Rest.getMeteoLocale(mainActivity.getApplicationContext(), city);
-			publishProgress("Meteo: "+ posizione);
-		          
-	  	
-        return parametri;
+		Map<String, Integer> parametri = null;
+		
+		localita = gpsTracker.getLocality(mainActivity);
+		parametri = Rest.getMeteoLocale(mainActivity, localita);
+		
+		publishProgress("Meteo: "+ localita);
+		
+		return parametri;
+		
 	}
 
 

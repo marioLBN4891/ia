@@ -9,13 +9,15 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 
 import ai.smarthome.R;
+import ai.smarthome.async.AsyncConfigurazioneMeteo;
 import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.LogView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.util.Log;
+
 
 public class StartActivity extends Activity {
 
@@ -39,7 +41,9 @@ public class StartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 	    StrictMode.setThreadPolicy(policy);
 	  
-	    
+	    AsyncConfigurazioneMeteo asyncConfMeteo = new AsyncConfigurazioneMeteo(this.getApplicationContext());
+		asyncConfMeteo.execute();
+		
 	    Session session = Session.openActiveSessionFromCache(this);
         
         uiHelper = new UiLifecycleHelper(this, callback);
@@ -49,7 +53,7 @@ public class StartActivity extends Activity {
         	new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() { 
-                	Log.i("SmartHomeEnvironment", "StartActivity: avvio thread...");
+                	LogView.info("StartActivity.onCreate.run: avvio normale");
                 	Intent i = new Intent(StartActivity.this, AccessoActivity.class);
                     startActivity(i);
                     finish();
@@ -104,7 +108,7 @@ public class StartActivity extends Activity {
             	Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
                     @Override
                     public void onCompleted(GraphUser user, Response response) {
-                        Log.i("SmartHomeEnvironment", "StartActivity: avvio sessione Facebook...");
+                    	LogView.info("StartActivity.onSessionStateChange: avvio sessione FB");
                     	
                     	String fbId = user.getId();
                         String firstName = user.getFirstName();

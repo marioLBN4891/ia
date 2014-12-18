@@ -25,6 +25,12 @@ public class SensoriFragment extends Fragment {
         String intestazione = getResources().getStringArray(R.array.opzioni_array)[conf.getPosizione()];
         getActivity().setTitle(intestazione);
 
+        Switch t = new Switch(getActivity());
+        t.setId(R.string.sens_temperatura);
+        t.setText("Rilevamento temperatura");
+        t.setChecked(true);
+       
+        
         Switch temperatura = (Switch)rootView.findViewById(R.id.sens_temperatura);
         Switch umidita = (Switch)rootView.findViewById(R.id.sens_umidita);
         Switch vento = (Switch)rootView.findViewById(R.id.sens_vento);
