@@ -24,14 +24,14 @@ public class PasswordActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		setContentView(R.layout.activity_password);
 		
 		db = new DatabaseHelper(this).getWritableDatabase();
 		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
 		mail = (EditText)findViewById(R.id.mailEditText);
-	    addListenerOnSendMailButton();
+		addListenerOnSendMailButton();
 	}
 
 	public void addListenerOnSendMailButton() {

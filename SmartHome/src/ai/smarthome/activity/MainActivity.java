@@ -1,5 +1,6 @@
 package ai.smarthome.activity;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -15,8 +16,10 @@ import ai.smarthome.activity.fragmentMain.RiepilogoFragment;
 import ai.smarthome.activity.fragmentMain.SensoriFragment;
 import ai.smarthome.async.AsyncGetMeteo;
 import ai.smarthome.database.DatabaseHelper;
+import ai.smarthome.database.wrapper.Componente;
 import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.database.wrapper.Meteo;
+import ai.smarthome.database.wrapper.Sensore;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.LogView;
 import ai.smarthome.util.UtilMeteo;
@@ -355,38 +358,22 @@ public class MainActivity extends Activity {
     
     public void cambiaSensori(View view) {
     	
-    	Switch temperatura = (Switch)findViewById(R.id.sens_temperatura);
-        Switch umidita = (Switch)findViewById(R.id.sens_umidita);
-        Switch vento = (Switch)findViewById(R.id.sens_vento);
-        Switch presenza = (Switch)findViewById(R.id.sens_presenza);
-        Switch sonoro = (Switch)findViewById(R.id.sens_sonoro);
-        
-        conf.setSensoreTemperatura(temperatura.isChecked());
-        conf.setSensoreUmidita(umidita.isChecked());
-        conf.setSensoreVento(vento.isChecked());
-        conf.setSensorePresenza(presenza.isChecked());
-        conf.setSensoreSonoro(sonoro.isChecked());
-        
-    	Toast.makeText(getApplicationContext(), "Sensori modificati con successo", Toast.LENGTH_SHORT).show();
+    	ArrayList<Sensore> lista = Sensore.getAllLista(db);
+	    for(Sensore s : lista) {
+	    	Switch switchSensore = (Switch)findViewById(s.getId());
+	    	Sensore.update(db, s.getNome(), switchSensore.isChecked());
+	    }	
+	    Toast.makeText(getApplicationContext(), "Sensori modificati con successo", Toast.LENGTH_SHORT).show();
     }
     
     public void cambiaComponenti(View view) {
     	
-    	Switch televisione = (Switch)findViewById(R.id.televisione);
-        Switch radio = (Switch)findViewById(R.id.radio);
-        Switch condizionatore = (Switch)findViewById(R.id.condizionatore);
-        Switch balcone = (Switch)findViewById(R.id.balcone);
-        Switch macchinaCaffe = (Switch)findViewById(R.id.macchinaCaffe);
-        Switch illuminazione = (Switch)findViewById(R.id.illuminazione);
-        
-        conf.setComponenteTelevisione(televisione.isChecked());
-        conf.setComponenteRadio(radio.isChecked());
-        conf.setComponenteCondizionatore(condizionatore.isChecked());
-        conf.setComponenteBalcone(balcone.isChecked());
-        conf.setComponenteMacchinaCaffe(macchinaCaffe.isChecked());
-        conf.setComponenteIlluminazione(illuminazione.isChecked());
-        
-    	Toast.makeText(getApplicationContext(), "Componenti modificati con successo", Toast.LENGTH_SHORT).show();
+    	ArrayList<Componente> lista = Componente.getAllLista(db);
+	    for(Componente c : lista) {
+	    	Switch switchComponente = (Switch)findViewById(c.getId());
+	    	Componente.update(db, c.getNome(), switchComponente.isChecked());
+	    }	
+	    Toast.makeText(getApplicationContext(), "Componenti modificati con successo", Toast.LENGTH_SHORT).show();
     }
    
     public void cambiaMeteo(View view) {

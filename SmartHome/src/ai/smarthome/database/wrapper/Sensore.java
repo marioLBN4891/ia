@@ -12,41 +12,34 @@ public class Sensore {
 	public static final String ACCESO_SPENTO = "accceso/spento";
 	public static final String APERTO_CHIUSO = "aperto/chiuso";
 	
-	private String nome;
-	private String tipo;
-	private int stato;
+	private int ID;
+	private String NOME;
+	private String TIPO;
+	private int STATO;
 	
-	public Sensore(String nome, String tipo, int stato) {
-		this.nome = nome;
-		this.stato = stato;
-		this.tipo = tipo;
+	public Sensore(int id, String nome, String tipo, int stato) {
+		this.ID = id;
+		this.NOME = nome;
+		this.STATO = stato;
+		this.TIPO = tipo;
 	}
 	
-	public void setNome(String nome) {
-		this.nome = nome;
+	public int getId() {
+		return this.ID;
 	}
-	
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-	
-	public void setStato(int stato) {
-		this.stato = stato;
-	}
-	
 	public String getNome() {
-		return this.nome;
+		return this.NOME;
 	}
 	
 	public String getTipo() {
-		return this.tipo;
+		return this.TIPO;
 	}
 	
 	public int getStato() {
-		return this.stato;
+		return this.STATO;
 	}
 
-	public static void setSensore(SQLiteDatabase db, String nome, String tipo, int stato) {
+	public static void setConfigurazione(SQLiteDatabase db, String nome, String tipo, int stato) {
 		ContentValues value = new ContentValues();
 		value.put(SensoriTable.NOME, nome);
 		value.put(SensoriTable.TIPO, tipo);
@@ -60,21 +53,27 @@ public class Sensore {
 		db.update(SensoriTable.TABLE_NAME, value, null, null);
 	}
 	
-	public static ArrayList<Oggetto> getLista(String tipo, int stato, SQLiteDatabase db) {
-		ArrayList<Oggetto> lista = new ArrayList<Oggetto>();
+	public static void update(SQLiteDatabase db, String nome, boolean stato) {
+		ContentValues value = new ContentValues();
+		value.put(SensoriTable.STATO, (stato) ? 1 : 0);
+		db.update(SensoriTable.TABLE_NAME, value, SensoriTable.NOME +" = \""+ nome+"\"", null);
+	}
+	
+	public static ArrayList<Sensore> getLista(String tipo, int stato, SQLiteDatabase db) {
+		ArrayList<Sensore> lista = new ArrayList<Sensore>();
 		Cursor cursore = db.query(SensoriTable.TABLE_NAME, SensoriTable.COLUMNS, SensoriTable.STATO+" = "+ stato + "AND "+SensoriTable.TIPO+" = \""+ tipo+ "\"",	null, null, null, SensoriTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Oggetto(cursore.getString(1), cursore.getString(2), cursore.getInt(2)));
+					lista.add(new Sensore(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(2)));
 		return lista;
 	}
 	
-	public static ArrayList<Oggetto> getAllLista(SQLiteDatabase db) {
-		ArrayList<Oggetto> lista = new ArrayList<Oggetto>();
+	public static ArrayList<Sensore> getAllLista(SQLiteDatabase db) {
+		ArrayList<Sensore> lista = new ArrayList<Sensore>();
 		Cursor cursore = db.query(SensoriTable.TABLE_NAME, SensoriTable.COLUMNS, null, null, null, null, SensoriTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Oggetto(cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Sensore(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
 		return lista;
 	}
 	

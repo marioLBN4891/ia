@@ -1,179 +1,44 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
+android:orientation="vertical"
 android:paddingBottom="@dimen/activity_vertical_margin"
 android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
-android:paddingTop="@dimen/activity_vertical_margin"
-tools:context="ai.smarthome.activity.fragmentMain.ComponentiFragment" >
+android:paddingTop="@dimen/activity_vertical_margin" >
 
 	<TextView 
     android:id="@+id/text_fragment_componenti"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
     android:text="@string/text_fragment_componenti" 
     android:textSize="@dimen/font_text14" />
 	
-	<TableLayout
-    android:id="@+id/tableComponenti"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/margin25"
-    android:layout_below="@+id/text_fragment_componenti">
-
-		<TableRow
-    	android:id="@+id/tableRow1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/televisioneText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/televisione"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-			
-			<Switch
-			android:id="@+id/televisione"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:textOn="Accesa"
-            android:textOff="Spenta" />
-		
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow2"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/radioText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
+	<LinearLayout 
+    android:id="@+id/llComponenti"    
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical" 
+	android:layout_marginTop="@dimen/margin20" />
+    
+	<RelativeLayout
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
 	
-			<Switch
-			android:id="@+id/radio"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:textOn="Accesa"
-            android:textOff="Spenta" />
-			
-		</TableRow>
+		<ImageButton
+    	android:id="@+id/cambiaComponentiButton"
+    	android:layout_width="@dimen/dimButtonSave"
+    	android:layout_height="@dimen/dimButtonSave"
+    	android:scaleType="fitXY"
+    	android:background="@null"
+    	android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+    	android:contentDescription="@string/cambiaComponenti"
+    	android:onClick="cambiaComponenti"
+    	android:src="@drawable/salva" />
 		
-		<TableRow
-    	android:id="@+id/tableRow3"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/condizionatoreText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/condizionatore"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
+	</RelativeLayout>
 	
-			<Switch
-			android:id="@+id/condizionatore"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textOn="Acceso"
-            android:textOff="Spento"  />
-	
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow4"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/balconeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/balcone"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-	
-			<Switch
-			android:id="@+id/balcone" 
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textOn="Aperto"
-            android:textOff="Chiuso " />
-			
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow5"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/macchinaCaffeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/macchinaCaffe"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-        	
-	
-			<Switch
-			android:id="@+id/macchinaCaffe"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textOn="Accesa"
-            android:textOff="Spenta" />
-		
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow6"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/illuminazioneText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/illuminazione"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-        	
-			<Switch
-			android:id="@+id/illuminazione"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textOn="Accesa"
-            android:textOff="Spenta" />
-		
-		</TableRow>
-		
-	</TableLayout>
-	
-	<ImageButton
-    android:id="@+id/cambiaComponentiButton"
-    android:layout_width="@dimen/dimButtonSave"
-    android:layout_height="@dimen/dimButtonSave"
-    android:scaleType="fitXY"
-    android:background="@null"
-    android:layout_alignParentBottom="true"
-	android:layout_centerHorizontal="true"
-    android:contentDescription="@string/cambiaComponenti"
-    android:onClick="cambiaComponenti"
-    android:src="@drawable/salva" />
-		
-</RelativeLayout>
+</LinearLayout>

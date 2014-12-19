@@ -1,144 +1,44 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
+android:orientation="vertical"
 android:paddingBottom="@dimen/activity_vertical_margin"
 android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
-android:paddingTop="@dimen/activity_vertical_margin"
-tools:context="ai.smarthome.activity.fragmentMain.SensoriFragment" > 
+android:paddingTop="@dimen/activity_vertical_margin" >
 
 	<TextView 
     android:id="@+id/text_fragment_sensori"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/text_fragment_sensori" 
     android:textSize="@dimen/font_text14" />
 	
-	<TableLayout
-    android:id="@+id/tableSensori"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
-    android:layout_marginTop="@dimen/margin25"
-    android:layout_below="@+id/text_fragment_sensori">
+	<LinearLayout 
+    android:id="@+id/llSensori"    
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical" 
+	android:layout_marginTop="@dimen/margin20" />
+    
+	<RelativeLayout
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+		<ImageButton
+    	android:id="@+id/cambiaSensoriButton"
+    	android:layout_width="@dimen/dimButtonSave"
+    	android:layout_height="@dimen/dimButtonSave"
+    	android:scaleType="fitXY"
+    	android:background="@null"
+    	android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+    	android:contentDescription="@string/cambiaSensori"
+    	android:onClick="cambiaSensori"
+    	android:src="@drawable/salva" />
+	
+	</RelativeLayout>
 
-		<TableRow
-    	android:id="@+id/tableRow1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/sens_temperaturaText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sens_temperatura"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-			
-			<Switch
-			android:id="@+id/sens_temperatura"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-	
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow2"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/sens_umiditaText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sens_umidita"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-	
-			<Switch
-			android:id="@+id/sens_umidita"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-	
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow3"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/sens_ventoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sens_vento"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-	
-			<Switch
-			android:id="@+id/sens_vento"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-	
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow4"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/sens_presenzaText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sens_presenza"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-	
-			<Switch
-			android:id="@+id/sens_presenza" 
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-	
-		</TableRow>
-		
-		<TableRow
-    	android:id="@+id/tableRow5"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_marginTop="@dimen/margin15" >
-
-        	<TextView
-            android:id="@+id/sens_sonoroText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sens_sonoro"
-            android:textSize="@dimen/font_text16"
-            android:textStyle="bold" />
-        	
-			<Switch
-			android:id="@+id/sens_sonoro"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-		
-		</TableRow>
-		
-	</TableLayout>
-	
-	<ImageButton
-    android:id="@+id/cambiaSensoriButton"
-    android:layout_width="@dimen/dimButtonSave"
-    android:layout_height="@dimen/dimButtonSave"
-    android:scaleType="fitXY"
-    android:background="@null"
-    android:layout_alignParentBottom="true"
-	android:layout_centerHorizontal="true"
-    android:contentDescription="@string/cambiaSensori"
-    android:onClick="cambiaSensori"
-    android:src="@drawable/salva" />
-	
-</RelativeLayout>
+</LinearLayout>

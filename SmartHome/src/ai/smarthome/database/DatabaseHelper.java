@@ -69,36 +69,36 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	}
 	
 	private void popolaOggettiTable(SQLiteDatabase db) {
-		Oggetto.setOggetto(db, "pane", Oggetto.DISPENSA, 0);
-		Oggetto.setOggetto(db, "pasta", Oggetto.DISPENSA, 0);
-		Oggetto.setOggetto(db, "caffè", Oggetto.DISPENSA, 0);
-		Oggetto.setOggetto(db, "pentola", Oggetto.MOBILE, 0);
-		Oggetto.setOggetto(db, "padella", Oggetto.MOBILE, 0);
-		Oggetto.setOggetto(db, "piatto", Oggetto.MOBILE, 0);
-		Oggetto.setOggetto(db, "posate", Oggetto.MOBILE, 0);
-		Oggetto.setOggetto(db, "bicchiere", Oggetto.MOBILE, 0);
-		Oggetto.setOggetto(db, "zucchero", Oggetto.DISPENSA, 0);
-		Oggetto.setOggetto(db, "latte", Oggetto.DISPENSA, 0);
-		Oggetto.setOggetto(db, "biscotti", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "pane", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "pasta", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "caffè", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "pentola", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "padella", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "piatto", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "posate", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "bicchiere", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "zucchero", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "latte", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "biscotti", Oggetto.DISPENSA, 0);
 	}
 	
 	private void popolaComponentiTable(SQLiteDatabase db) {
-		Componente.setComponente(db, "Televisione", Componente.ACCESO_SPENTO, 0);
-		Componente.setComponente(db, "Radio", Componente.ACCESO_SPENTO, 0);
-		Componente.setComponente(db, "Condizionatore", Componente.ACCESO_SPENTO, 0);
-		Componente.setComponente(db, "Balcone", Componente.APERTO_CHIUSO, 0);
-		Componente.setComponente(db, "Macchina del caffè", Componente.ACCESO_SPENTO, 0);
-		Componente.setComponente(db, "Tostapane", Componente.ACCESO_SPENTO, 0);
-		Componente.setComponente(db, "Illuminazione", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Televisione", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Radio", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Condizionatore", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Balcone", Componente.APERTO_CHIUSO, 0);
+		Componente.setConfigurazione(db, "Macchina del caffè", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Tostapane", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Illuminazione", Componente.ACCESO_SPENTO, 0);
 		
 	}
 	
 	private void popolaSensoriTable(SQLiteDatabase db) {
-		Sensore.setSensore(db, "Rilevamento temperatura", Sensore.ACCESO_SPENTO, 1);
-		Sensore.setSensore(db, "Rilevamento umidità", Sensore.ACCESO_SPENTO, 1);
-		Sensore.setSensore(db, "Rilevamento vento", Sensore.ACCESO_SPENTO, 1);
-		Sensore.setSensore(db, "Rilevamento presenza", Sensore.ACCESO_SPENTO, 1);
-		Sensore.setSensore(db, "Rilevamento sonoro", Sensore.ACCESO_SPENTO, 1);
+		Sensore.setConfigurazione(db, "Rilevamento temperatura", Sensore.ACCESO_SPENTO, 1);
+		Sensore.setConfigurazione(db, "Rilevamento umidità", Sensore.ACCESO_SPENTO, 1);
+		Sensore.setConfigurazione(db, "Rilevamento vento", Sensore.ACCESO_SPENTO, 1);
+		Sensore.setConfigurazione(db, "Rilevamento presenza", Sensore.ACCESO_SPENTO, 1);
+		Sensore.setConfigurazione(db, "Rilevamento sonoro", Sensore.ACCESO_SPENTO, 1);
 	}
 	
 	private void popolaMeteoTable(SQLiteDatabase db) {

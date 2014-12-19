@@ -16,28 +16,21 @@ public class Oggetto implements Serializable {
 	public static final String DISPENSA = "dispensa";
 	public static final String MOBILE = "mobile";
 	
+	private int ID;
 	private String NOME;
 	private String CLASSE;
 	private int STATO;
 	
-	public Oggetto(String nome, String classe, int stato) {
+	public Oggetto(int id, String nome, String classe, int stato) {
+		this.ID = id;
 		this.NOME = nome;
 		this.CLASSE = classe;
 		this.STATO = stato;
 	}
 
-	public void setNome(String nome) {
-		this.NOME = nome;
+	public int getId() {
+		return this.ID;
 	}
-	
-	public void setClasse(String classe) {
-		this.CLASSE = classe;
-	}
-	
-	public void setStato(int stato) {
-		this.STATO = stato;
-	}
-	
 	
 	public String getNome() {
 		return this.NOME;
@@ -50,7 +43,7 @@ public class Oggetto implements Serializable {
 	}
 	
 	
-	public static void setOggetto(SQLiteDatabase db, String nome, String classe, int stato) {
+	public static void setConfigurazione(SQLiteDatabase db, String nome, String classe, int stato) {
 		ContentValues value = new ContentValues();
 		value.put(OggettiTable.NOME, nome);
 		value.put(OggettiTable.CLASSE, classe);
@@ -64,12 +57,18 @@ public class Oggetto implements Serializable {
 		db.update(OggettiTable.TABLE_NAME, value, null, null);
 	}
 	
+	public static void update(SQLiteDatabase db, String nome, boolean stato) {
+		ContentValues value = new ContentValues();
+		value.put(OggettiTable.STATO, (stato) ? 1 : 0);
+		db.update(OggettiTable.TABLE_NAME, value, OggettiTable.NOME +" = \""+ nome+"\"", null);
+	}
+	
 	public static ArrayList<Oggetto> getLista(String classe, int stato, SQLiteDatabase db) {
 		ArrayList<Oggetto> lista = new ArrayList<Oggetto>();
 		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato + "AND "+OggettiTable.CLASSE+" = \""+ classe +"\"",	null, null, null, OggettiTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Oggetto(cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
 		return lista;
 	}
 	
@@ -78,7 +77,7 @@ public class Oggetto implements Serializable {
 		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, null, null, null, null, OggettiTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Oggetto(cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
 		return lista;
 	}
 	
