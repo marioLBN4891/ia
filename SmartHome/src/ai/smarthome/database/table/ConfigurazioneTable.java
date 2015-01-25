@@ -2,9 +2,9 @@ package ai.smarthome.database.table;
 
 import android.provider.BaseColumns;
 
-public interface MeteoTable extends BaseColumns
+public interface ConfigurazioneTable extends BaseColumns
 	{
-		String TABLE_NAME = "meteo";
+		String TABLE_NAME = "configurazione";
 	 
 		String LOCALITA = "localita";
 		String METEO = "meteo";
@@ -14,6 +14,7 @@ public interface MeteoTable extends BaseColumns
 		String DATA = "data";
 		String ORA = "ora";
 		String MINUTI = "minuti";
+		String COMPONENTI = "componenti";
 				
 		String[] COLUMNS = new String[] {
 				_ID,
@@ -24,7 +25,8 @@ public interface MeteoTable extends BaseColumns
 				VENTO,
 				DATA,
 				ORA,
-				MINUTI
+				MINUTI,
+				COMPONENTI
 		};
 	
 }

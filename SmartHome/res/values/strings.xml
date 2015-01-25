@@ -32,18 +32,16 @@
     <string name="sendMailButton">Invia Mail</string>
     
     <string-array name="opzioni_array">
-        <item>Benvenuto</item>
         <item>Avvio veloce</item>
-        <item>Riepilogo Impostazioni</item>
-        <item>Cambia Data e Ora</item>
-        <item>Cambia Meteo</item>
-        <item>Cambia Componenti</item>
-        <item>Cambia Sensori</item>
+        <item>Data e Ora</item>
+        <item>Meteo</item>
+        <item>Componenti</item>
+        <item>Sensori</item>
         <item>Info utente</item>
     </string-array>
 
-	<string name="text_fragment_avvioveloce1">\nSeleziona una configurazione predefinita per avviare la simulazione oppure definisci una configurazione personalizzata modificando i parametri disponibili nelle altre sezioni.</string>
-    <string name="text_fragment_avvioveloce2">Oppure utilizza le previsioni meteo della tua posizione attuale:</string>
+	<string name="text_fragment_avvioveloce1">\nSeleziona una delle quattro configurazioni predefinite per avviare velocemente la simulazione oppure definisci una configurazione personalizzata modificando i parametri disponibili nelle altre sezioni dell\'applicazione.</string>
+    <string name="text_fragment_avvioveloce2">Clicca sul pulsante a destra per utilizzare le condizioni meteo della tua posizione attuale.</string>
     <string name="text_fragment_infopersonali">Informazioni personali dell\'utente.\nQuesta sezione permette di modifica email e password e avere un riepilogo dei propri dati.</string>
     <string name="text_fragment_sim1">Impostazioni simulazione</string>
     <string name="text_fragment_sim2">Data:</string>
@@ -51,13 +49,14 @@
     <string name="text_fragment_sim4">Clima:</string>
     <string name="text_fragment_sim5">Componenti:</string>
     <string name="text_fragment_sim6">Sensori:</string>
-    <string name="text_fragment_data1">Modifica la data e ora di partenza della simulazione.\nUtilizza la data e l\'ora corrente o scegli una data e ora qualsiasi.</string>
+    <string name="text_fragment_data1">In questa sezione puoi modificare la data e l\'ora di partenza della simulazione.\nUtilizza la configurazione attuale oppure scegli una data e un orario qualsiasi.</string>
     <string name="text_fragment_data2">Seleziona una nuova data:</string>
     <string name="text_fragment_ora1">Modifica l\'orario di partenza della simulazione.\nUtilizza l\'orario corrente o fissa un orario qualsiasi a tua discrezione.</string>
     <string name="text_fragment_ora2">Seleziona un nuovo orario:</string>
-    <string name="text_fragment_meteo">Modifica le condizioni climatiche e metereologiche presenti all\'interno e all\'esterno dell\'ambiente domestico.\nCambia lo stato del clima.</string>
-    <string name="text_fragment_componenti">Modifica lo stato di funzionamento dei componenti presenti nell\'ambiente domestico.\nCambia lo stato dei componenti.</string>
-    <string name="text_fragment_sensori">Modifica lo stato di funzionamento dei sensori presenti nell\'ambiente domestico.\nAttiva o disattiva i sensori.\n<b>La funzionalità è momentaneamente disabilitata</b></string>
+    <string name="text_fragment_meteo">In questa sezione puoi modificare le condizioni climatiche e metereologiche presenti.\nPuoi modificare la condizione climatica generale e/o modificare i singoli parametri.</string>
+    <string name="text_fragment_meteo1">In alternativa, clicca sul pulsante a destra per utilizzare le condizioni meteo della tua posizione attuale.</string>
+    <string name="text_fragment_componenti">In questa sezione puoi modificare lo stato di funzionamento dei componenti (acceso/spento - aperto/chiuso) presenti nell\'ambiente domestico.\nCambia lo stato dei componenti all\'avvio della simulazione.</string>
+    <string name="text_fragment_sensori">In questa sezione puoi modificare lo stato di funzionamento dei sensori presenti all\'interno dell\'ambiente domestico.\nAttiva o disattiva i sensori sotto elencati.\n<b>La funzionalità è momentaneamente disabilitata</b></string>
     
     <string name="drawer_open">Apri menù di navigazione</string>
     <string name="drawer_close">Chiudi menù di navigazione</string>
@@ -115,13 +114,14 @@
     <string name="settings">Settings</string>
     <string name="cancel">Annulla</string>
     
-    <string name="impMeteo">Impostazioni Meteo</string>
+    <string name="impMeteo">Impostazioni simulazione</string>
     <string name="loc">Località</string>
     <string name="met">Meteo</string>
     <string name="temp">Temperatura</string>
     <string name="umid">Umidità</string>
     <string name="vent">Vento</string>
-    <string name="data">Data</string>
-    <string name="orario">Orario</string>
+    <string name="data">Data e Ora</string>
+    <string name="comp">Componenti</string>
+    
     
 </resources>

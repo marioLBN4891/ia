@@ -15,6 +15,32 @@ android:paddingTop="@dimen/activity_vertical_margin" >
     android:text="@string/text_fragment_meteo" 
     android:textSize="@dimen/font_text14" />
 	
+	<RelativeLayout 
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="@dimen/margin5" >
+        
+    	<TextView
+    	android:id="@+id/text_fragment_meteo1"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_toLeftOf="@+id/meteoAttualeButton"
+    	android:text="@string/text_fragment_meteo1"
+    	android:textSize="@dimen/font_text14" />
+
+    	<ImageButton
+    	android:id="@+id/meteoAttualeButton"
+    	android:layout_width="@dimen/dimButtonConf"
+    	android:layout_height="@dimen/dimButtonConf"
+    	android:layout_alignParentRight="true"
+    	android:contentDescription="@string/confVeloceMeteo"
+    	android:onClick="cambiaMeteoMenu"
+    	android:padding="@dimen/margin5"
+    	android:scaleType="fitXY"
+    	android:src="@drawable/meteo_oggi" />
+    	
+    </RelativeLayout>
+    
 	<TextView 
     android:id="@+id/textMeteo"
     android:layout_width="match_parent"

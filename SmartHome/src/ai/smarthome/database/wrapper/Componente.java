@@ -1,6 +1,7 @@
 package ai.smarthome.database.wrapper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ai.smarthome.database.table.ComponentiTable;
 import android.content.ContentValues;
@@ -61,11 +62,26 @@ public class Componente {
 	
 	public static ArrayList<Componente> getLista(String tipo, int stato, SQLiteDatabase db) {
 		ArrayList<Componente> lista = new ArrayList<Componente>();
-		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + "AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+		
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
 					lista.add(new Componente(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+		
 		return lista;
+	}
+	
+	public static CharSequence[] getListaCharSequence(String tipo, int stato, SQLiteDatabase db) {
+		List<String> listItems = new ArrayList<String>();
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+		
+		if (cursore.getCount() > 0)
+			while (cursore.moveToNext()) 
+				listItems.add(cursore.getString(1));
+		
+		CharSequence[] charSequenceItems = listItems.toArray(new CharSequence[listItems.size()]);;
+		
+		return charSequenceItems;
 	}
 	
 	public static ArrayList<Componente> getAllLista(SQLiteDatabase db) {
@@ -101,4 +117,28 @@ public class Componente {
 		db.update(ComponentiTable.TABLE_NAME, value, ComponentiTable.NOME+" = \""+ nome+ "\"", null);
 	}
 	
+	public static boolean checkComponente(String tipo, int stato, SQLiteDatabase db) {
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+		if (cursore.getCount() > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	
+	public static boolean checkDispensaMobileAperta(String tipo, int stato, String nome, SQLiteDatabase db) {
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\" AND "+ComponentiTable.NOME+" = \""+ nome +"\"", null, null, null, ComponentiTable.NOME);
+		if (cursore.getCount() > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	public static boolean checkDispensaMobile(String tipo, int stato, SQLiteDatabase db) {
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\" AND ("+ComponentiTable.NOME+" = \"Dispensa\" OR "+ComponentiTable.NOME+" = \"Mobile\")", null, null, null, ComponentiTable.NOME);
+		if (cursore.getCount() > 0)
+			return true;
+		else
+			return false;
+	}
 }

@@ -2,6 +2,7 @@ package ai.smarthome.database.wrapper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import ai.smarthome.database.table.OggettiTable;
 import android.content.ContentValues;
@@ -13,8 +14,8 @@ public class Oggetto implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static final String DISPENSA = "dispensa";
-	public static final String MOBILE = "mobile";
+	public static final String DISPENSA = "Dispensa";
+	public static final String MOBILE = "Mobile";
 	
 	private int ID;
 	private String NOME;
@@ -65,11 +66,39 @@ public class Oggetto implements Serializable {
 	
 	public static ArrayList<Oggetto> getLista(String classe, int stato, SQLiteDatabase db) {
 		ArrayList<Oggetto> lista = new ArrayList<Oggetto>();
-		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato + "AND "+OggettiTable.CLASSE+" = \""+ classe +"\"",	null, null, null, OggettiTable.NOME);
+		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato + " AND "+OggettiTable.CLASSE+" = \""+ classe +"\"",	null, null, null, OggettiTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
 					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
 		return lista;
+	}
+	
+	
+	public static CharSequence[] getListaCharSequence(SQLiteDatabase db, int stato) {
+		List<String> listItems = new ArrayList<String>();
+		if(stato == 0) {
+			if(Componente.checkDispensaMobileAperta(Componente.APERTO_CHIUSO, 1, Oggetto.DISPENSA, db)) {
+				Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato + " AND "+OggettiTable.CLASSE+" = \""+ Oggetto.DISPENSA +"\"",	null, null, null, OggettiTable.NOME);
+				if (cursore.getCount() > 0)
+					while (cursore.moveToNext()) 
+						listItems.add(cursore.getString(1));
+			}
+			if(Componente.checkDispensaMobileAperta(Componente.APERTO_CHIUSO, 1, Oggetto.MOBILE, db)) {
+				Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato + " AND "+OggettiTable.CLASSE+" = \""+ Oggetto.MOBILE +"\"",	null, null, null, OggettiTable.NOME);
+				if (cursore.getCount() > 0)
+					while (cursore.moveToNext()) 
+						listItems.add(cursore.getString(1));
+			}
+		}
+		if (stato == 1) {
+			Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato,	null, null, null, OggettiTable.NOME);
+			if (cursore.getCount() > 0)
+				while (cursore.moveToNext()) 
+					listItems.add(cursore.getString(1));
+		}
+		CharSequence[] charSequenceItems = listItems.toArray(new CharSequence[listItems.size()]);;
+		
+		return charSequenceItems;
 	}
 	
 	public static ArrayList<Oggetto> getAllLista(SQLiteDatabase db) {

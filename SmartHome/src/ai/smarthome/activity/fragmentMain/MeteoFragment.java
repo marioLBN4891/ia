@@ -3,8 +3,9 @@ package ai.smarthome.activity.fragmentMain;
 import ai.smarthome.R;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Configurazione;
-import ai.smarthome.database.wrapper.Meteo;
-import ai.smarthome.util.UtilMeteo;
+import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.Costanti;
+import ai.smarthome.util.UtilConfigurazione;
 import android.app.Fragment;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,26 +18,25 @@ import android.widget.TextView;
 
 public class MeteoFragment extends Fragment {
 	
-	public static final String CONFIGURAZIONE = "configurazione";
 	private SeekBar seekMeteo, seekTempEst, seekUmidita, seekVento; 
     private TextView textMeteo, textTempEst, textUmidita, textVento;
     private SQLiteDatabase db;
     
     public MeteoFragment() {
-        // Empty constructor required for fragment subclasses
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	
-    	Configurazione conf = (Configurazione) getArguments().getSerializable(CONFIGURAZIONE);
+    	Utente user = (Utente) getArguments().getSerializable(Costanti.UTENTE);
     	View rootView = inflater.inflate(R.layout.fragment_meteo, container, false);
-        String intestazione = getResources().getStringArray(R.array.opzioni_array)[conf.getPosizione()];
+        String intestazione = getResources().getStringArray(R.array.opzioni_array)[user.getPosizione()];
         getActivity().setTitle(intestazione);
         
         db = new DatabaseHelper(getActivity()).getWritableDatabase();
         
-        Meteo meteo = Meteo.getMeteo(db);
+        Configurazione meteo = Configurazione.getConfigurazione(db);
         
         seekMeteo = (SeekBar) rootView.findViewById(R.id.seekMeteo);
         seekTempEst = (SeekBar) rootView.findViewById(R.id.seekTemperaturaEsterna);
@@ -49,9 +49,12 @@ public class MeteoFragment extends Fragment {
         textVento = (TextView) rootView.findViewById(R.id.textVento);
         
         setTextMeteo(meteo.getMeteo());
-        UtilMeteo.setTextViewTemperatura(textTempEst, meteo.getTemperatura());
-        UtilMeteo.setTextViewUmidita(textUmidita, meteo.getUmidita());
-        UtilMeteo.setTextViewVento(textVento, meteo.getVento());
+        UtilConfigurazione.setTextViewTemperatura(textTempEst, meteo.getTemperatura());
+        textTempEst.setText("Temperatura: "+textTempEst.getText());
+        UtilConfigurazione.setTextViewUmidita(textUmidita, meteo.getUmidita());
+        textUmidita.setText("Umidità: "+textUmidita.getText());
+        UtilConfigurazione.setTextViewVento(textVento, meteo.getVento());
+        textVento.setText("Vento: "+textVento.getText());
         
         seekMeteo.setProgress(meteo.getMeteo());
         seekTempEst.setProgress(meteo.getTemperatura());
@@ -78,7 +81,8 @@ public class MeteoFragment extends Fragment {
         seekTempEst.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilMeteo.setTextViewTemperatura(textTempEst, progress);
+        		UtilConfigurazione.setTextViewTemperatura(textTempEst, progress);
+        		textTempEst.setText("Temperatura: "+textTempEst.getText());
         	}
 
         	@Override
@@ -94,7 +98,8 @@ public class MeteoFragment extends Fragment {
         seekUmidita.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilMeteo.setTextViewUmidita(textUmidita, progress);
+        		UtilConfigurazione.setTextViewUmidita(textUmidita, progress);
+        		textUmidita.setText("Umidità: "+textUmidita.getText());
         	}
 
         	@Override
@@ -111,7 +116,8 @@ public class MeteoFragment extends Fragment {
         seekVento.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilMeteo.setTextViewVento(textVento, progress);
+        		UtilConfigurazione.setTextViewVento(textVento, progress);
+        		textVento.setText("Vento: "+textVento.getText());
         	}
 
         	@Override
@@ -124,20 +130,20 @@ public class MeteoFragment extends Fragment {
         	
         });
         
-        
+        db.close();
         return rootView;
     }
     
     
     private void setTextMeteo(int progress) {
     	if (progress <= 35) 
-    		setClima("Meteo: PIOVOSO", 10, 80, 30);
+    		setClima("Condizioni generali: PIOVOSO", 10, 80, 30);
 		if (progress > 35 && progress <= 65) 
-			setClima("Meteo: NUVOLOSO", 40, 50, 10);
+			setClima("Condizioni generali: NUVOLOSO", 40, 50, 10);
 		if (progress > 65 && progress <= 80) 
-			setClima("Meteo: SERENO", 70, 60, 30);
+			setClima("Condizioni generali: SERENO", 70, 60, 30);
 		if (progress > 80) 
-			setClima("Meteo: SOLEGGIATO", 90, 90, 10);
+			setClima("Condizioni generali: SOLEGGIATO", 90, 90, 10);
 		
     }
     

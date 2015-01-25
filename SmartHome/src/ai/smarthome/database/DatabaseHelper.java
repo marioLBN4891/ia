@@ -6,12 +6,12 @@ import java.util.Date;
 
 import ai.smarthome.database.table.ComponentiTable;
 import ai.smarthome.database.table.ConnessioneVeloceTable;
-import ai.smarthome.database.table.MeteoTable;
+import ai.smarthome.database.table.ConfigurazioneTable;
 import ai.smarthome.database.table.OggettiTable;
 import ai.smarthome.database.table.SensoriTable;
 import ai.smarthome.database.table.UtentiTable;
 import ai.smarthome.database.wrapper.Componente;
-import ai.smarthome.database.wrapper.Meteo;
+import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.database.wrapper.Oggetto;
 import ai.smarthome.database.wrapper.Sensore;
 import ai.smarthome.database.wrapper.Utente;
@@ -56,8 +56,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		String sqlOggettiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL, {4} INTEGER NOT NULL);";
 		db.execSQL(MessageFormat.format(sqlOggettiTable, OggettiTable.TABLE_NAME, BaseColumns._ID, OggettiTable.NOME, OggettiTable.CLASSE, OggettiTable.STATO));
 		
-		String sqlMeteoTable = "CREATE TABLE {0} ({1} INTEGER NOT NULL, {2} TEXT NOT NULL, {3} INTEGER NOT NULL, {4} INTEGER NOT NULL, {5} INTEGER NOT NULL, {6} INTEGER NOT NULL, {7} LONG NOT NULL, {8} INTEGER NOT NULL, {9} INTEGER NOT NULL);";
-		db.execSQL(MessageFormat.format(sqlMeteoTable, MeteoTable.TABLE_NAME, BaseColumns._ID, MeteoTable.LOCALITA, MeteoTable.METEO, MeteoTable.TEMPERATURA, MeteoTable.UMIDITA, MeteoTable.VENTO, MeteoTable.DATA, MeteoTable.ORA, MeteoTable.MINUTI));
+		String sqlConfigurazioneTable = "CREATE TABLE {0} ({1} INTEGER NOT NULL, {2} TEXT NOT NULL, {3} INTEGER NOT NULL, {4} INTEGER NOT NULL, {5} INTEGER NOT NULL, {6} INTEGER NOT NULL, {7} LONG NOT NULL, {8} INTEGER NOT NULL, {9} INTEGER NOT NULL, {10} INTEGER NOT NULL);";
+		db.execSQL(MessageFormat.format(sqlConfigurazioneTable, ConfigurazioneTable.TABLE_NAME, BaseColumns._ID, ConfigurazioneTable.LOCALITA, ConfigurazioneTable.METEO, ConfigurazioneTable.TEMPERATURA, ConfigurazioneTable.UMIDITA, ConfigurazioneTable.VENTO, ConfigurazioneTable.DATA, ConfigurazioneTable.ORA, ConfigurazioneTable.MINUTI, ConfigurazioneTable.COMPONENTI));
 	}
 
 	private void popolaTabelleDatabase(SQLiteDatabase db) {
@@ -65,21 +65,21 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		popolaOggettiTable(db);
 		popolaComponentiTable(db);
 		popolaSensoriTable(db);
-		popolaMeteoTable(db);
+		popolaConfigurazioneTable(db);
 	}
 	
 	private void popolaOggettiTable(SQLiteDatabase db) {
-		Oggetto.setConfigurazione(db, "pane", Oggetto.DISPENSA, 0);
-		Oggetto.setConfigurazione(db, "pasta", Oggetto.DISPENSA, 0);
-		Oggetto.setConfigurazione(db, "caffè", Oggetto.DISPENSA, 0);
-		Oggetto.setConfigurazione(db, "pentola", Oggetto.MOBILE, 0);
-		Oggetto.setConfigurazione(db, "padella", Oggetto.MOBILE, 0);
-		Oggetto.setConfigurazione(db, "piatto", Oggetto.MOBILE, 0);
-		Oggetto.setConfigurazione(db, "posate", Oggetto.MOBILE, 0);
-		Oggetto.setConfigurazione(db, "bicchiere", Oggetto.MOBILE, 0);
-		Oggetto.setConfigurazione(db, "zucchero", Oggetto.DISPENSA, 0);
-		Oggetto.setConfigurazione(db, "latte", Oggetto.DISPENSA, 0);
-		Oggetto.setConfigurazione(db, "biscotti", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "Pane", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "Pasta", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "Caffè", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "Pentola", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "Padella", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "Piatto", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "Posate", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "Bicchiere", Oggetto.MOBILE, 0);
+		Oggetto.setConfigurazione(db, "Zucchero", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "Latte", Oggetto.DISPENSA, 0);
+		Oggetto.setConfigurazione(db, "Biscotti", Oggetto.DISPENSA, 0);
 	}
 	
 	private void popolaComponentiTable(SQLiteDatabase db) {
@@ -89,8 +89,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		Componente.setConfigurazione(db, "Balcone", Componente.APERTO_CHIUSO, 0);
 		Componente.setConfigurazione(db, "Macchina del caffè", Componente.ACCESO_SPENTO, 0);
 		Componente.setConfigurazione(db, "Tostapane", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Fornello", Componente.ACCESO_SPENTO, 0);
+		Componente.setConfigurazione(db, "Forno", Componente.ACCESO_SPENTO, 0);
 		Componente.setConfigurazione(db, "Illuminazione", Componente.ACCESO_SPENTO, 0);
-		
+		Componente.setConfigurazione(db, "Dispensa", Componente.APERTO_CHIUSO, 0);
+		Componente.setConfigurazione(db, "Mobile", Componente.APERTO_CHIUSO, 0);
+		Componente.setConfigurazione(db, "Frigorifero", Componente.ACCESO_SPENTO, 0);
 	}
 	
 	private void popolaSensoriTable(SQLiteDatabase db) {
@@ -101,11 +105,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		Sensore.setConfigurazione(db, "Rilevamento sonoro", Sensore.ACCESO_SPENTO, 1);
 	}
 	
-	private void popolaMeteoTable(SQLiteDatabase db) {
+	private void popolaConfigurazioneTable(SQLiteDatabase db) {
 		final Calendar c = Calendar.getInstance();
     	int hour = c.get(Calendar.HOUR_OF_DAY);
     	int minute = c.get(Calendar.MINUTE);
-		Meteo.setConfigurazione(db, "-", 50, 50, 50, 50, new Date().getTime(), hour, minute);
+		Configurazione.setConfigurazione(db, "-", 50, 50, 50, 50, new Date().getTime(), hour, minute, 0);
 	}
 	
 	private void popolaUtentiTable(SQLiteDatabase db) {

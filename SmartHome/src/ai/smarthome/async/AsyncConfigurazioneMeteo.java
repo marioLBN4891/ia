@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Map;
 
 import ai.smarthome.database.DatabaseHelper;
-import ai.smarthome.database.wrapper.Meteo;
+import ai.smarthome.database.wrapper.Configurazione;
 import ai.smarthome.util.GPSTracker;
 import ai.smarthome.util.LogView;
 import ai.smarthome.util.rest.Rest;
@@ -44,11 +44,11 @@ public class AsyncConfigurazioneMeteo extends AsyncTask<Void, String, Map<String
     	long data = new Date().getTime();
     	
 		if (parametri != null) {
-			Meteo.updateConfigurazione(db, localita, parametri.get("meteo"), parametri.get("tempEst"), parametri.get("umidita"), parametri.get("vento"), data, hour, minute);
+			Configurazione.updateConfigurazione(db, localita, parametri.get("meteo"), parametri.get("tempEst"), parametri.get("umidita"), parametri.get("vento"), data, hour, minute, 0);
 			LogView.info("AsyncConfigurazioneMeteo.onPostExecute: OK");
 		}
 		else {
-			Meteo.updateConfigurazione(db, "-", 50, 50, 50, 50, data, hour, minute);
+			Configurazione.updateConfigurazione(db, "-", 50, 50, 50, 50, data, hour, minute, 0);
 			LogView.info("AsyncConfigurazioneMeteo.onPostExecute: ERRORE");
 		}
 			
@@ -58,11 +58,13 @@ public class AsyncConfigurazioneMeteo extends AsyncTask<Void, String, Map<String
 	@Override
 	protected Map<String, Integer> doInBackground(Void... params) {
 		Map<String, Integer> parametri = null;
-		
-		localita = gpsTracker.getLocality(context);
-		parametri = Rest.getMeteoLocale(context, localita);
-		
-		return parametri;
+		try {
+			localita = gpsTracker.getLocality(context);
+			parametri = Rest.getMeteoLocale(context, localita);
+		}
+		catch(Exception e) {
+		}
+			return parametri;
 	}
 
 

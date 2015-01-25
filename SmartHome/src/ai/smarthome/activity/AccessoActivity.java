@@ -11,7 +11,10 @@ import ai.smarthome.R;
 import ai.smarthome.activity.fragmentAccesso.LoginFragment;
 import ai.smarthome.activity.fragmentAccesso.RegistrazioneFragment;
 import ai.smarthome.database.DatabaseHelper;
+import ai.smarthome.database.wrapper.Componente;
+import ai.smarthome.database.wrapper.Oggetto;
 import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.Costanti;
 import ai.smarthome.util.Utilities;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -38,8 +41,6 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 	private EditText  nome;
 	private SQLiteDatabase db;
 	
-	public static final String UTENTE = "utente";
-	
 	private UiLifecycleHelper uiHelper;
     private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 	
@@ -50,6 +51,11 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
         uiHelper.onCreate(savedInstanceState);
         
 		setContentView(R.layout.activity_accesso);
+		
+		db = new DatabaseHelper(this).getWritableDatabase();
+		
+		Componente.reset(db);
+		Oggetto.reset(db);
 		
 		ActionBar ab = getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -66,10 +72,7 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
         tabReg.setText("Registrazione");
         tabReg.setTabListener(this);
         ab.addTab(tabReg);
-             
-        db = new DatabaseHelper(this).getWritableDatabase();
-
-        
+   	
 	}
 	
 	private Session.StatusCallback statusCallback = new Session.StatusCallback() {
@@ -133,7 +136,7 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 		Utente user = Utente.getConnessioneVeloce(db);
         if (user != null) {
         	Intent i = new Intent(AccessoActivity.this, MainActivity.class);
-        	i.putExtra(UTENTE, user);
+        	i.putExtra(Costanti.UTENTE, user);
             startActivity(i);
             finish();
 		}	
@@ -236,7 +239,7 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 		        if (user != null) {
 		        	Utente.setConnessioneVeloce(db, user.getMail(), user.getPassword());
 			        Intent i = new Intent(AccessoActivity.this, MainActivity.class);
-			        i.putExtra(UTENTE, user);
+			        i.putExtra(Costanti.UTENTE, user);
 			        startActivity(i);
 			        finish();
 				}	

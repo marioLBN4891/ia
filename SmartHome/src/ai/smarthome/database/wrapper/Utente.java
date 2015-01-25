@@ -17,6 +17,8 @@ public class Utente implements Serializable {
 	private String PASSWORD;
 	private String COGNOME;
 	private String NOME;
+	private int posizioneFragment;
+	
 	
 	public Utente (String id, String mail, String password, String cognome, String nome) {
 		this.ID = id;
@@ -24,9 +26,17 @@ public class Utente implements Serializable {
 		this.PASSWORD = password;
 		this.COGNOME = cognome;
 		this.NOME = nome;
+		this.posizioneFragment = 0;
 	}
 	
-	
+	public void setPosizione(int posizione) {
+		this.posizioneFragment = posizione;
+	}
+		
+	public int getPosizione() {
+		return this.posizioneFragment;
+	}
+		
 	public static void setUtente(SQLiteDatabase db, String mail, String password, String cognome, String nome) {
 		ContentValues value = new ContentValues();
 		value.put(UtentiTable.MAIL, mail);

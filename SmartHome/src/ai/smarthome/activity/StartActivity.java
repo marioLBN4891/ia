@@ -9,8 +9,8 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 
 import ai.smarthome.R;
-import ai.smarthome.async.AsyncConfigurazioneMeteo;
 import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.Costanti;
 import ai.smarthome.util.LogView;
 import android.app.Activity;
 import android.content.Intent;
@@ -21,9 +21,6 @@ import android.os.StrictMode;
 
 public class StartActivity extends Activity {
 
-	private static int START_TIME_OUT = 3000;
-	public static final String UTENTE = "utente";
-	
 	private UiLifecycleHelper uiHelper;
     
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -41,9 +38,6 @@ public class StartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 	    StrictMode.setThreadPolicy(policy);
 	  
-	    AsyncConfigurazioneMeteo asyncConfMeteo = new AsyncConfigurazioneMeteo(this.getApplicationContext());
-		asyncConfMeteo.execute();
-		
 	    Session session = Session.openActiveSessionFromCache(this);
         
         uiHelper = new UiLifecycleHelper(this, callback);
@@ -58,7 +52,7 @@ public class StartActivity extends Activity {
                     startActivity(i);
                     finish();
                 }
-            }, START_TIME_OUT);
+            }, Costanti.START_TIME_OUT);
         }
    }
 
@@ -116,7 +110,7 @@ public class StartActivity extends Activity {
                       
                         Utente utente= new Utente(fbId, null, null, lastName, firstName);
                         Intent i = new Intent(StartActivity.this, MainActivity.class);
-                        i.putExtra(UTENTE, utente);
+                        i.putExtra(Costanti.UTENTE, utente);
                         startActivity(i);
                         finish();
                     }
