@@ -18,6 +18,7 @@
     <string name="loginButton">Entra</string>
     <string name="registrationButton">Registrati</string>
     <string name="logout">Logout</string>
+    <string name="report">Report</string>
     
     <string name="formRegistrazione">Registrati al sistema per poter accedere alle funzionalità del sistema C@SA.\nProcedi con la compilazione dei campi sottostanti ed effettua l\'accesso nella sezione di login.</string>
     <string name="registrazione">Registrazione</string>
@@ -60,8 +61,6 @@
     
     <string name="drawer_open">Apri menù di navigazione</string>
     <string name="drawer_close">Chiudi menù di navigazione</string>
-    <string name="actionInquiry">Domanda</string>
-    <string name="activityInquiry">Domanda</string>
     
     <string name="utente">Utente:</string>
     <string name="modificaMail">Modifica email:</string>
@@ -121,7 +120,10 @@
     <string name="umid">Umidità</string>
     <string name="vent">Vento</string>
     <string name="data">Data e Ora</string>
-    <string name="comp">Componenti</string>
+    <string name="comp">Configurazione Componenti</string>
     
+    <string name="riepilogo">Azioni eseguite</string>
+    
+    <string name="text_report">In questa sezione puoi visualizzare il report completo delle azioni eseguite durante la simulazione.\nPuoi, inoltre, salvare il report ed inviarlo via mail al tuo indirizzo di posta elettronica o ad un altro recapito.</string>
     
 </resources>

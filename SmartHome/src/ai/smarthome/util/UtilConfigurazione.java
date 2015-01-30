@@ -62,9 +62,9 @@ public class UtilConfigurazione {
 
 	public static void setTextViewComponenti(TextView textcomponenti, int progress) {
 		if (progress == 1) 
-			textcomponenti.setText("Configurazione personalizzata");
+			textcomponenti.setText("Personalizzata");
 		else
-			textcomponenti.setText("Configurazione standard");
+			textcomponenti.setText("Standard");
 	}
 	
 	public static void updateMeteo(SQLiteDatabase db, String loc, int meteo, int temp, int umidita, int vento) {

@@ -1,0 +1,64 @@
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:paddingBottom="@dimen/margin5"
+android:paddingLeft="@dimen/margin5"
+android:paddingRight="@dimen/margin5"
+android:paddingTop="@dimen/margin5" >
+
+	<TextView
+    android:id="@+id/text_report"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/text_report"
+    android:textSize="@dimen/font_text14" />
+	
+	<TableLayout
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" 
+	android:paddingTop="@dimen/margin15" >
+    	
+    	<TableRow 
+    	android:layout_width="fill_parent"
+		android:layout_height="wrap_content" >
+    	    
+    	    <TextView 
+			android:background="@drawable/cell_head" 
+			android:textColor="#000" 
+			android:textStyle="bold" 
+			android:gravity="center_horizontal" 
+			android:id="@+id/textView" 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_span="2"
+			android:layout_weight="1"
+			android:textSize="@dimen/font_text12" 
+			android:text="@string/riepilogo"
+			android:padding="@dimen/marginTableMeteo" />
+    	
+    	</TableRow>
+    	
+    </TableLayout>
+    
+	<ScrollView
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingBottom="@dimen/margin15"
+	android:paddingLeft="@dimen/margin15"
+	android:paddingRight="@dimen/margin15"
+	android:paddingTop="@dimen/margin5" >
+
+		<TableLayout
+		android:id="@+id/tableReport"     
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent" >
+		    
+		</TableLayout>
+			
+	</ScrollView>
+	
+</LinearLayout>
+
+

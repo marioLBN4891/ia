@@ -126,19 +126,5 @@ public class Componente {
 	}
 	
 	
-	public static boolean checkDispensaMobileAperta(String tipo, int stato, String nome, SQLiteDatabase db) {
-		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\" AND "+ComponentiTable.NOME+" = \""+ nome +"\"", null, null, null, ComponentiTable.NOME);
-		if (cursore.getCount() > 0)
-			return true;
-		else
-			return false;
-	}
 	
-	public static boolean checkDispensaMobile(String tipo, int stato, SQLiteDatabase db) {
-		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\" AND ("+ComponentiTable.NOME+" = \"Dispensa\" OR "+ComponentiTable.NOME+" = \"Mobile\")", null, null, null, ComponentiTable.NOME);
-		if (cursore.getCount() > 0)
-			return true;
-		else
-			return false;
-	}
 }

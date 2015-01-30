@@ -23,10 +23,6 @@ public class Utilities {
 	}
 
 	
-	public static void getMainMenuOnActivity(final Context context, Menu menu) {
-		((Activity)context).getMenuInflater().inflate(R.menu.main, menu);
-	}
-	
 	public static void getLogoutMenuOnActivity(final Context context, Menu menu) {
 		((Activity)context).getMenuInflater().inflate(R.menu.logout, menu);
 	}

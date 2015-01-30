@@ -18,10 +18,11 @@ import ai.smarthome.async.AsyncMeteo;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Componente;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.database.wrapper.Oggetto;
+import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Sensore;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
-import ai.smarthome.util.LogView;
 import ai.smarthome.util.UtilConfigurazione;
 import ai.smarthome.util.Utilities;
 import android.annotation.SuppressLint;
@@ -111,11 +112,13 @@ public class MainActivity extends Activity {
         
         AsyncConfigurazioneMeteo asyncConfMeteo = new AsyncConfigurazioneMeteo(this);
         asyncConfMeteo.execute();
+       
+        Report.reset(db);
+        Oggetto.reset(db);
         
         setContentView(R.layout.activity_main);
         setNavigationDrawer(savedInstanceState);
-        
-        LogView.info(Configurazione.toString(db));
+       
    }
 
     public void setNavigationDrawer(Bundle savedInstanceState) {
@@ -346,6 +349,7 @@ public class MainActivity extends Activity {
     	Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     	intent.putExtra(Costanti.UTENTE, user);
     	startActivity(intent);
+    	
     }
     
     public void cambiaSensori(View view) {
