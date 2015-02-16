@@ -2,8 +2,11 @@ package ai.smarthome.util.rest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +17,128 @@ import android.content.Context;
 
 
 public class Rest  {
-	final private static String serverAddress = "http://192.168.141.1:8080/WebServerProlog/prolog";
+	final private static String serverAddress = "http://192.168.70.1:8080/WebServerProlog/smarthome";
 	final static String GETPARAMETRIMAIL = "getParametriMail()";
 	final static String GETMETEOLOCALE= "getMeteoLocale()";
 	
 	
+	public static boolean consultProlog() {
+		
+		try {
+			URL url = new URL(serverAddress+"/consultProlog");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) {
+					LogView.info("Rest.consultProlog: ERRORE");
+					return false;
+				}
+			}
+			
+			boolean stato = Boolean.valueOf(line);
+			LogView.info("Rest.consultProlog: "+stato);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.consultProlog: ERRORE");
+			return false;
+		} 
+		
+	}
+	
+	public static boolean assertProlog(String azione, String tempo, String oggetto) {
+		
+		Map<String, String> form = new HashMap<String, String>();
+		form.put("azione", azione);
+		form.put("tempo", tempo);
+		form.put("oggetto", oggetto);
+		
+		try {
+			URL url = new URL(serverAddress+"/assertProlog?"+codificaForm(form));
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) {
+					LogView.info("Rest.assertProlog: ERRORE");
+					return false;
+				}
+			}
+			
+			boolean stato = Boolean.valueOf(line);
+			LogView.info("Rest.assertProlog: "+stato);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.assertProlog: ERRORE");
+			return false;
+		} 
+		
+	}
+
+	public static boolean assertPrologV2(String fatto) {
+		
+		try {
+			URL url = new URL(serverAddress+"/assertPrologV2?fatto="+fatto);
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.setConnectTimeout(1000 * 2);
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			boolean stato = false;
+			
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) {
+					LogView.info("Rest.assertPrologV2: ERRORE JSON - "+fatto);
+					return stato;
+				}
+				stato = Boolean.valueOf(json.getBoolean("esito"));
+			}
+			
+			LogView.info("Rest.assertPrologV2: "+stato+" - "+fatto);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.assertProlog: ERRORE EXC - "+fatto);
+			return false;
+		} 
+		
+	}
 	public static void apri() {
 		
 		try {
@@ -405,5 +525,20 @@ public class Rest  {
 			return null;
 		} 
 		
+	}
+	
+	private static String codificaForm(Map<String, String> data) {
+		StringBuffer sb= new StringBuffer();
+		try {
+			for(String key : data.keySet()) {
+				sb.append(URLEncoder.encode(key, "UTF-8"));
+				sb.append('=');
+				sb.append(URLEncoder.encode(data.get(key), "UTF-8"));
+				sb.append('&');
+			}
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException("Unsupported encoding UTF-8");
+		}
+		return sb.toString();
 	}
 }

@@ -23,6 +23,7 @@ import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Sensore;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
+import ai.smarthome.util.Prolog;
 import ai.smarthome.util.UtilConfigurazione;
 import ai.smarthome.util.Utilities;
 import android.annotation.SuppressLint;
@@ -342,13 +343,14 @@ public class MainActivity extends Activity {
     
     public void startSimulazione(View view) {
     	
- //   	ArrayList<String> lista = conf.toPrologRules("t0");
- //   	for(String stringa : lista) 
- //   		Log.i("PROLOG", stringa);
-    	
-    	Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
-    	intent.putExtra(Costanti.UTENTE, user);
-    	startActivity(intent);
+    	if(Prolog.startSimulazione(db)) {
+    		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
+    		intent.putExtra(Costanti.UTENTE, user);
+    		startActivity(intent);
+    	}
+    	else {
+    		
+    	}
     	
     }
     
