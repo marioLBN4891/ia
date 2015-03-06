@@ -2,14 +2,14 @@ package ai.smarthome.util.rest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import ai.smarthome.util.LogView;
@@ -17,15 +17,13 @@ import android.content.Context;
 
 
 public class Rest  {
-	final private static String serverAddress = "http://192.168.70.1:8080/WebServerProlog/smarthome";
+	final private static String serverAddress = "http://192.168.228.1:8080/ReLay/she";
 	final static String GETPARAMETRIMAIL = "getParametriMail()";
 	final static String GETMETEOLOCALE= "getMeteoLocale()";
 	
-	
-	public static boolean consultProlog() {
-		
+	public static void sendPosition(String user, String latitude, String longitude) {
 		try {
-			URL url = new URL(serverAddress+"/consultProlog");
+			URL url = new URL(serverAddress+"/sendPosition?user="+user+"+latitude="+latitude+"+longitude="+longitude);
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -37,37 +35,64 @@ public class Rest  {
 			conn.connect();
 			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			
-			JSONObject json = null;
+			String esito = null;
 			String line = null;
 			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) {
-					LogView.info("Rest.consultProlog: ERRORE");
+				JSONObject json = new JSONObject(line);
+				esito = json.getString("esito");
+				if(esito.contains("errore")) {
+					LogView.info("Rest.sendPosition: ERRORE");
+				}
+			}
+			boolean stato = Boolean.valueOf(esito);
+			LogView.info("Rest.sendPosition: "+stato);
+					
+		} catch (Exception e) {
+			LogView.info("Rest.sendPosition: ERRORE");
+		} 
+	}
+	
+	public static boolean start() {
+		
+		try {
+			URL url = new URL(serverAddress+"/start");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			String esito = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				JSONObject json = new JSONObject(line);
+				esito = json.getString("esito");
+				if(esito.contains("errore")) {
+					LogView.info("Rest.start: ERRORE");
 					return false;
 				}
 			}
-			
-			boolean stato = Boolean.valueOf(line);
-			LogView.info("Rest.consultProlog: "+stato);
+			boolean stato = Boolean.valueOf(esito);
+			LogView.info("Rest.start: "+stato);
 			return stato;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			LogView.info("Rest.consultProlog: ERRORE");
+			LogView.info("Rest.start: ERRORE");
 			return false;
 		} 
 		
 	}
 	
-	public static boolean assertProlog(String azione, String tempo, String oggetto) {
-		
-		Map<String, String> form = new HashMap<String, String>();
-		form.put("azione", azione);
-		form.put("tempo", tempo);
-		form.put("oggetto", oggetto);
+	public static boolean stop() {
 		
 		try {
-			URL url = new URL(serverAddress+"/assertProlog?"+codificaForm(form));
+			URL url = new URL(serverAddress+"/stop");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -79,338 +104,79 @@ public class Rest  {
 			conn.connect();
 			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			
-			JSONObject json = null;
+			String esito = null;
 			String line = null;
 			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) {
-					LogView.info("Rest.assertProlog: ERRORE");
+				JSONObject json = new JSONObject(line);
+				esito = json.getString("esito");
+				if(esito.contains("errore")) {
+					LogView.info("Rest.stop: ERRORE");
 					return false;
 				}
 			}
-			
-			boolean stato = Boolean.valueOf(line);
-			LogView.info("Rest.assertProlog: "+stato);
+			boolean stato = Boolean.valueOf(esito);
+			LogView.info("Rest.stop: "+stato);
 			return stato;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			LogView.info("Rest.assertProlog: ERRORE");
+			LogView.info("Rest.stop: ERRORE");
 			return false;
 		} 
 		
 	}
 
-	public static boolean assertPrologV2(String fatto) {
+	public static HashMap<String, Serializable> request(String fatto) {
+		
+		HashMap<String, Serializable> risultati = new HashMap<String, Serializable>();
+		ArrayList<String> listaFatti = new ArrayList<String>();
+		
+		risultati.put("esito", false);
+		risultati.put("listaFatti", listaFatti);
+		
 		
 		try {
-			URL url = new URL(serverAddress+"/assertPrologV2?fatto="+fatto);
+			URL url = new URL(serverAddress+"/request?fatto="+fatto);
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
+			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
-			conn.setConnectTimeout(1000 * 2);
 			conn.connect();
 			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			
 			JSONObject json = null;
 			String line = null;
-			boolean stato = false;
-			
 			while ((line = rd.readLine()) != null) {
 				json = new JSONObject(line);
 				if(line.contains("errore")) {
-					LogView.info("Rest.assertPrologV2: ERRORE JSON - "+fatto);
-					return stato;
+					LogView.info("Rest.request: ERRORE");
+					return risultati;
 				}
-				stato = Boolean.valueOf(json.getBoolean("esito"));
 			}
+			JSONArray jsonArray = json.getJSONArray("listaFatti");
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonFatto = jsonArray.getJSONObject(i);
+				listaFatti.add(jsonFatto.getString("fatto"));
+			}
+			boolean stato = Boolean.valueOf(json.getBoolean("esito"));
+			LogView.info("Rest.request: "+stato);
+			risultati.put("esito", stato);
+			risultati.put("listaFatti", listaFatti);
 			
-			LogView.info("Rest.assertPrologV2: "+stato+" - "+fatto);
-			return stato;
+			return risultati;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			LogView.info("Rest.assertProlog: ERRORE EXC - "+fatto);
-			return false;
-		} 
-		
-	}
-	public static void apri() {
-		
-		try {
-			URL url = new URL(serverAddress+"/apri");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.apri: ERRORE");
-			}
-			
-			LogView.info("Rest.apri: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.apri: ERRORE");
-			return ;
-		} 
-		
-	}
-	
-	public static void chiudi() {
-		
-		try {
-			URL url = new URL(serverAddress+"/chiudi");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.chiudi: ERRORE");
-			}
-			
-			LogView.info("Rest.chiudi: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.chiudi: ERRORE");
-			return ;
-		} 
-		
-	}
-	
-	public static void accendi() {
-		
-		try {
-			URL url = new URL(serverAddress+"/accendi");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.accendi: ERRORE");
-			}
-			
-			LogView.info("Rest.accendi: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.accendi: ERRORE");
-			return ;
-		} 
-		
-	}
-	
-	public static void spegni() {
-		
-		try {
-			URL url = new URL(serverAddress+"/chiudi");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.spegni: ERRORE");
-			}
-			
-			LogView.info("Rest.spegni: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.spegni: ERRORE");
-			return ;
-		} 
-		
-	}
-	
-	public static void prendi() {
-		
-		try {
-			URL url = new URL(serverAddress+"/prendi");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.prendi: ERRORE");
-			}
-			
-			LogView.info("Rest.prendi: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.prendi: ERRORE");
-			return ;
+			LogView.info("Rest.request: ERRORE");
+			return risultati;
 		} 
 		
 	}
 
-	public static void lascia() {
-		
-		try {
-			URL url = new URL(serverAddress+"/lascia");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.lascia: ERRORE");
-			}
-			
-			LogView.info("Rest.lascia: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.lascia: ERRORE");
-			return ;
-		} 
-		
-	}
-
-	public static void consenti() {
-		
-		try {
-			URL url = new URL(serverAddress+"/consenti");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.consenti: ERRORE");
-			}
-			
-			LogView.info("Rest.consenti: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.consenti: ERRORE");
-			return ;
-		} 
-		
-	}
-
-	public static void rifiuta() {
-		
-		try {
-			URL url = new URL(serverAddress+"/rifiuta");
-		
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			BufferedReader rd;
-			conn.connect();
-			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			
-			JSONObject json = null;
-			String line = null;
-			while ((line = rd.readLine()) != null) {
-				json = new JSONObject(line);
-				if(line.contains("errore")) 
-					LogView.info("Rest.rifiuta: ERRORE");
-			}
-			
-			LogView.info("Rest.rifiuta: OK");
-			return ;
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			LogView.info("Rest.rifiuta: ERRORE");
-			return ;
-		} 
-		
-	}
-	
 	public static Map<String,String> getParametriMail() {
 		
 		final String EMAIL_FROM = "email_from";
@@ -492,12 +258,21 @@ public class Rest  {
 			
 			JSONObject datiMeteo = json.getJSONObject("data");
 			
+			int tempInt = 0;
 			int temperaturaC = ((datiMeteo.getInt("temperature")-32)*5)/9;
-			if (temperaturaC <= 10 ) temperaturaC = 10;
-			if (temperaturaC >= 35 ) temperaturaC = 35;
-			temperaturaC = (temperaturaC - 10) * 4;
+			tempInt = temperaturaC;
+			if (temperaturaC <= -10 ) {
+				temperaturaC = -10;
+				tempInt = 2;
+			}
+			if (temperaturaC >= 40 ) {
+				temperaturaC = 40;
+				tempInt = 33;
+			}
+			temperaturaC = temperaturaC + 10;
 			
 			parametri.put("tempEst", temperaturaC);
+			parametri.put("tempInt", tempInt);
 			
 			String meteo = datiMeteo.getString("skytext");
 			int meteoClima = 0;
@@ -511,9 +286,9 @@ public class Rest  {
 			parametri.put("meteo", meteoClima);
 			parametri.put("visibilita", meteoClima);
 			
-			parametri.put("umidita", datiMeteo.getInt("humidity"));
-			
-			int vento = 2 * datiMeteo.getInt("wind");
+			parametri.put("umiditaEst", datiMeteo.getInt("humidity"));
+			parametri.put("umiditaInt", datiMeteo.getInt("humidity"));
+			int vento = datiMeteo.getInt("wind");
 			parametri.put("vento", vento);
 			
 			LogView.info("Rest.getMeteoLocale: OK");
@@ -527,18 +302,5 @@ public class Rest  {
 		
 	}
 	
-	private static String codificaForm(Map<String, String> data) {
-		StringBuffer sb= new StringBuffer();
-		try {
-			for(String key : data.keySet()) {
-				sb.append(URLEncoder.encode(key, "UTF-8"));
-				sb.append('=');
-				sb.append(URLEncoder.encode(data.get(key), "UTF-8"));
-				sb.append('&');
-			}
-		} catch(UnsupportedEncodingException e) {
-			throw new RuntimeException("Unsupported encoding UTF-8");
-		}
-		return sb.toString();
-	}
+	
 }

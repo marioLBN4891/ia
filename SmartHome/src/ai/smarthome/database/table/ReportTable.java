@@ -8,11 +8,15 @@ public interface ReportTable extends BaseColumns
  
 	String AZIONE = "azione";
 	String PROLOG = "prolog";
+	String ITEM = "item";
+	String STATO = "stato";
 	
 	String[] COLUMNS = new String[] {
 			_ID,
 			AZIONE,
-			PROLOG
+			PROLOG,
+			ITEM,
+			STATO
 	};
 
 }

@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 public class MeteoFragment extends Fragment {
 	
-	private SeekBar seekMeteo, seekTempEst, seekUmidita, seekVento; 
-    private TextView textMeteo, textTempEst, textUmidita, textVento;
+	private SeekBar seekMeteo, seekTempInt, seekTempEst, seekUmiditaInt, seekUmiditaEst, seekVento; 
+    private TextView textMeteo, textTempInt, textTempEst, textUmiditaInt, textUmiditaEst, textVento;
     private SQLiteDatabase db;
     
     public MeteoFragment() {
@@ -39,26 +39,36 @@ public class MeteoFragment extends Fragment {
         Configurazione meteo = Configurazione.getConfigurazione(db);
         
         seekMeteo = (SeekBar) rootView.findViewById(R.id.seekMeteo);
+        seekTempInt = (SeekBar) rootView.findViewById(R.id.seekTemperaturaInterna);
         seekTempEst = (SeekBar) rootView.findViewById(R.id.seekTemperaturaEsterna);
-        seekUmidita = (SeekBar) rootView.findViewById(R.id.seekUmidita);
+        seekUmiditaInt = (SeekBar) rootView.findViewById(R.id.seekUmiditaInterna);
+        seekUmiditaEst = (SeekBar) rootView.findViewById(R.id.seekUmiditaEsterna);
         seekVento = (SeekBar) rootView.findViewById(R.id.seekVento);
         
         textMeteo = (TextView) rootView.findViewById(R.id.textMeteo);
+        textTempInt = (TextView) rootView.findViewById(R.id.textTemperaturaInterna);
         textTempEst = (TextView) rootView.findViewById(R.id.textTemperaturaEsterna);
-        textUmidita = (TextView) rootView.findViewById(R.id.textUmidita);
+        textUmiditaInt = (TextView) rootView.findViewById(R.id.textUmiditaInterna);
+        textUmiditaEst = (TextView) rootView.findViewById(R.id.textUmiditaEsterna);
         textVento = (TextView) rootView.findViewById(R.id.textVento);
         
         setTextMeteo(meteo.getMeteo());
-        UtilConfigurazione.setTextViewTemperatura(textTempEst, meteo.getTemperatura());
-        textTempEst.setText("Temperatura: "+textTempEst.getText());
-        UtilConfigurazione.setTextViewUmidita(textUmidita, meteo.getUmidita());
-        textUmidita.setText("Umidità: "+textUmidita.getText());
+        UtilConfigurazione.setTextViewTemperaturaInterna(textTempInt, meteo.getTemperaturaInt());
+        textTempInt.setText("Temperatura interna: "+textTempInt.getText());
+        UtilConfigurazione.setTextViewTemperaturaEsterna(textTempEst, meteo.getTemperaturaEst());
+        textTempEst.setText("Temperatura esterna: "+textTempEst.getText());
+        UtilConfigurazione.setTextViewUmidita(textUmiditaInt, meteo.getUmiditaInt());
+        textUmiditaInt.setText("Umidità interna: "+textUmiditaInt.getText());
+        UtilConfigurazione.setTextViewUmidita(textUmiditaEst, meteo.getUmiditaEst());
+        textUmiditaEst.setText("Umidità esterna: "+textUmiditaEst.getText());
         UtilConfigurazione.setTextViewVento(textVento, meteo.getVento());
         textVento.setText("Vento: "+textVento.getText());
         
         seekMeteo.setProgress(meteo.getMeteo());
-        seekTempEst.setProgress(meteo.getTemperatura());
-        seekUmidita.setProgress(meteo.getUmidita());
+        seekTempInt.setProgress(meteo.getTemperaturaInt());
+        seekTempEst.setProgress(meteo.getTemperaturaEst());
+        seekUmiditaInt.setProgress(meteo.getUmiditaInt());
+        seekUmiditaEst.setProgress(meteo.getUmiditaEst());
         seekVento.setProgress(meteo.getVento());
         
         seekMeteo.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -78,11 +88,28 @@ public class MeteoFragment extends Fragment {
         });
         
         
+        seekTempInt.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        	@Override
+        	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        		UtilConfigurazione.setTextViewTemperaturaInterna(textTempInt, progress);
+        		textTempInt.setText("Temperatura interna: "+textTempInt.getText());
+        	}
+
+        	@Override
+        	public void onStartTrackingTouch(SeekBar seekBar) {
+        	}
+
+        	@Override
+        	public void onStopTrackingTouch(SeekBar seekBar) {
+        	}
+        	
+        });
+        
         seekTempEst.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewTemperatura(textTempEst, progress);
-        		textTempEst.setText("Temperatura: "+textTempEst.getText());
+        		UtilConfigurazione.setTextViewTemperaturaEsterna(textTempEst, progress);
+        		textTempEst.setText("Temperatura esterna: "+textTempEst.getText());
         	}
 
         	@Override
@@ -95,11 +122,11 @@ public class MeteoFragment extends Fragment {
         	
         });
         
-        seekUmidita.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        seekUmiditaInt.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewUmidita(textUmidita, progress);
-        		textUmidita.setText("Umidità: "+textUmidita.getText());
+        		UtilConfigurazione.setTextViewUmidita(textUmiditaInt, progress);
+        		textUmiditaInt.setText("Umidità interna: "+textUmiditaInt.getText());
         	}
 
         	@Override
@@ -112,6 +139,22 @@ public class MeteoFragment extends Fragment {
         	
         });
         
+        seekUmiditaEst.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        	@Override
+        	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        		UtilConfigurazione.setTextViewUmidita(textUmiditaEst, progress);
+        		textUmiditaEst.setText("Umidità esterna: "+textUmiditaEst.getText());
+        	}
+
+        	@Override
+        	public void onStartTrackingTouch(SeekBar seekBar) {
+        	}
+
+        	@Override
+        	public void onStopTrackingTouch(SeekBar seekBar) {
+        	}
+        	
+        });
         
         seekVento.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
@@ -137,20 +180,22 @@ public class MeteoFragment extends Fragment {
     
     private void setTextMeteo(int progress) {
     	if (progress <= 35) 
-    		setClima("Condizioni generali: PIOVOSO", 10, 80, 30);
+    		setClima("Condizioni generali: PIOVOSO", 20, 10, 70, 80, 7);
 		if (progress > 35 && progress <= 65) 
-			setClima("Condizioni generali: NUVOLOSO", 40, 50, 10);
+			setClima("Condizioni generali: NUVOLOSO", 50, 40, 50, 50, 4);
 		if (progress > 65 && progress <= 80) 
-			setClima("Condizioni generali: SERENO", 70, 60, 30);
+			setClima("Condizioni generali: SERENO", 60, 70, 70, 60, 2);
 		if (progress > 80) 
-			setClima("Condizioni generali: SOLEGGIATO", 90, 90, 10);
+			setClima("Condizioni generali: SOLEGGIATO", 80, 90, 80, 90, 0);
 		
     }
     
-    private void setClima(String meteo, int tempEst, int umidita, int vento) {
+    private void setClima(String meteo, int tempInt, int tempEst, int umiditaInt, int umiditaEst, int vento) {
     	textMeteo.setText(meteo);
+    	seekTempInt.setProgress(tempInt);
     	seekTempEst.setProgress(tempEst);
-		seekUmidita.setProgress(umidita);
+		seekUmiditaInt.setProgress(umiditaInt);
+		seekUmiditaEst.setProgress(umiditaEst);
 		seekVento.setProgress(vento);
 		}
     

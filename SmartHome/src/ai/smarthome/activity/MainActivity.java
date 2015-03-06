@@ -13,8 +13,8 @@ import ai.smarthome.activity.fragmentMain.DataFragment;
 import ai.smarthome.activity.fragmentMain.InfoPersonaliFragment;
 import ai.smarthome.activity.fragmentMain.MeteoFragment;
 import ai.smarthome.activity.fragmentMain.SensoriFragment;
-import ai.smarthome.async.AsyncConfigurazioneMeteo;
 import ai.smarthome.async.AsyncMeteo;
+import ai.smarthome.async.AsyncPosition;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Componente;
 import ai.smarthome.database.wrapper.Configurazione;
@@ -53,34 +53,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-/**
- * This example illustrates a common usage of the DrawerLayout widget
- * in the Android support library.
- * <p/>
- * <p>When a navigation (left) drawer is present, the host activity should detect presses of
- * the action bar's Up affordance as a signal to open and close the navigation drawer. The
- * ActionBarDrawerToggle facilitates this behavior.
- * Items within the drawer should fall into one of two categories:</p>
- * <p/>
- * <ul>
- * <li><strong>View switches</strong>. A view switch follows the same basic policies as
- * list or tab navigation in that a view switch does not create navigation history.
- * This pattern should only be used at the root activity of a task, leaving some form
- * of Up navigation active for activities further down the navigation hierarchy.</li>
- * <li><strong>Selective Up</strong>. The drawer allows the user to choose an alternate
- * parent for Up navigation. This allows a user to jump across an app's navigation
- * hierarchy at will. The application should treat this as it treats Up navigation from
- * a different task, replacing the current task stack using TaskStackBuilder or similar.
- * This is the only form of navigation drawer that should be used outside of the root
- * activity of a task.</li>
- * </ul>
- * <p/>
- * <p>Right side drawers should be used for actions, not navigation. This follows the pattern
- * established by the Action Bar that navigation should be to the left and actions to the right.
- * An action should be an operation performed on the current contents of the window,
- * for example enabling or disabling a data overlay on top of the current content.</p>
- */
-
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
     
@@ -111,8 +83,8 @@ public class MainActivity extends Activity {
         	if(bundle.get(Costanti.UTENTE) != null) 
         		user = (Utente) bundle.get(Costanti.UTENTE);
         
-        AsyncConfigurazioneMeteo asyncConfMeteo = new AsyncConfigurazioneMeteo(this);
-        asyncConfMeteo.execute();
+        AsyncPosition asyncPosition= new AsyncPosition(this);
+        asyncPosition.execute();
        
         Report.reset(db);
         Oggetto.reset(db);
@@ -343,13 +315,22 @@ public class MainActivity extends Activity {
     
     public void startSimulazione(View view) {
     	
-    	if(Prolog.startSimulazione(db)) {
+    	if(Prolog.startSimulazione()) {
     		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     		intent.putExtra(Costanti.UTENTE, user);
+    		intent.putExtra("listaFattiDedotti", Prolog.eseguiConfigurazione(db));
     		startActivity(intent);
+    		finish();
     	}
     	else {
-    		
+    		new AlertDialog.Builder(this)
+     			.setTitle("Errore")
+     			.setMessage("Impossibile connettersi al server")
+     			.setPositiveButton("Indietro",new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog,int id) {
+    					dialog.cancel();
+    				}
+    			}).create().show();
     	}
     	
     }
@@ -380,17 +361,19 @@ public class MainActivity extends Activity {
     public void cambiaMeteo(View view) {
     	
     	SeekBar seekMeteo = (SeekBar)findViewById(R.id.seekMeteo);
+    	SeekBar seekTempInt = (SeekBar)findViewById(R.id.seekTemperaturaInterna);
     	SeekBar seekTempEst = (SeekBar)findViewById(R.id.seekTemperaturaEsterna);
-    	SeekBar seekUmidita = (SeekBar)findViewById(R.id.seekUmidita);
+    	SeekBar seekUmiditaInt = (SeekBar)findViewById(R.id.seekUmiditaInterna);
+    	SeekBar seekUmiditaEst = (SeekBar)findViewById(R.id.seekUmiditaEsterna);
     	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
     	
-    	UtilConfigurazione.updateMeteo(db, "-", seekMeteo.getProgress(), seekTempEst.getProgress(), seekUmidita.getProgress(), seekVento.getProgress());
+    	UtilConfigurazione.updateMeteo(db, "-", seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress());
     	
         Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
     }
     
     public void cambiaMeteoSole(View view) {
- 		UtilConfigurazione.updateMeteo(db, "-", 90, 90, 90, 10);
+ 		UtilConfigurazione.updateMeteo(db, "-", 90, 25, 40, 80, 90, 0);
  		Date data = new Date();
  		data.setMonth(Calendar.AUGUST);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -398,7 +381,7 @@ public class MainActivity extends Activity {
  	}
  	
     public void cambiaMeteoSereno(View view) {
- 		UtilConfigurazione.updateMeteo(db, "-", 70, 70, 60, 30); 
+ 		UtilConfigurazione.updateMeteo(db, "-", 70, 20, 30, 50, 60, 2); 
  		Date data = new Date();
  		data.setMonth(Calendar.MAY);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -406,7 +389,7 @@ public class MainActivity extends Activity {
  	}
  		
     public void cambiaMeteoNuvole(View view) {
- 		UtilConfigurazione.updateMeteo(db, "-", 40, 40, 50, 10);
+ 		UtilConfigurazione.updateMeteo(db, "-", 40, 15, 25, 45, 50, 4);
  		Date data = new Date();
  		data.setMonth(Calendar.NOVEMBER);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -414,7 +397,7 @@ public class MainActivity extends Activity {
  	}
  	
 	public void cambiaMeteoPioggia(View view) {
-    	UtilConfigurazione.updateMeteo(db, "-", 20, 10, 80, 30);
+    	UtilConfigurazione.updateMeteo(db, "-", 20, 10, 25, 70, 80, 7);
  		Date data = new Date();
  		data.setMonth(Calendar.JANUARY);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -432,15 +415,19 @@ public class MainActivity extends Activity {
     	TextView localitaText = (TextView) findViewById(R.id.textLoc);
         TextView dataText = (TextView) findViewById(R.id.textData);
         TextView climaMeteo = (TextView) findViewById(R.id.textMeteo);
-        TextView climaTempEst = (TextView) findViewById(R.id.textTemperatura);
-        TextView climaUmidita = (TextView) findViewById(R.id.textUmidita);
+        TextView climaTempInt = (TextView) findViewById(R.id.textTemperaturaInterna);
+        TextView climaTempEst = (TextView) findViewById(R.id.textTemperaturaEsterna);
+        TextView climaUmiditaInt = (TextView) findViewById(R.id.textUmiditaInterna);
+        TextView climaUmiditaEst = (TextView) findViewById(R.id.textUmiditaEsterna);
         TextView climaVento = (TextView) findViewById(R.id.textVento);
         UtilConfigurazione.setTextViewLocalita(localitaText, meteo.getLocalita());
         UtilConfigurazione.setTextViewData(dataText, meteo.getData());
         UtilConfigurazione.setTextViewOrario(dataText, meteo.getOra(), meteo.getMinuti());
         UtilConfigurazione.setTextViewMeteo(climaMeteo, meteo.getMeteo());
-        UtilConfigurazione.setTextViewTemperatura(climaTempEst, meteo.getTemperatura());
-        UtilConfigurazione.setTextViewUmidita(climaUmidita, meteo.getUmidita());
+        UtilConfigurazione.setTextViewTemperaturaInterna(climaTempInt, meteo.getTemperaturaInt());
+        UtilConfigurazione.setTextViewTemperaturaEsterna(climaTempEst, meteo.getTemperaturaEst());
+        UtilConfigurazione.setTextViewUmidita(climaUmiditaInt, meteo.getUmiditaInt());
+        UtilConfigurazione.setTextViewUmidita(climaUmiditaEst, meteo.getUmiditaEst());
         UtilConfigurazione.setTextViewVento(climaVento, meteo.getVento());
     }
     

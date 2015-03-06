@@ -9,6 +9,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 
 import ai.smarthome.R;
+import ai.smarthome.async.AsyncConfigurazioneMeteo;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
 import ai.smarthome.util.LogView;
@@ -38,6 +39,9 @@ public class StartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 	    StrictMode.setThreadPolicy(policy);
 	  
+	    AsyncConfigurazioneMeteo asyncConfMeteo = new AsyncConfigurazioneMeteo(this);
+        asyncConfMeteo.execute();
+        
 	    Session session = Session.openActiveSessionFromCache(this);
         
         uiHelper = new UiLifecycleHelper(this, callback);

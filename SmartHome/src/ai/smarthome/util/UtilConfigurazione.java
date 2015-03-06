@@ -23,14 +23,20 @@ public class UtilConfigurazione {
     }
 	
 	public static void setTextViewVento(TextView textvento, int progress) {
-    	if (progress == 0) 
-    		textvento.setText("ASSENTE");
-		if (progress > 0 && progress <= 33) 
-			textvento.setText("DEBOLE");
-		if (progress > 33 && progress <= 66) 
-			textvento.setText("MODERATO");
-		if (progress > 66) 
-			textvento.setText("FORTE");
+    	if (progress >= 0 && progress <= 1) textvento.setText("CALMO");
+    	if (progress >= 2 && progress <= 3) textvento.setText("BAVA DI VENTO");
+    	if (progress >= 4 && progress <= 6) textvento.setText("BREZZA LEGGERA");
+    	if (progress >= 7 && progress <= 10) textvento.setText("BREZZA");
+    	if (progress >= 11 && progress <= 16) textvento.setText("BREZZA VIVACE");
+    	if (progress >= 17 && progress <= 21) textvento.setText("BREZZA TESA");
+    	if (progress >= 22 && progress <= 27) textvento.setText("VENTO FRESCO");
+    	if (progress >= 28 && progress <= 33) textvento.setText("VENTO FORTE");
+    	if (progress >= 34 && progress <= 40) textvento.setText("BURRASCA MODERATA");
+    	if (progress >= 41 && progress <= 47) textvento.setText("BURRASCA FORTE");
+    	if (progress >= 48 && progress <= 55) textvento.setText("TEMPESTA");
+    	if (progress >= 56 && progress <= 63) textvento.setText("FORTUNALE");
+    	if (progress >= 64) textvento.setText("URAGANO");
+    	
     }
 	
 	public static void setTextViewMeteo(TextView textmeteo, int progress) {
@@ -44,21 +50,25 @@ public class UtilConfigurazione {
 			textmeteo.setText("SOLEGGIATO");
 	}
     
-	public static void setTextViewTemperatura(TextView texttempest, int progress) {
-    	int temperatura = 10 + (progress / 4) ;
-    	texttempest.setText(temperatura + " °C");
+	public static void setTextViewTemperaturaInterna(TextView texttemp, int progress) {
+    	if (progress != 40 )
+    		texttemp.setText(progress + " °C");
+    	else
+    		texttemp.setText(progress + " °C e oltre");
+	
     }
     
-	public static void setTextViewUmidita(TextView textumidita, int progress) {
-    	if (progress <= 25) 
-    		textumidita.setText("BASSA");
-		if (progress > 25 && progress <= 50)
-			textumidita.setText("MEDIO-BASSA");
-		if (progress > 50 && progress <= 75) 
-			textumidita.setText("MEDIO-ALTA");
-		if (progress > 75) 
-			textumidita.setText("ALTA");
+	public static void setTextViewTemperaturaEsterna(TextView texttemp, int progress) {
+    	if (progress > 0 && progress < 50)
+    		texttemp.setText((progress-10) + " °C");
+    	
+    	if (progress == 0 || progress == 50)
+    		texttemp.setText((progress-10) + " °C e oltre");
     }
+	
+	public static void setTextViewUmidita(TextView textumidita, int progress) {
+    	textumidita.setText(progress+"%");
+	}
 
 	public static void setTextViewComponenti(TextView textcomponenti, int progress) {
 		if (progress == 1) 
@@ -67,8 +77,8 @@ public class UtilConfigurazione {
 			textcomponenti.setText("Standard");
 	}
 	
-	public static void updateMeteo(SQLiteDatabase db, String loc, int meteo, int temp, int umidita, int vento) {
-    	Configurazione.updateMeteo(db, loc, meteo, temp, umidita, vento);
+	public static void updateMeteo(SQLiteDatabase db, String loc, int meteo, int tempInt, int tempEst, int umiditaInt, int umiditaEst, int vento) {
+    	Configurazione.updateMeteo(db, loc, meteo, tempInt, tempEst, umiditaInt, umiditaEst, vento);
     }
 
 	public static void updateData(SQLiteDatabase db, long data) {

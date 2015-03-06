@@ -9,6 +9,7 @@ import ai.smarthome.database.wrapper.Oggetto;
 import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
+import ai.smarthome.util.Prolog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -34,6 +35,7 @@ public class SimulazioneActivity extends Activity  {
 	private Button apriButton, chiudiButton, accendiButton, spegniButton, prendiButton, lasciaButton, consentiButton, negaButton;
 	private int contatoreAzioni = 0;
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,9 +46,11 @@ public class SimulazioneActivity extends Activity  {
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
+		ArrayList<String> listaFattiDedotti = new ArrayList<String>();
 		Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
             user = (Utente) bundle.get(Costanti.UTENTE);
+            listaFattiDedotti = (ArrayList<String>) bundle.get("listaFattiDedotti");
         }
 		 
         apriButton = (Button) findViewById(R.id.buttonApri);
@@ -67,6 +71,9 @@ public class SimulazioneActivity extends Activity  {
         
         consentiButton.setEnabled(false);
         negaButton.setEnabled(false);
+        
+        if (listaFattiDedotti != null && !listaFattiDedotti.isEmpty())
+        	Report.insertFattiDedotti(db, listaFattiDedotti);
         
         ArrayList<Report> lista = Report.getLista(db);
 		
@@ -138,6 +145,16 @@ public class SimulazioneActivity extends Activity  {
         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+            	if (!Prolog.stopSimulazione()) {
+            		new AlertDialog.Builder(getApplicationContext())
+         			.setTitle("Errore")
+         			.setMessage("Impossibile chiudere correttamente la sessione.")
+         			.setPositiveButton("Continua",new DialogInterface.OnClickListener() {
+        				public void onClick(DialogInterface dialog,int id) {
+        					dialog.cancel();
+        				}
+        			}).create().show();
+            	}
             	Intent intent = new Intent(SimulazioneActivity.this, MainActivity.class);
             	intent.putExtra(Costanti.UTENTE, user);
                 startActivity(intent);
@@ -167,10 +184,11 @@ public class SimulazioneActivity extends Activity  {
 			 						String checkedItem1 = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
 			 						Oggetto.prendi(db, checkedItem1);
 			 						lasciaButton.setEnabled(true);
-			 						viewSelectedAction("Hai Aperto: ", checkedItem);
-			 						viewSelectedAction("Hai Preso: ", checkedItem1);
-			 						viewSelectedAction("Hai Chiuso: ", checkedItem);
-			 					}
+			 						
+			 						String fatto = "preso("+checkedItem1+","+contatoreAzioni+")";
+			 						viewSelectedAction("Hai Preso: ", checkedItem1, fatto, 1, Prolog.eseguiFatto(contatoreAzioni, fatto, "1"));
+			 						
+			 						}
 			 				})
 			 				.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
 			 					public void onClick(DialogInterface dialog,int id) {
@@ -182,7 +200,9 @@ public class SimulazioneActivity extends Activity  {
 					else {
 						Componente.apri(db, checkedItem);
 						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
-						viewSelectedAction("Hai Aperto: ", checkedItem);
+						
+						String fatto1 = checkedItem+"Open("+contatoreAzioni+")";
+ 						viewSelectedAction("Hai Aperto: ", checkedItem, fatto1, 1, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
 					}
 				}
 			})
@@ -207,7 +227,9 @@ public class SimulazioneActivity extends Activity  {
 					Componente.chiudi(db, checkedItem);
 					chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
 					
-					viewSelectedAction("Hai Chiuso: ", checkedItem);}
+					String fatto1 = checkedItem+"Close("+contatoreAzioni+")";
+					viewSelectedAction("Hai Chiuso: ", checkedItem, fatto1, 0, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
+				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
@@ -231,7 +253,8 @@ public class SimulazioneActivity extends Activity  {
 					spegniButton.setEnabled(true);
 					accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
 					
-					viewSelectedAction("Hai Acceso: ", checkedItem);
+					String fatto1 = checkedItem+"On("+contatoreAzioni+")";
+					viewSelectedAction("Hai Acceso: ", checkedItem, fatto1, 1, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
 			    }
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -256,7 +279,8 @@ public class SimulazioneActivity extends Activity  {
 					accendiButton.setEnabled(true);
 					spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
 					
-					viewSelectedAction("Hai Spento: ", checkedItem);
+					String fatto1 = checkedItem+"Off("+contatoreAzioni+")";
+					viewSelectedAction("Hai Spento: ", checkedItem, fatto1, 0, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
 					
 				}
 			})
@@ -281,7 +305,9 @@ public class SimulazioneActivity extends Activity  {
 					Oggetto.prendi(db, checkedItem);
 					lasciaButton.setEnabled(true);
 					prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-					viewSelectedAction("Hai preso: ", checkedItem);
+					
+					String fatto = "preso("+checkedItem+","+contatoreAzioni+")";
+					viewSelectedAction("Hai preso: ", checkedItem, fatto, 1, Prolog.eseguiFatto(contatoreAzioni, fatto, "1"));
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -306,7 +332,8 @@ public class SimulazioneActivity extends Activity  {
 					lasciaButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
 					prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
 					
-					viewSelectedAction("Hai Lasciato: ", checkedItem);
+					String fatto = "lascia("+checkedItem+","+contatoreAzioni+")";
+					viewSelectedAction("Hai Lasciato: ", checkedItem, fatto, 0, Prolog.eseguiFatto(contatoreAzioni, fatto, "1"));
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -354,16 +381,16 @@ public class SimulazioneActivity extends Activity  {
  			
 	}
 	
-	private void viewSelectedAction(String message, String checkedItem) {
-		
+	private void viewSelectedAction(String message, String checkedItem, String prolog, int stato, ArrayList<String> listaFattiDedotti) {
+	
 		TableLayout tableLayout = (TableLayout) findViewById(R.id.tableSVlayout);
 	    TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
 	    lp.setMargins(10, 2, 10, 3);
 	    
 	    ArrayList<Report> lista = Report.getLista(db);
 	    
-	    Report.insert(db, contatoreAzioni, message+checkedItem, "123");
-		
+	    Report.insert(db, contatoreAzioni, message+checkedItem, prolog, checkedItem, stato);
+	    Report.insertFattiDedotti(db, listaFattiDedotti);
 		
 	    tableLayout.removeAllViews();
 	    
@@ -406,6 +433,29 @@ public class SimulazioneActivity extends Activity  {
 	    riga.addView(textView1);
 	    riga.addView(textView2);
 	    tableLayout.addView(riga, 0);
+	    
+	    
+	    ArrayList<Report> listaDed = Report.listaDedottiToListaReport(listaFattiDedotti);
+	    
+	    for (Report r: listaDed) {
+	    	TextView textView3 = new TextView(this);
+		    textView3.setText("t" + r.getId());
+		    textView3.setTextColor(Color.CYAN);
+		    textView3.setTextSize(16);
+		    textView3.setLayoutParams(lp);
+		    
+		    TextView textView4 = new TextView(this);
+		    textView4.setText(r.getAzione());
+		    textView4.setTextColor(Color.CYAN);
+		    textView4.setTextSize(16);
+		    textView4.setLayoutParams(lp);
+		        
+		    TableRow rigaDed = new TableRow(this);
+		    rigaDed.setLayoutParams(lp);
+		    rigaDed.addView(textView3);
+		    rigaDed.addView(textView4);
+		    tableLayout.addView(rigaDed, 0);
+		}
 	    
 	    contatoreAzioni++;
 		

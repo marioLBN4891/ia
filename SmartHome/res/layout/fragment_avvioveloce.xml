@@ -172,19 +172,42 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:textSize="@dimen/font_text12" 
-			android:text="@string/temp"
+			android:text="@string/temperaturaInterna"
 			android:padding="@dimen/marginTableMeteo" />
 		
 			<TextView 
 			android:background="@drawable/cell_bodytext" 
-			android:id="@+id/textTemperatura" 
+			android:id="@+id/textTemperaturaInterna" 
 			android:layout_width="160dp"
 			android:layout_height="wrap_content"
 			android:textSize="@dimen/font_text12"
 			android:padding="@dimen/marginTableMeteo"  />
 		
 		</TableRow>
-    	
+    	<TableRow 
+    	android:layout_width="fill_parent"
+		android:layout_height="wrap_content" >	
+		
+        	<TextView 
+			android:background="@drawable/cell_body" 
+			android:id="@+id/textView3_1" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:textSize="@dimen/font_text12" 
+			android:text="@string/temperaturaEsterna"
+			android:padding="@dimen/marginTableMeteo" />
+		
+			<TextView 
+			android:background="@drawable/cell_bodytext" 
+			android:id="@+id/textTemperaturaEsterna" 
+			android:layout_width="160dp"
+			android:layout_height="wrap_content"
+			android:textSize="@dimen/font_text12"
+			android:padding="@dimen/marginTableMeteo"  />
+		
+		</TableRow>
+		
 		<TableRow 
     	android:layout_width="fill_parent"
 		android:layout_height="wrap_content" >	
@@ -196,12 +219,12 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:textSize="@dimen/font_text12" 
-			android:text="@string/umid"
+			android:text="@string/umiditaInterna" 
 			android:padding="@dimen/marginTableMeteo" />
 		
 			<TextView 
 			android:background="@drawable/cell_bodytext" 
-			android:id="@+id/textUmidita" 
+			android:id="@+id/textUmiditaInterna" 
 			android:layout_width="160dp"
 			android:layout_height="wrap_content" 
 			android:textSize="@dimen/font_text12"
@@ -209,6 +232,30 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 		
 		</TableRow>
     	
+		<TableRow 
+    	android:layout_width="fill_parent"
+		android:layout_height="wrap_content" >	
+        
+        	<TextView 
+			android:background="@drawable/cell_body" 
+			android:id="@+id/textView4_1" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:textSize="@dimen/font_text12" 
+			android:text="@string/umiditaEsterna"
+			android:padding="@dimen/marginTableMeteo" />
+		
+			<TextView 
+			android:background="@drawable/cell_bodytext" 
+			android:id="@+id/textUmiditaEsterna" 
+			android:layout_width="160dp"
+			android:layout_height="wrap_content" 
+			android:textSize="@dimen/font_text12"
+			android:padding="@dimen/marginTableMeteo"  />
+		
+		</TableRow>
+		
 		<TableRow 
     	android:layout_width="fill_parent"
 		android:layout_height="wrap_content" >	

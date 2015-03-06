@@ -17,12 +17,14 @@ public class Componente {
 	private String NOME;
 	private String TIPO;
 	private int STATO;
+	private String PROLOG;
 	
-	public Componente(int id, String nome, String tipo, int stato) {
+	public Componente(int id, String nome, String tipo, int stato, String prolog) {
 		this.ID = id;
 		this.NOME = nome;
 		this.STATO = stato;
 		this.TIPO = tipo;
+		this.PROLOG = prolog;
 	}
 	
 	public int getId() {
@@ -39,12 +41,17 @@ public class Componente {
 	public int getStato() {
 		return this.STATO;
 	}
+	
+	public String getProlog() {
+		return this.PROLOG;
+	}
 
-	public static void setConfigurazione(SQLiteDatabase db, String nome, String tipo, int stato) {
+	public static void setConfigurazione(SQLiteDatabase db, String nome, String tipo, int stato, String prolog) {
 		ContentValues value = new ContentValues();
 		value.put(ComponentiTable.NOME, nome);
 		value.put(ComponentiTable.TIPO, tipo);
 		value.put(ComponentiTable.STATO, stato);
+		value.put(ComponentiTable.PROLOG, prolog);
 		db.insert(ComponentiTable.TABLE_NAME, null, value);
 	}
 
@@ -66,7 +73,7 @@ public class Componente {
 		
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Componente(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Componente(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3), cursore.getString(4)));
 		
 		return lista;
 	}
@@ -89,7 +96,7 @@ public class Componente {
 		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, null, null, null, null, ComponentiTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Componente(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Componente(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3), cursore.getString(4)));
 		return lista;
 	}
 	

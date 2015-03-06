@@ -40,8 +40,10 @@ public class AvvioVeloceFragment extends Fragment {
         TextView textLoc = (TextView) rootView.findViewById(R.id.textLoc);
         TextView textData = (TextView) rootView.findViewById(R.id.textData);
         TextView textMeteo = (TextView) rootView.findViewById(R.id.textMeteo);
-        TextView textTemperatura = (TextView) rootView.findViewById(R.id.textTemperatura);
-        TextView textUmidita = (TextView) rootView.findViewById(R.id.textUmidita);
+        TextView textTemperaturaInt = (TextView) rootView.findViewById(R.id.textTemperaturaInterna);
+        TextView textTemperaturaEst = (TextView) rootView.findViewById(R.id.textTemperaturaEsterna);
+        TextView textUmiditaInt = (TextView) rootView.findViewById(R.id.textUmiditaInterna);
+        TextView textUmiditaEst = (TextView) rootView.findViewById(R.id.textUmiditaEsterna);
         TextView textVento = (TextView) rootView.findViewById(R.id.textVento);
         TextView textComponenti = (TextView) rootView.findViewById(R.id.textComponenti);
         
@@ -49,8 +51,10 @@ public class AvvioVeloceFragment extends Fragment {
         UtilConfigurazione.setTextViewData(textData, configurazione.getData());
         UtilConfigurazione.setTextViewOrario(textData, configurazione.getOra(), configurazione.getMinuti());
         UtilConfigurazione.setTextViewMeteo(textMeteo, configurazione.getMeteo());
-        UtilConfigurazione.setTextViewTemperatura(textTemperatura, configurazione.getTemperatura());
-        UtilConfigurazione.setTextViewUmidita(textUmidita, configurazione.getUmidita());
+        UtilConfigurazione.setTextViewTemperaturaInterna(textTemperaturaInt, configurazione.getTemperaturaInt());
+        UtilConfigurazione.setTextViewTemperaturaEsterna(textTemperaturaEst, configurazione.getTemperaturaEst());
+        UtilConfigurazione.setTextViewUmidita(textUmiditaInt, configurazione.getUmiditaInt());
+        UtilConfigurazione.setTextViewUmidita(textUmiditaEst, configurazione.getUmiditaEst());
         UtilConfigurazione.setTextViewVento(textVento, configurazione.getVento());
         UtilConfigurazione.setTextViewComponenti(textComponenti, configurazione.getComponenti());
         

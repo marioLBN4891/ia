@@ -16,7 +16,7 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 	private final MainActivity mainActivity;
 	private GPSTracker gpsTracker;
 	private String localita;
-	private SeekBar seekMeteo, seekTempEst, seekUmidita, seekVento;
+	private SeekBar seekMeteo, seekTempInt, seekTempEst, seekUmiditaInt, seekUmiditaEst, seekVento;
 	
 	public AsyncMeteo(MainActivity mainActivity) {
 		this.mainActivity = mainActivity;
@@ -38,13 +38,17 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 		mainActivity.findViewById(R.id.cambiaMeteoButton).setClickable(true);
 		
 		seekMeteo = (SeekBar) mainActivity.findViewById(R.id.seekMeteo);
+        seekTempInt = (SeekBar) mainActivity.findViewById(R.id.seekTemperaturaInterna);
         seekTempEst = (SeekBar) mainActivity.findViewById(R.id.seekTemperaturaEsterna);
-        seekUmidita = (SeekBar) mainActivity.findViewById(R.id.seekUmidita);
+        seekUmiditaInt = (SeekBar) mainActivity.findViewById(R.id.seekUmiditaInterna);
+        seekUmiditaEst = (SeekBar) mainActivity.findViewById(R.id.seekUmiditaEsterna);
         seekVento = (SeekBar) mainActivity.findViewById(R.id.seekVento);
         
         seekMeteo.setProgress(parametri.get("meteo"));
+        seekTempInt.setProgress(parametri.get("tempInt"));
         seekTempEst.setProgress(parametri.get("tempEst"));
-        seekUmidita.setProgress(parametri.get("umidita"));
+        seekUmiditaEst.setProgress(parametri.get("umiditaInt"));
+        seekUmiditaInt.setProgress(parametri.get("umiditaEst"));
         seekVento.setProgress(parametri.get("vento"));
 	}
 

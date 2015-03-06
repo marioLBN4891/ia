@@ -23,12 +23,14 @@ public class Oggetto implements Serializable {
 	private String NOME;
 	private String CLASSE;
 	private int STATO;
+	private String PROLOG;
 	
-	public Oggetto(int id, String nome, String classe, int stato) {
+	public Oggetto(int id, String nome, String classe, int stato, String prolog) {
 		this.ID = id;
 		this.NOME = nome;
 		this.CLASSE = classe;
 		this.STATO = stato;
+		this.PROLOG = prolog;
 	}
 
 	public int getId() {
@@ -44,13 +46,16 @@ public class Oggetto implements Serializable {
 	public int getStato() {
 		return this.STATO;
 	}
+	public String getProlog() {
+		return this.PROLOG;
+	}
 	
-	
-	public static void setConfigurazione(SQLiteDatabase db, String nome, String classe, int stato) {
+	public static void setConfigurazione(SQLiteDatabase db, String nome, String classe, int stato, String prolog) {
 		ContentValues value = new ContentValues();
 		value.put(OggettiTable.NOME, nome);
 		value.put(OggettiTable.CLASSE, classe);
 		value.put(OggettiTable.STATO, stato);
+		value.put(OggettiTable.PROLOG, prolog);
 		db.insert(OggettiTable.TABLE_NAME, null, value);
 	}
 
@@ -71,7 +76,7 @@ public class Oggetto implements Serializable {
 		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ stato + " AND "+OggettiTable.CLASSE+" = \""+ classe +"\"",	null, null, null, OggettiTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3), cursore.getString(4)));
 		return lista;
 	}
 	
@@ -98,7 +103,7 @@ public class Oggetto implements Serializable {
 		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, null, null, null, null, OggettiTable.NOME);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3)));
+					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3), cursore.getString(4)));
 		return lista;
 	}
 	

@@ -9,12 +9,14 @@ public interface OggettiTable extends BaseColumns
 		String NOME = "nome";
 		String CLASSE = "classe";
 		String STATO = "stato";
+		String PROLOG = "prolog";
 		
 		String[] COLUMNS = new String[] {
 				_ID,
 				NOME,
 				CLASSE,
-				STATO
+				STATO,
+				PROLOG
 		};
 	
 }

@@ -8,8 +8,10 @@ public interface ConfigurazioneTable extends BaseColumns
 	 
 		String LOCALITA = "localita";
 		String METEO = "meteo";
-		String TEMPERATURA = "temperatura";
-		String UMIDITA = "umidita";
+		String TEMPERATURAINT = "temperaturaInt";
+		String TEMPERATURAEST = "temperaturaEst";
+		String UMIDITAINT = "umiditaInt";
+		String UMIDITAEST = "umiditaEst";
 		String VENTO = "vento";
 		String DATA = "data";
 		String ORA = "ora";
@@ -20,8 +22,10 @@ public interface ConfigurazioneTable extends BaseColumns
 				_ID,
 				LOCALITA,
 				METEO,
-				TEMPERATURA,
-				UMIDITA,
+				TEMPERATURAINT,
+				TEMPERATURAEST,
+				UMIDITAINT,
+				UMIDITAEST,
 				VENTO,
 				DATA,
 				ORA,

@@ -93,6 +93,8 @@
     <string name="visibilita">Visibilità:</string>
     <string name="temperaturaInterna">Temperatura interna:</string>
     <string name="temperaturaEsterna">Temperatura esterna:</string>
+    <string name="umiditaInterna">Umidità interna:</string>
+    <string name="umiditaEsterna">Umidità esterna:</string>
     <string name="cambiaMeteo">Modifica Impostazioni</string>
     <string name="cucina_text">immagine cucina</string>
     
