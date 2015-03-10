@@ -1,6 +1,8 @@
 package ai.smarthome.activity;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import ai.smarthome.R;
 import ai.smarthome.database.DatabaseHelper;
@@ -33,9 +35,8 @@ public class SimulazioneActivity extends Activity  {
 	private Utente user;
 	private SQLiteDatabase db;
 	private Button apriButton, chiudiButton, accendiButton, spegniButton, prendiButton, lasciaButton, consentiButton, negaButton;
-	private int contatoreAzioni = 0;
+	private String timestamp;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,13 +47,18 @@ public class SimulazioneActivity extends Activity  {
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		ArrayList<String> listaFattiDedotti = new ArrayList<String>();
 		Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
             user = (Utente) bundle.get(Costanti.UTENTE);
-            listaFattiDedotti = (ArrayList<String>) bundle.get("listaFattiDedotti");
         }
-		 
+        
+        Date date= new java.util.Date();
+        String timestamp = String.valueOf((new Timestamp(date.getTime())));
+        
+        if (!Prolog.eseguiConfigurazione(db, timestamp)) {
+    		alertServerError();
+    	}
+        
         apriButton = (Button) findViewById(R.id.buttonApri);
         chiudiButton = (Button) findViewById(R.id.buttonChiudi);
         accendiButton = (Button) findViewById(R.id.buttonAccendi);
@@ -72,36 +78,7 @@ public class SimulazioneActivity extends Activity  {
         consentiButton.setEnabled(false);
         negaButton.setEnabled(false);
         
-        if (listaFattiDedotti != null && !listaFattiDedotti.isEmpty())
-        	Report.insertFattiDedotti(db, listaFattiDedotti);
-        
-        ArrayList<Report> lista = Report.getLista(db);
-		
-		TableLayout tableLayout = (TableLayout) findViewById(R.id.tableSVlayout);
-	    TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
-	    lp.setMargins(10, 2, 10, 3);
-	        
-	    for (Report r: lista) {
-	    	contatoreAzioni++;
-		    
-	    	TextView textView1 = new TextView(this);
-		    textView1.setText("t" + r.getId());
-		    textView1.setTextColor(Color.BLUE);
-		    textView1.setTextSize(16);
-		    textView1.setLayoutParams(lp);
-		    
-		    TextView textView2 = new TextView(this);
-		    textView2.setText(r.getAzione());
-		    textView2.setTextColor(Color.BLACK);
-		    textView2.setTextSize(16);
-		    textView2.setLayoutParams(lp);
-		        
-		    TableRow riga = new TableRow(this);
-		    riga.setLayoutParams(lp);
-		    riga.addView(textView1);
-		    riga.addView(textView2);
-		    tableLayout.addView(riga, 0);
-		}
+        refreshListaFatti();
     }
 
 	@Override
@@ -182,11 +159,15 @@ public class SimulazioneActivity extends Activity  {
 			 					public void onClick(DialogInterface dialog,int id) {
 			 						ListView lw = ((AlertDialog)dialog).getListView();
 			 						String checkedItem1 = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-			 						Oggetto.prendi(db, checkedItem1);
-			 						lasciaButton.setEnabled(true);
-			 						
-			 						String fatto = "preso("+checkedItem1+","+contatoreAzioni+")";
-			 						viewSelectedAction("Hai Preso: ", checkedItem1, fatto, 1, Prolog.eseguiFatto(contatoreAzioni, fatto, "1"));
+			 						String fatto = "preso("+timestamp+","+checkedItem1+")";
+			 						Report report = new Report("Hai preso "+checkedItem1, checkedItem1, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+			 						if (Prolog.sendFatto(db, report)) {
+			 							Oggetto.prendi(db, checkedItem1);
+			 							lasciaButton.setEnabled(true);
+			 							refreshListaFatti();
+			 						}
+			 						else
+			 							alertServerError();
 			 						
 			 						}
 			 				})
@@ -198,11 +179,15 @@ public class SimulazioneActivity extends Activity  {
 						alertDialogBuilder2.create().show();
 					}
 					else {
-						Componente.apri(db, checkedItem);
-						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
-						
-						String fatto1 = checkedItem+"Open("+contatoreAzioni+")";
- 						viewSelectedAction("Hai Aperto: ", checkedItem, fatto1, 1, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
+						String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",open)";
+						Report report = new Report("Hai aperto "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+						if (Prolog.sendFatto(db, report)) {
+							Componente.OnOpen(db, checkedItem);
+							chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
+							refreshListaFatti();
+						}
+						else
+							alertServerError();
 					}
 				}
 			})
@@ -224,11 +209,16 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					Componente.chiudi(db, checkedItem);
-					chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
-					
-					String fatto1 = checkedItem+"Close("+contatoreAzioni+")";
-					viewSelectedAction("Hai Chiuso: ", checkedItem, fatto1, 0, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
+					String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",close)";
+					Report report = new Report("Hai chiuso "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					if (Prolog.sendFatto(db, report)) {
+						Componente.OffClose(db, checkedItem);
+						apriButton.setEnabled(true);
+						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
+						refreshListaFatti();
+					}
+					else
+						alertServerError();
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -249,13 +239,17 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					Componente.accendi(db, checkedItem);
-					spegniButton.setEnabled(true);
-					accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
-					
-					String fatto1 = checkedItem+"On("+contatoreAzioni+")";
-					viewSelectedAction("Hai Acceso: ", checkedItem, fatto1, 1, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
-			    }
+					String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",on)";
+					Report report = new Report("Hai acceso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					if (Prolog.sendFatto(db, report)) {
+						Componente.OnOpen(db, checkedItem);
+						spegniButton.setEnabled(true);
+						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+						refreshListaFatti();
+					}
+					else
+						alertServerError();
+				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
@@ -275,13 +269,16 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					Componente.spegni(db, checkedItem);
-					accendiButton.setEnabled(true);
-					spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
-					
-					String fatto1 = checkedItem+"Off("+contatoreAzioni+")";
-					viewSelectedAction("Hai Spento: ", checkedItem, fatto1, 0, Prolog.eseguiFatto(contatoreAzioni, fatto1, "1"));
-					
+					String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",on)";
+					Report report = new Report("Hai spento "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					if (Prolog.sendFatto(db, report)) {
+						Componente.OffClose(db, checkedItem);
+						accendiButton.setEnabled(true);
+						spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
+						refreshListaFatti();
+					}
+					else
+						alertServerError();
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -302,12 +299,16 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					Oggetto.prendi(db, checkedItem);
-					lasciaButton.setEnabled(true);
-					prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-					
-					String fatto = "preso("+checkedItem+","+contatoreAzioni+")";
-					viewSelectedAction("Hai preso: ", checkedItem, fatto, 1, Prolog.eseguiFatto(contatoreAzioni, fatto, "1"));
+					String fatto = "preso("+timestamp+","+checkedItem+")";
+					Report report = new Report("Hai preso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					if (Prolog.sendFatto(db, report)) {
+						Oggetto.prendi(db, checkedItem);
+						lasciaButton.setEnabled(true);
+						prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
+						refreshListaFatti();
+					}
+					else
+						alertServerError();
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -328,12 +329,16 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					Oggetto.lascia(db, checkedItem);
-					lasciaButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
-					prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-					
-					String fatto = "lascia("+checkedItem+","+contatoreAzioni+")";
-					viewSelectedAction("Hai Lasciato: ", checkedItem, fatto, 0, Prolog.eseguiFatto(contatoreAzioni, fatto, "1"));
+					String fatto = "lascia("+timestamp+","+checkedItem+")";
+					Report report = new Report("Hai lasciato "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					if (Prolog.sendFatto(db, report)) {
+						Oggetto.lascia(db, checkedItem);
+						lasciaButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
+						prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
+						refreshListaFatti();
+					}
+					else
+						alertServerError();
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -381,7 +386,7 @@ public class SimulazioneActivity extends Activity  {
  			
 	}
 	
-	private void viewSelectedAction(String message, String checkedItem, String prolog, int stato, ArrayList<String> listaFattiDedotti) {
+	private void refreshListaFatti() {
 	
 		TableLayout tableLayout = (TableLayout) findViewById(R.id.tableSVlayout);
 	    TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
@@ -389,24 +394,34 @@ public class SimulazioneActivity extends Activity  {
 	    
 	    ArrayList<Report> lista = Report.getLista(db);
 	    
-	    Report.insert(db, contatoreAzioni, message+checkedItem, prolog, checkedItem, stato);
-	    Report.insertFattiDedotti(db, listaFattiDedotti);
-		
 	    tableLayout.removeAllViews();
 	    
 	    for (Report r: lista) {
 	    	TextView textView1 = new TextView(this);
-		    textView1.setText("t" + r.getId());
-		    textView1.setTextColor(Color.BLUE);
+	    	TextView textView2 = new TextView(this);
+		    textView1.setText(r.getId());
+	    	textView2.setText(r.getAzione());
 		    textView1.setTextSize(16);
-		    textView1.setLayoutParams(lp);
-		    
-		    TextView textView2 = new TextView(this);
-		    textView2.setText(r.getAzione());
-		    textView2.setTextColor(Color.BLACK);
 		    textView2.setTextSize(16);
+		    textView1.setLayoutParams(lp);
 		    textView2.setLayoutParams(lp);
-		        
+		    
+		    if (r.getNuovo() == 1 && r.getSentReceived() == 0) {
+		    	textView1.setTextColor(Color.RED);
+			    textView1.setTypeface(null, Typeface.BOLD);
+			    textView2.setTextColor(Color.RED);
+			    textView2.setTypeface(null, Typeface.BOLD);
+			}
+		    if (r.getNuovo() == 0 && r.getSentReceived() == 0) {
+		    	textView1.setTextColor(Color.BLUE);
+		    	textView2.setTextColor(Color.BLACK);
+			}
+			    
+		    if (r.getSentReceived() == 1) {
+		    	textView1.setTextColor(Color.CYAN);
+			    textView2.setTextColor(Color.CYAN);
+			}
+			
 		    TableRow riga = new TableRow(this);
 		    riga.setLayoutParams(lp);
 		    riga.addView(textView1);
@@ -414,50 +429,17 @@ public class SimulazioneActivity extends Activity  {
 		    tableLayout.addView(riga, 0);
 		}
 	    
-	    TextView textView1 = new TextView(this);
-	    textView1.setText("t" + contatoreAzioni);
-	    textView1.setTextColor(Color.RED);
-	    textView1.setTypeface(null, Typeface.BOLD);
-	    textView1.setTextSize(16);
-	    textView1.setLayoutParams(lp);
-	    
-	    TextView textView2 = new TextView(this);
-	    textView2.setText(message + checkedItem);
-	    textView2.setTextColor(Color.RED);
-	    textView2.setTypeface(null, Typeface.BOLD);
-	    textView2.setTextSize(16);
-	    textView2.setLayoutParams(lp);
-	        
-	    TableRow riga = new TableRow(this);
-	    riga.setLayoutParams(lp);
-	    riga.addView(textView1);
-	    riga.addView(textView2);
-	    tableLayout.addView(riga, 0);
-	    
-	    
-	    ArrayList<Report> listaDed = Report.listaDedottiToListaReport(listaFattiDedotti);
-	    
-	    for (Report r: listaDed) {
-	    	TextView textView3 = new TextView(this);
-		    textView3.setText("t" + r.getId());
-		    textView3.setTextColor(Color.CYAN);
-		    textView3.setTextSize(16);
-		    textView3.setLayoutParams(lp);
-		    
-		    TextView textView4 = new TextView(this);
-		    textView4.setText(r.getAzione());
-		    textView4.setTextColor(Color.CYAN);
-		    textView4.setTextSize(16);
-		    textView4.setLayoutParams(lp);
-		        
-		    TableRow rigaDed = new TableRow(this);
-		    rigaDed.setLayoutParams(lp);
-		    rigaDed.addView(textView3);
-		    rigaDed.addView(textView4);
-		    tableLayout.addView(rigaDed, 0);
-		}
-	    
-	    contatoreAzioni++;
-		
+	    Report.updateReport(db);
+	}
+	
+	private void alertServerError() {
+		new AlertDialog.Builder(getApplicationContext())
+		.setIcon(R.drawable.attenzione).setTitle("Errore")
+			.setMessage("Impossibile contattare il Server.")
+			.setPositiveButton("Indietro",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		}).create().show();
 	}
 }

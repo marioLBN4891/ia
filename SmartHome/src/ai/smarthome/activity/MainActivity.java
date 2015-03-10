@@ -3,6 +3,7 @@ package ai.smarthome.activity;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import com.facebook.Session;
 
@@ -13,7 +14,6 @@ import ai.smarthome.activity.fragmentMain.DataFragment;
 import ai.smarthome.activity.fragmentMain.InfoPersonaliFragment;
 import ai.smarthome.activity.fragmentMain.MeteoFragment;
 import ai.smarthome.activity.fragmentMain.SensoriFragment;
-import ai.smarthome.async.AsyncMeteo;
 import ai.smarthome.async.AsyncPosition;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Componente;
@@ -23,9 +23,11 @@ import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Sensore;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
+import ai.smarthome.util.GPSTracker;
 import ai.smarthome.util.Prolog;
 import ai.smarthome.util.UtilConfigurazione;
 import ai.smarthome.util.Utilities;
+import ai.smarthome.util.rest.Rest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -62,7 +64,7 @@ public class MainActivity extends Activity {
 
     private CharSequence intestazioneDrawer, intestazioneActivity;
     private String[] intestazioneOpzioni; 
-    
+    private AsyncPosition asyncPosition= new AsyncPosition(this);
     private SQLiteDatabase db;
     private Utente user;
     
@@ -83,7 +85,7 @@ public class MainActivity extends Activity {
         	if(bundle.get(Costanti.UTENTE) != null) 
         		user = (Utente) bundle.get(Costanti.UTENTE);
         
-        AsyncPosition asyncPosition= new AsyncPosition(this);
+        
         asyncPosition.execute();
        
         Report.reset(db);
@@ -314,25 +316,17 @@ public class MainActivity extends Activity {
     }
     
     public void startSimulazione(View view) {
-    	
-    	if(Prolog.startSimulazione()) {
+    	if (Prolog.startSimulazione()) {
     		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     		intent.putExtra(Costanti.UTENTE, user);
-    		intent.putExtra("listaFattiDedotti", Prolog.eseguiConfigurazione(db));
     		startActivity(intent);
     		finish();
     	}
     	else {
-    		new AlertDialog.Builder(this)
-     			.setTitle("Errore")
-     			.setMessage("Impossibile connettersi al server")
-     			.setPositiveButton("Indietro",new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog,int id) {
-    					dialog.cancel();
-    				}
-    			}).create().show();
+    		new AlertDialog.Builder(this).setIcon(R.drawable.attenzione).setTitle("Errore")
+            .setMessage("Impossibile contattare il Server")
+            .setPositiveButton("Indietro", null).show();
     	}
-    	
     }
     
     public void cambiaSensori(View view) {
@@ -405,12 +399,45 @@ public class MainActivity extends Activity {
  	}
    
     public void cambiaMeteoMenu(View view) {
-    	Toast.makeText(getApplicationContext(), "Caricamento meteo locale in corso...", Toast.LENGTH_SHORT).show();
-    	AsyncMeteo asyncMeteoMenu = new AsyncMeteo(this);
-		asyncMeteoMenu.execute();
-	}
+    	
+    	findViewById(R.id.cambiaMeteoButton).setClickable(false);
+    	findViewById(R.id.meteoAttualeButton).setClickable(false);
+		
+    	try {
+    		Toast.makeText(getApplicationContext(), "Caricamento meteo locale in corso...", Toast.LENGTH_SHORT).show();
+        	
+    		Map<String, Integer> parametri = null;
+	    	
+			String localita = (new GPSTracker(this)).getLocality(this);
+			parametri = Rest.getMeteoLocale(this, localita);
+		
+			SeekBar seekMeteo = (SeekBar) findViewById(R.id.seekMeteo);
+			SeekBar seekTempInt = (SeekBar) findViewById(R.id.seekTemperaturaInterna);
+			SeekBar seekTempEst = (SeekBar) findViewById(R.id.seekTemperaturaEsterna);
+			SeekBar seekUmiditaInt = (SeekBar) findViewById(R.id.seekUmiditaInterna);
+			SeekBar seekUmiditaEst = (SeekBar) findViewById(R.id.seekUmiditaEsterna);
+			SeekBar seekVento = (SeekBar) findViewById(R.id.seekVento);
+	        
+	        seekMeteo.setProgress(parametri.get("meteo"));
+	        seekTempInt.setProgress(parametri.get("tempInt"));
+	        seekTempEst.setProgress(parametri.get("tempEst"));
+	        seekUmiditaEst.setProgress(parametri.get("umiditaInt"));
+	        seekUmiditaInt.setProgress(parametri.get("umiditaEst"));
+	        seekVento.setProgress(parametri.get("vento"));
+	        
+			Toast.makeText(getApplicationContext(), "Meteo caricato: "+ localita, Toast.LENGTH_SHORT).show();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Toast.makeText(getApplicationContext(), "Impossibile caricare meteo locale", Toast.LENGTH_SHORT).show();
+	    }
+    	
+    	findViewById(R.id.cambiaMeteoButton).setClickable(true);
+    	findViewById(R.id.meteoAttualeButton).setClickable(true);
+		
+    }
     
-    public void setClimaMeteoAvvioVeloce(Configurazione meteo) {
+    public void setClimaMeteoAvvioVeloce(Configurazione configurazione) {
     	
     	TextView localitaText = (TextView) findViewById(R.id.textLoc);
         TextView dataText = (TextView) findViewById(R.id.textData);
@@ -420,15 +447,15 @@ public class MainActivity extends Activity {
         TextView climaUmiditaInt = (TextView) findViewById(R.id.textUmiditaInterna);
         TextView climaUmiditaEst = (TextView) findViewById(R.id.textUmiditaEsterna);
         TextView climaVento = (TextView) findViewById(R.id.textVento);
-        UtilConfigurazione.setTextViewLocalita(localitaText, meteo.getLocalita());
-        UtilConfigurazione.setTextViewData(dataText, meteo.getData());
-        UtilConfigurazione.setTextViewOrario(dataText, meteo.getOra(), meteo.getMinuti());
-        UtilConfigurazione.setTextViewMeteo(climaMeteo, meteo.getMeteo());
-        UtilConfigurazione.setTextViewTemperaturaInterna(climaTempInt, meteo.getTemperaturaInt());
-        UtilConfigurazione.setTextViewTemperaturaEsterna(climaTempEst, meteo.getTemperaturaEst());
-        UtilConfigurazione.setTextViewUmidita(climaUmiditaInt, meteo.getUmiditaInt());
-        UtilConfigurazione.setTextViewUmidita(climaUmiditaEst, meteo.getUmiditaEst());
-        UtilConfigurazione.setTextViewVento(climaVento, meteo.getVento());
+        localitaText.setText(UtilConfigurazione.setTextViewLocalita(configurazione.getLocalita()));
+        dataText.setText(UtilConfigurazione.setTextViewData(configurazione.getData())+ " - " + UtilConfigurazione.setTextViewOrario(configurazione.getOra(), configurazione.getMinuti()));
+        climaMeteo.setText(UtilConfigurazione.setTextViewMeteo(configurazione.getMeteo()));
+        climaTempInt.setText(UtilConfigurazione.setTextViewTemperaturaInterna(configurazione.getTemperaturaInt()));
+        climaTempEst.setText(UtilConfigurazione.setTextViewTemperaturaEsterna(configurazione.getTemperaturaEst()));
+        climaUmiditaInt.setText(UtilConfigurazione.setTextViewUmidita(configurazione.getUmiditaInt()));
+        climaUmiditaEst.setText(UtilConfigurazione.setTextViewUmidita(configurazione.getUmiditaEst()));
+        climaVento.setText(UtilConfigurazione.setTextViewVento(configurazione.getVento()));
+        
     }
     
 }

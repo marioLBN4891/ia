@@ -52,17 +52,12 @@ public class MeteoFragment extends Fragment {
         textUmiditaEst = (TextView) rootView.findViewById(R.id.textUmiditaEsterna);
         textVento = (TextView) rootView.findViewById(R.id.textVento);
         
-        setTextMeteo(meteo.getMeteo());
-        UtilConfigurazione.setTextViewTemperaturaInterna(textTempInt, meteo.getTemperaturaInt());
-        textTempInt.setText("Temperatura interna: "+textTempInt.getText());
-        UtilConfigurazione.setTextViewTemperaturaEsterna(textTempEst, meteo.getTemperaturaEst());
-        textTempEst.setText("Temperatura esterna: "+textTempEst.getText());
-        UtilConfigurazione.setTextViewUmidita(textUmiditaInt, meteo.getUmiditaInt());
-        textUmiditaInt.setText("Umidità interna: "+textUmiditaInt.getText());
-        UtilConfigurazione.setTextViewUmidita(textUmiditaEst, meteo.getUmiditaEst());
-        textUmiditaEst.setText("Umidità esterna: "+textUmiditaEst.getText());
-        UtilConfigurazione.setTextViewVento(textVento, meteo.getVento());
-        textVento.setText("Vento: "+textVento.getText());
+        textMeteo.append(UtilConfigurazione.setTextViewMeteo(meteo.getMeteo()));
+        textTempInt.append(UtilConfigurazione.setTextViewTemperaturaInterna(meteo.getTemperaturaInt()));
+        textTempEst.append(UtilConfigurazione.setTextViewTemperaturaEsterna(meteo.getTemperaturaEst()));
+        textUmiditaInt.append(UtilConfigurazione.setTextViewUmidita(meteo.getUmiditaInt()));
+        textUmiditaEst.append(UtilConfigurazione.setTextViewUmidita(meteo.getUmiditaEst()));
+        textVento.append(UtilConfigurazione.setTextViewVento(meteo.getVento()));
         
         seekMeteo.setProgress(meteo.getMeteo());
         seekTempInt.setProgress(meteo.getTemperaturaInt());
@@ -87,12 +82,11 @@ public class MeteoFragment extends Fragment {
         	
         });
         
-        
         seekTempInt.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewTemperaturaInterna(textTempInt, progress);
-        		textTempInt.setText("Temperatura interna: "+textTempInt.getText());
+        		textTempInt.setText(R.string.temperaturaInterna);
+                textTempInt.append(UtilConfigurazione.setTextViewTemperaturaInterna(progress));
         	}
 
         	@Override
@@ -108,8 +102,8 @@ public class MeteoFragment extends Fragment {
         seekTempEst.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewTemperaturaEsterna(textTempEst, progress);
-        		textTempEst.setText("Temperatura esterna: "+textTempEst.getText());
+        		textTempEst.setText(R.string.temperaturaEsterna);
+            	textTempEst.append(UtilConfigurazione.setTextViewTemperaturaEsterna(progress));
         	}
 
         	@Override
@@ -125,8 +119,8 @@ public class MeteoFragment extends Fragment {
         seekUmiditaInt.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewUmidita(textUmiditaInt, progress);
-        		textUmiditaInt.setText("Umidità interna: "+textUmiditaInt.getText());
+        		textUmiditaInt.setText(R.string.umidita);
+            	textUmiditaInt.append(UtilConfigurazione.setTextViewUmidita(progress));
         	}
 
         	@Override
@@ -142,8 +136,8 @@ public class MeteoFragment extends Fragment {
         seekUmiditaEst.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewUmidita(textUmiditaEst, progress);
-        		textUmiditaEst.setText("Umidità esterna: "+textUmiditaEst.getText());
+        		textUmiditaEst.setText(R.string.umiditaEsterna);
+            	textUmiditaEst.append(UtilConfigurazione.setTextViewUmidita(progress));
         	}
 
         	@Override
@@ -159,8 +153,8 @@ public class MeteoFragment extends Fragment {
         seekVento.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	@Override
         	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        		UtilConfigurazione.setTextViewVento(textVento, progress);
-        		textVento.setText("Vento: "+textVento.getText());
+        		textVento.setText(R.string.vento);
+            	textVento.append(UtilConfigurazione.setTextViewVento(progress));
         	}
 
         	@Override
@@ -180,24 +174,36 @@ public class MeteoFragment extends Fragment {
     
     private void setTextMeteo(int progress) {
     	if (progress <= 35) 
-    		setClima("Condizioni generali: PIOVOSO", 20, 10, 70, 80, 7);
+    		setClima(progress, 10, 25, 70, 80, 7);
 		if (progress > 35 && progress <= 65) 
-			setClima("Condizioni generali: NUVOLOSO", 50, 40, 50, 50, 4);
+			setClima(progress, 15, 25, 45, 50, 4);
 		if (progress > 65 && progress <= 80) 
-			setClima("Condizioni generali: SERENO", 60, 70, 70, 60, 2);
+			setClima(progress, 20, 30, 50, 60, 2);
 		if (progress > 80) 
-			setClima("Condizioni generali: SOLEGGIATO", 80, 90, 80, 90, 0);
+			setClima(progress, 25, 40, 80, 90, 0);
 		
     }
     
-    private void setClima(String meteo, int tempInt, int tempEst, int umiditaInt, int umiditaEst, int vento) {
-    	textMeteo.setText(meteo);
-    	seekTempInt.setProgress(tempInt);
-    	seekTempEst.setProgress(tempEst);
-		seekUmiditaInt.setProgress(umiditaInt);
-		seekUmiditaEst.setProgress(umiditaEst);
-		seekVento.setProgress(vento);
-		}
+    private void setClima(int meteo, int tempInt, int tempEst, int umiditaInt, int umiditaEst, int vento) {
+    	textMeteo.setText(R.string.meteo);
+    	textMeteo.append(UtilConfigurazione.setTextViewMeteo(meteo));
+        
+    	textTempInt.setText(R.string.temperaturaInterna);
+        textTempInt.append(UtilConfigurazione.setTextViewTemperaturaInterna(tempInt));
+    	
+        textTempEst.setText(R.string.temperaturaEsterna);
+    	textTempEst.append(UtilConfigurazione.setTextViewTemperaturaEsterna(tempEst));
+    	
+    	textUmiditaInt.setText(R.string.umidita);
+    	textUmiditaInt.append(UtilConfigurazione.setTextViewUmidita(umiditaInt));
+    	
+    	textUmiditaEst.setText(R.string.umiditaEsterna);
+    	textUmiditaEst.append(UtilConfigurazione.setTextViewUmidita(umiditaEst));
+    	
+    	textVento.setText(R.string.vento);
+    	textVento.append(UtilConfigurazione.setTextViewVento(vento));
+       
+	}
     
     
 }

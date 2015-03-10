@@ -7,16 +7,20 @@ public interface ReportTable extends BaseColumns
 	String TABLE_NAME = "report";
  
 	String AZIONE = "azione";
-	String PROLOG = "prolog";
 	String ITEM = "item";
 	String STATO = "stato";
+	String PROLOG = "prolog";
+	String SENTRECEIVED= "sentreceived";
+	String NUOVO = "nuovo";
 	
 	String[] COLUMNS = new String[] {
 			_ID,
 			AZIONE,
-			PROLOG,
 			ITEM,
-			STATO
+			STATO,
+			PROLOG,
+			SENTRECEIVED,
+			NUOVO
 	};
 
 }

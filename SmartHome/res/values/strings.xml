@@ -87,14 +87,14 @@
     <string name="macchinaCaffe">Macchina del caffè</string>
     <string name="illuminazione">Illuminazione</string>
     <string name="cambiaComponenti">Modifica Impostazioni</string>
-    <string name="meteo">Meteo:</string>
-    <string name="umidita">Umidità:</string>
-    <string name="vento">Vento:</string>
+    <string name="meteo">Condizioni Generali:\n</string>
+    <string name="umidita">Umidità:\n</string>
+    <string name="vento">Vento:\n</string>
     <string name="visibilita">Visibilità:</string>
-    <string name="temperaturaInterna">Temperatura interna:</string>
-    <string name="temperaturaEsterna">Temperatura esterna:</string>
-    <string name="umiditaInterna">Umidità interna:</string>
-    <string name="umiditaEsterna">Umidità esterna:</string>
+    <string name="temperaturaInterna">Temperatura interna:\n</string>
+    <string name="temperaturaEsterna">Temperatura esterna:\n</string>
+    <string name="umiditaInterna">Umidità interna:\n</string>
+    <string name="umiditaEsterna">Umidità esterna:\n</string>
     <string name="cambiaMeteo">Modifica Impostazioni</string>
     <string name="cucina_text">immagine cucina</string>
     
@@ -117,9 +117,11 @@
     
     <string name="impMeteo">Impostazioni simulazione</string>
     <string name="loc">Località</string>
-    <string name="met">Meteo</string>
-    <string name="temp">Temperatura</string>
-    <string name="umid">Umidità</string>
+    <string name="met">Condizioni meteo</string>
+    <string name="tempin">Temperatura interna</string>
+    <string name="tempout">Temperatura esterna</string>
+    <string name="umidin">Umidità interna</string>
+    <string name="umidout">Umidità esterna</string>
     <string name="vent">Vento</string>
     <string name="data">Data e Ora</string>
     <string name="comp">Configurazione Componenti</string>

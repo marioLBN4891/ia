@@ -100,28 +100,24 @@ public class Componente {
 		return lista;
 	}
 	
-	public static void apri(SQLiteDatabase db, String nome) {
+	public static void OnOpen(SQLiteDatabase db, String nome) {
 		ContentValues value = new ContentValues();
 		value.put(ComponentiTable.STATO, 1);
 		db.update(ComponentiTable.TABLE_NAME, value, ComponentiTable.NOME+" = \""+ nome+ "\"", null);
 	}
 	
-	public static void chiudi(SQLiteDatabase db, String nome) {
+	public static void OffClose(SQLiteDatabase db, String nome) {
 		ContentValues value = new ContentValues();
 		value.put(ComponentiTable.STATO, 0);
 		db.update(ComponentiTable.TABLE_NAME, value, ComponentiTable.NOME+" = \""+ nome+ "\"", null);
 	}
 	
-	public static void accendi(SQLiteDatabase db, String nome) {
-		ContentValues value = new ContentValues();
-		value.put(ComponentiTable.STATO, 1);
-		db.update(ComponentiTable.TABLE_NAME, value, ComponentiTable.NOME+" = \""+ nome+ "\"", null);
-	}
-	
-	public static void spegni(SQLiteDatabase db, String nome) {
-		ContentValues value = new ContentValues();
-		value.put(ComponentiTable.STATO, 0);
-		db.update(ComponentiTable.TABLE_NAME, value, ComponentiTable.NOME+" = \""+ nome+ "\"", null);
+	public static String getProlog(SQLiteDatabase db, String nome) {
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.NOME+" = "+ nome, null, null, null, ComponentiTable.NOME);
+		if (cursore.getCount() > 0)
+			while (cursore.moveToNext()) 
+					return cursore.getString(4);
+		return null;
 	}
 	
 	public static boolean checkComponente(String tipo, int stato, SQLiteDatabase db) {

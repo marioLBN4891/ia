@@ -172,7 +172,7 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:textSize="@dimen/font_text12" 
-			android:text="@string/temperaturaInterna"
+			android:text="@string/tempin"
 			android:padding="@dimen/marginTableMeteo" />
 		
 			<TextView 
@@ -195,7 +195,7 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:textSize="@dimen/font_text12" 
-			android:text="@string/temperaturaEsterna"
+			android:text="@string/tempout"
 			android:padding="@dimen/marginTableMeteo" />
 		
 			<TextView 
@@ -219,7 +219,7 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:textSize="@dimen/font_text12" 
-			android:text="@string/umiditaInterna" 
+			android:text="@string/umidin" 
 			android:padding="@dimen/marginTableMeteo" />
 		
 			<TextView 
@@ -243,7 +243,7 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:textSize="@dimen/font_text12" 
-			android:text="@string/umiditaEsterna"
+			android:text="@string/umidout"
 			android:padding="@dimen/marginTableMeteo" />
 		
 			<TextView 

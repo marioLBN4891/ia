@@ -21,6 +21,7 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 	public AsyncMeteo(MainActivity mainActivity) {
 		this.mainActivity = mainActivity;
 		gpsTracker = new GPSTracker(mainActivity);
+		
 	}
 	
 	
@@ -28,6 +29,7 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 	protected void onPreExecute() {
 		super.onPreExecute();
 		mainActivity.findViewById(R.id.cambiaMeteoButton).setClickable(false);
+		
 	}
 
 
@@ -50,6 +52,7 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
         seekUmiditaEst.setProgress(parametri.get("umiditaInt"));
         seekUmiditaInt.setProgress(parametri.get("umiditaEst"));
         seekVento.setProgress(parametri.get("vento"));
+        
 	}
 
 
@@ -57,10 +60,15 @@ public class AsyncMeteo extends AsyncTask<Void, String, Map<String, Integer>> {
 	protected Map<String, Integer> doInBackground(Void... params) {
 		Map<String, Integer> parametri = null;
 		
-		localita = gpsTracker.getLocality(mainActivity);
-		parametri = Rest.getMeteoLocale(mainActivity, localita);
+		try {
+			localita = gpsTracker.getLocality(mainActivity);
+			parametri = Rest.getMeteoLocale(mainActivity, localita);
 		
-		publishProgress("Meteo caricato: "+ localita);
+			publishProgress("Meteo caricato: "+ localita);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return parametri;
 		

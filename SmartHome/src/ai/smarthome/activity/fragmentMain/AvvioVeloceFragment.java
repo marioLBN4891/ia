@@ -47,17 +47,16 @@ public class AvvioVeloceFragment extends Fragment {
         TextView textVento = (TextView) rootView.findViewById(R.id.textVento);
         TextView textComponenti = (TextView) rootView.findViewById(R.id.textComponenti);
         
-        UtilConfigurazione.setTextViewLocalita(textLoc, configurazione.getLocalita());
-        UtilConfigurazione.setTextViewData(textData, configurazione.getData());
-        UtilConfigurazione.setTextViewOrario(textData, configurazione.getOra(), configurazione.getMinuti());
-        UtilConfigurazione.setTextViewMeteo(textMeteo, configurazione.getMeteo());
-        UtilConfigurazione.setTextViewTemperaturaInterna(textTemperaturaInt, configurazione.getTemperaturaInt());
-        UtilConfigurazione.setTextViewTemperaturaEsterna(textTemperaturaEst, configurazione.getTemperaturaEst());
-        UtilConfigurazione.setTextViewUmidita(textUmiditaInt, configurazione.getUmiditaInt());
-        UtilConfigurazione.setTextViewUmidita(textUmiditaEst, configurazione.getUmiditaEst());
-        UtilConfigurazione.setTextViewVento(textVento, configurazione.getVento());
-        UtilConfigurazione.setTextViewComponenti(textComponenti, configurazione.getComponenti());
-        
+        textLoc.setText(UtilConfigurazione.setTextViewLocalita(configurazione.getLocalita()));
+        textData.setText(UtilConfigurazione.setTextViewData(configurazione.getData())+ " - " + UtilConfigurazione.setTextViewOrario(configurazione.getOra(), configurazione.getMinuti()));
+        textMeteo.setText(UtilConfigurazione.setTextViewMeteo(configurazione.getMeteo()));
+        textTemperaturaInt.setText(UtilConfigurazione.setTextViewTemperaturaInterna(configurazione.getTemperaturaInt()));
+        textTemperaturaEst.setText(UtilConfigurazione.setTextViewTemperaturaEsterna(configurazione.getTemperaturaEst()));
+        textUmiditaInt.setText(UtilConfigurazione.setTextViewUmidita(configurazione.getUmiditaInt()));
+        textUmiditaEst.setText(UtilConfigurazione.setTextViewUmidita(configurazione.getUmiditaEst()));
+        textVento.setText(UtilConfigurazione.setTextViewVento(configurazione.getVento()));
+        textComponenti.setText(UtilConfigurazione.setTextViewComponenti(configurazione.getComponenti()));
+
         db.close();
         return rootView;
     }

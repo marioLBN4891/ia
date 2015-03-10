@@ -12,7 +12,9 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.util.LogView;
+import ai.smarthome.util.Prolog;
 import android.content.Context;
 
 
@@ -52,10 +54,10 @@ public class Rest  {
 		} 
 	}
 	
-	public static boolean start() {
+	public static boolean startSimulazione() {
 		
 		try {
-			URL url = new URL(serverAddress+"/start");
+			URL url = new URL(serverAddress+"/startSimulazione");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -73,26 +75,26 @@ public class Rest  {
 				JSONObject json = new JSONObject(line);
 				esito = json.getString("esito");
 				if(esito.contains("errore")) {
-					LogView.info("Rest.start: ERRORE");
+					LogView.info("Rest.startSimulazione: ERRORE");
 					return false;
 				}
 			}
 			boolean stato = Boolean.valueOf(esito);
-			LogView.info("Rest.start: "+stato);
+			LogView.info("Rest.startSimulazione: "+stato);
 			return stato;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			LogView.info("Rest.start: ERRORE");
+			LogView.info("Rest.startSimulazione: ERRORE");
 			return false;
 		} 
 		
 	}
 	
-	public static boolean stop() {
+	public static boolean stopSimulazione() {
 		
 		try {
-			URL url = new URL(serverAddress+"/stop");
+			URL url = new URL(serverAddress+"/stopSimulazione");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -110,18 +112,105 @@ public class Rest  {
 				JSONObject json = new JSONObject(line);
 				esito = json.getString("esito");
 				if(esito.contains("errore")) {
-					LogView.info("Rest.stop: ERRORE");
+					LogView.info("Rest.stopSimulazione: ERRORE");
 					return false;
 				}
 			}
 			boolean stato = Boolean.valueOf(esito);
-			LogView.info("Rest.stop: "+stato);
+			LogView.info("Rest.stopSimulazione: "+stato);
 			return stato;
 					
 		} catch (Exception e) {
 			e.printStackTrace();
-			LogView.info("Rest.stop: ERRORE");
+			LogView.info("Rest.stopSimulazione: ERRORE");
 			return false;
+		} 
+		
+	}
+
+	public static boolean sendFactToServer(String fatto) {
+		
+		try {
+			URL url = new URL(serverAddress+"/send?fatto="+fatto);
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) {
+					LogView.info("Rest.send: ERRORE");
+					return false;
+				}
+			}
+			boolean stato = Boolean.valueOf(json.getBoolean("esito"));
+			LogView.info("Rest.send: "+stato);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.send: ERRORE");
+			return false;
+		} 
+		
+	}
+
+	public static HashMap<String, Serializable> inferisci() {
+		
+		HashMap<String, Serializable> risultati = new HashMap<String, Serializable>();
+		ArrayList<Report> listaFattiDedotti = new ArrayList<Report>();
+		
+		risultati.put("esito", false);
+		risultati.put("listaFattiDedotti", listaFattiDedotti);
+		
+		
+		try {
+			URL url = new URL(serverAddress+"/inferisci");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(1000 * 2);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) {
+					LogView.info("Rest.inferisci: ERRORE");
+					return risultati;
+				}
+			}
+			JSONArray jsonArray = json.getJSONArray("listaFatti");
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonFatto = jsonArray.getJSONObject(i);
+				listaFattiDedotti.add(Prolog.fattoDedottoToReport(jsonFatto.getString("fatto")));
+			}
+			boolean stato = Boolean.valueOf(json.getBoolean("esito"));
+			LogView.info("Rest.inferisci: "+stato);
+			risultati.put("esito", stato);
+			risultati.put("listaFattiDedotti", listaFattiDedotti);
+			
+			return risultati;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.inferisci: ERRORE");
+			return risultati;
 		} 
 		
 	}
