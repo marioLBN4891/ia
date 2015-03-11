@@ -1,5 +1,6 @@
 package ai.smarthome.util;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -104,4 +105,15 @@ public class UtilConfigurazione {
 		else
 		   return "0" + String.valueOf(c);
 	}
+	
+	public static String setTimestamp() {
+		Date date= new java.util.Date();
+		String timestamp = String.valueOf((new Timestamp(date.getTime())));
+		timestamp = timestamp.replace("-", "");
+		timestamp = timestamp.replace(":", "");
+		timestamp = timestamp.replace(".", "");
+		timestamp = timestamp.replace(" ", "");
+        
+        return timestamp;
+    }
 }

@@ -1,8 +1,6 @@
 package ai.smarthome.activity;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 
 import ai.smarthome.R;
 import ai.smarthome.database.DatabaseHelper;
@@ -12,6 +10,7 @@ import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
 import ai.smarthome.util.Prolog;
+import ai.smarthome.util.UtilConfigurazione;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -52,8 +51,8 @@ public class SimulazioneActivity extends Activity  {
             user = (Utente) bundle.get(Costanti.UTENTE);
         }
         
-        Date date= new java.util.Date();
-        String timestamp = String.valueOf((new Timestamp(date.getTime())));
+        
+        String timestamp = UtilConfigurazione.setTimestamp();
         
         if (!Prolog.eseguiConfigurazione(db, timestamp)) {
     		alertServerError();
@@ -440,6 +439,6 @@ public class SimulazioneActivity extends Activity  {
 			public void onClick(DialogInterface dialog,int id) {
 				dialog.cancel();
 			}
-		}).create().show();
+		}).show();
 	}
 }

@@ -180,7 +180,7 @@ public class Rest  {
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(1000 * 5);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
