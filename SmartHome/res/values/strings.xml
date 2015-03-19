@@ -3,11 +3,11 @@
 
     <string name="facebook_app_id">487118931333654</string>
      
-    <string name="app_name">Smart Home Environment</string>
+    <string name="app_name">Smart Kitchen</string>
     <string name="cdl">Laurea Magistrale in Informatica</string>
     <string name="esame">Esame di Intelligenza Artificiale</string>
     <string name="progetto">Smart Home Environment\nC@SA</string>
-    <string name="sviluppato">Developed by Labianca M. - All rights reserved © 2014</string>
+    <string name="sviluppato">Developed by Labianca M. - All rights reserved © 2015</string>
     <string name="action_settings">Configurazioni</string>
     <string name="activityAccesso">Accesso</string>
     <string name="login">Login</string>
@@ -25,6 +25,7 @@
     <string name="cognome">Cognome</string>
     <string name="nome">Nome</string>
     <string name="mail">Email</string>
+    <string name="username">Username</string>
     <string name="password2">Ripeti password</string>
     <string name="activityMain">Opzioni</string>
 
@@ -39,11 +40,12 @@
         <item>Componenti</item>
         <item>Sensori</item>
         <item>Info utente</item>
+        <item>Impostazioni app</item>
     </string-array>
 
 	<string name="text_fragment_avvioveloce1">\nSeleziona una delle quattro configurazioni predefinite per avviare velocemente la simulazione oppure definisci una configurazione personalizzata modificando i parametri disponibili nelle altre sezioni dell\'applicazione.</string>
     <string name="text_fragment_avvioveloce2">Clicca sul pulsante a destra per utilizzare le condizioni meteo della tua posizione attuale.</string>
-    <string name="text_fragment_infopersonali">Informazioni personali dell\'utente.\nQuesta sezione permette di modifica email e password e avere un riepilogo dei propri dati.</string>
+    <string name="text_fragment_infoutente">In questa sezione puoi modificare lo stato dell\'utente all\'interno dell\'ambiente cucina.\nPotrai definire la sua presenza all\'inizio della simulazione e definire opzionalmente una attività che sta o deve svolgere</string>
     <string name="text_fragment_sim1">Impostazioni simulazione</string>
     <string name="text_fragment_sim2">Data:</string>
     <string name="text_fragment_sim3">Ora:</string>
@@ -58,18 +60,34 @@
     <string name="text_fragment_meteo1">In alternativa, clicca sul pulsante a destra per utilizzare le condizioni meteo della tua posizione attuale.</string>
     <string name="text_fragment_componenti">In questa sezione puoi modificare lo stato di funzionamento dei componenti (acceso/spento - aperto/chiuso) presenti nell\'ambiente domestico.\nCambia lo stato dei componenti all\'avvio della simulazione.</string>
     <string name="text_fragment_sensori">In questa sezione puoi modificare lo stato di funzionamento dei sensori presenti all\'interno dell\'ambiente domestico.\nAttiva o disattiva i sensori sotto elencati.\n<b>La funzionalità è momentaneamente disabilitata</b></string>
+    <string name="text_fragment_impostazioni">In questa sezione puoi modificare l\'indirizzo del server a cui inviare le richieste XML-RPC ed avviare il  Web Server.\nE\' richiesta una password di sistema per confermare l\' operazione da effettuare.</string>
     
+    <string name="password_accesso">Inserisci password per accedere:</string>
+	<string name="indirizzo">Modifica URL del Server:</string>
+	<string name="server">Avvia il Web Server cliccando sul pulsante sottostante:</string>
+	
+	<string name="avvia_server">Avvia Server</string>
+	<string name="cambiaImpostazioni">Impostazioni</string>
+	    
     <string name="drawer_open">Apri menù di navigazione</string>
     <string name="drawer_close">Chiudi menù di navigazione</string>
     
-    <string name="utente">Utente:</string>
-    <string name="modificaMail">Modifica email:</string>
-    <string name="posizione">Posizione attuale:</string>
-    <string name="modificaPassword">Modifica password</string>
-    <string name="vecchiaPassword">Password attuale:</string>
-    <string name="nuovaPassword">Nuova password:</string>
-    <string name="infoPersonaliButton">Cambia Info Personali</string>
+    <string name="utente">L\'utente </string>
+    <string name="checkUserPresentTrue">è presente in cucina</string>
+    <string name="checkUserPresentFalse">non è presente in cucina</string>
     
+    
+    <string name="infoUtenteButton">Cambia Info Utente</string>
+	<string name="textUtente">L\'utente</string>
+	<string name="cambiaInfoUtente">Info Utente</string>
+	<string name="dadovevieni">Da quale ambiente vieni?</string>
+    <string name="daaltracamera">Da un\'altra camera della casa.</string>
+    <string name="daesterno">Dall\'esterno della casa.</string>
+    <string name="dovevai">In quale ambiente vai?</string>
+    <string name="inaltracamera">In un\'altra camera della casa.</string>
+    <string name="inesterno">All\'esterno della casa.</string>
+    
+        
     <string name="cambiaOrario">Salva Orario</string>
     <string name="cambiaData">Salva Data</string>
     <string name="startSimulazione">Avvia Simulazione</string>
@@ -88,6 +106,7 @@
     <string name="illuminazione">Illuminazione</string>
     <string name="cambiaComponenti">Modifica Impostazioni</string>
     <string name="meteo">Condizioni Generali:\n</string>
+    <string name="localita">Località:</string>
     <string name="umidita">Umidità:\n</string>
     <string name="vento">Vento:\n</string>
     <string name="visibilita">Visibilità:</string>
@@ -106,9 +125,10 @@
     <string name="accendi">Accendi</string>
     <string name="spegni">Spegni</string>
     <string name="prendi">Prendi</string>
-    <string name="lascia">Lascia</string>
-    <string name="consenti">Consenti</string>
+    <string name="riponi">Riponi</string>
     <string name="rifiuta">Nega</string>
+    <string name="esci">Esci</string>
+    <string name="entra">Entra</string>
     
     <string name="GPSAlertDialogTitle">Configurazione Gps</string>
     <string name="GPSAlertDialogMessage">Il dispositivo Gps è spento. Per una migliore qualità del servizio ti invitiamo ad attivarlo.</string>

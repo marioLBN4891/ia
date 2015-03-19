@@ -7,8 +7,11 @@ import java.util.HashMap;
 
 import ai.smarthome.database.wrapper.Componente;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.database.wrapper.Impostazione;
+import ai.smarthome.database.wrapper.Oggetto;
 import ai.smarthome.database.wrapper.Report;
-import ai.smarthome.util.rest.Rest;
+import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.xmlrpc.XMLRPC;
 import android.database.sqlite.SQLiteDatabase;
 
 public class Prolog {
@@ -18,340 +21,502 @@ public class Prolog {
 	private static String FATTO = "_fatto";
 	private static String CERTEZZA = "_certezza";
 		
-	public static boolean startSimulazione() {
-		return Rest.startSimulazione();
+	public static boolean startSimulazione(Utente user, SQLiteDatabase db) {
+		return XMLRPC.startSimulazione(user, Impostazione.getIndirizzo(db));
 	}
 	
-	public static boolean stopSimulazione() {
-		return Rest.stopSimulazione();
+	public static boolean stopSimulazione(Utente user, SQLiteDatabase db) {
+		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static boolean eseguiConfigurazione(SQLiteDatabase db, String timestamp) {
+	public static boolean eseguiConfigurazione(SQLiteDatabase db, String timestamp, Utente user, Report report) {
+		String serverAddress = Impostazione.getIndirizzo(db);
 		
-		Report.reset(db);
-		
+		Report.updateReportLetti(db);
 		ArrayList<Report> listaFatti = new ArrayList<Report>();
-		
-		listaFatti.add(isPresentUser(timestamp, false));
-		
-		Configurazione meteo = Configurazione.getConfigurazione(db);
-		listaFatti.add(dataSimulazione(timestamp, meteo.getData()));
-		listaFatti.add(oraSimulazione(timestamp, meteo.getOra()));
-		listaFatti.add(temperaturaSimulazione(timestamp, meteo.getTemperaturaInt(), true));
-		listaFatti.add(temperaturaSimulazione(timestamp, meteo.getTemperaturaInt(), false));
-		listaFatti.add(umiditaSimulazione(timestamp, meteo.getUmiditaInt(), true));
-		listaFatti.add(umiditaSimulazione(timestamp, meteo.getUmiditaInt(), false));
-		listaFatti.add(ventoSimulazione(timestamp, meteo.getVento()));
-		
-		ArrayList<Report> listaFattiComponenti = new ArrayList<Report>();
-		listaFattiComponenti = componentiSimulazione(timestamp, Componente.getAllLista(db));
-		for(Report fattoComp : listaFattiComponenti)
-			listaFatti.add(fattoComp);
-		
-		for(Report report : listaFatti) {
-			Report.insert(db, report);
+		listaFatti = Report.getListaReportIniziali(db);
+			
+		if (listaFatti == null || listaFatti.isEmpty()) {
+			
+			Configurazione meteo = Configurazione.getConfigurazione(db);
+			listaFatti.add(dataSimulazione(timestamp, meteo.getData()));
+			listaFatti.add(oraSimulazione(timestamp, meteo.getOra()));
+			listaFatti.add(temperaturaSimulazione(timestamp, meteo.getTemperaturaInt(), true));
+			listaFatti.add(temperaturaSimulazione(timestamp, meteo.getTemperaturaInt(), false));
+			listaFatti.add(umiditaSimulazione(timestamp, meteo.getUmiditaInt(), true));
+			listaFatti.add(umiditaSimulazione(timestamp, meteo.getUmiditaInt(), false));
+			listaFatti.add(ventoSimulazione(timestamp, meteo.getVento()));
+			
+			ArrayList<Report> listaFattiComponenti = new ArrayList<Report>();
+			listaFattiComponenti = componentiSimulazione(timestamp, Componente.getAllLista(db));
+			for(Report fattoComp : listaFattiComponenti)
+				listaFatti.add(fattoComp);
+			
+			listaFatti.add(isPresentUser(timestamp, user.isPresente()));
+			listaFatti.add(statoAttualeUser(timestamp, user.isPresente(), user.getEsterno()));
+			
+			int indice = 1;
+			for(Report reportListaFatti : listaFatti) {
+				reportListaFatti.setId(indice);
+				reportListaFatti.setProlog(setFatto(reportListaFatti));
+				indice++;
+				Report.insert(db, reportListaFatti);
+			}
 		}
 		
-		ArrayList<Report> listaReport= Report.getLista(db);
-		for(Report report : listaReport) {
-			if (!Rest.sendFactToServer(setFatto(report))) 
-				return false;
+		if (report != null) 
+			listaFatti.add(Report.addNuovoFatto(db, report));
+		else
+			listaFatti = checkFattiUser(db, timestamp, user, listaFatti);
+		
+		int maxId = getMaxIdListaFatti(listaFatti);
+		ArrayList<Oggetto> listaOggetti = Oggetto.getListaPresi(db);
+		if(!listaOggetti.isEmpty() && listaOggetti != null) {
+			ArrayList<Report> listaFattiOggetti = new ArrayList<Report>();
+			listaFattiOggetti = oggettiSimulazione(timestamp, listaOggetti);
+			for(Report fattoOgg : listaFattiOggetti) {
+				fattoOgg.setId(++maxId);
+				fattoOgg.setProlog(setFatto(fattoOgg));
+				listaFatti.add(fattoOgg);
+			}
+					
 		}
 		
-		HashMap<String, Serializable> risultati = Rest.inferisci();
+		ArrayList<String> listaProlog = new ArrayList<String>();
+		for(Report repTosend : listaFatti) {
+			listaProlog.add(repTosend.getProlog());
+		}
+		
+		HashMap<String, Serializable> risultati = XMLRPC.inferisci(user, db, serverAddress, listaProlog);
 		boolean stato = (Boolean) risultati.get("esito");
 		ArrayList<Report> listaFattiDedotti = null;
 		if(stato) {
-			listaFattiDedotti = (ArrayList<Report>) risultati.get("listaFattiDedotti");
+			listaFattiDedotti = (ArrayList<Report>) risultati.get("listaDedotti");
 			if (listaFattiDedotti == null)
 				return false;
 			if (listaFattiDedotti.isEmpty())
 				return true;
 		}
+		else
+			return false;
 		
-		for(Report report : listaFattiDedotti) {
-			Report.insert(db, report);
-			if (!report.getItem().equals("")) {
-				if (report.getStato() == 0)
-					Componente.OffClose(db, report.getItem());
-				if (report.getStato() == 1)
-				Componente.OnOpen(db, report.getItem());
+		ArrayList<Report> listaFattiDedottiSalvati = Report.getListaFattiDedottiSalvati(db);
+		for(Report dedtToSave : listaFattiDedotti) {
+			if (!checkDeduzioneRidondante(db, dedtToSave.getProlog(), listaFattiDedottiSalvati)) {
+				Report.addNuovoFattoDedotto(db, dedtToSave);
+				if (!dedtToSave.getItem().equals("")) {
+					Componente.cambiaStato(db, dedtToSave.getItem(), dedtToSave.getStato());
+					Report.cambiaStatoComponente(db, dedtToSave.getItem());
+				}
 			}
 		}
+		Report.stampaLista(db);
+		return true;
+		
+	}
+	
+	private static int getMaxIdListaFatti(ArrayList<Report> listaFatti) {
+		int maxId = 0;
+		for(Report r : listaFatti)
+			if(maxId < r.getId())
+				maxId = r.getId();
+		return maxId;
+	}
+
+	public static ArrayList<Report> checkFattiUser(SQLiteDatabase db, String timestamp, Utente user, ArrayList<Report> listaFatti) {
+		
+		Report rPres = isPresentUser(timestamp, user.isPresente());
+		Report rAtt = statoAttualeUser(timestamp, user.isPresente(), user.getEsterno());
+		ArrayList<Report> listaFattiAggiornata = new ArrayList<Report>();
+		
+		for (Report r : listaFatti) {
+			if (r.getProlog().contains("is_present")) {
+				rPres.setId(r.getId());
+				rPres.setProlog(setFatto(rPres));
+				listaFattiAggiornata.add(rPres);
+				Report.updateFattiUser(db, rPres.getProlog(), rPres.getId());
+			}
+			else
+				if (r.getProlog().contains("came_from")) {
+					rAtt.setId(r.getId());
+					rAtt.setProlog(setFatto(rAtt));
+					listaFattiAggiornata.add(rAtt);
+					Report.updateFattiUser(db, rAtt.getProlog(), rAtt.getId());
+				}
+				else
+					if (r.getProlog().contains("go_to")) {
+						rAtt.setId(r.getId());
+						rAtt.setProlog(setFatto(rAtt));
+						listaFattiAggiornata.add(rAtt);
+						Report.updateFattiUser(db, rAtt.getProlog(), rAtt.getId());
+					}
+					else
+						listaFattiAggiornata.add(r);
+		}
+		return listaFattiAggiornata;
+	}
+	
+	public static boolean retract(SQLiteDatabase db, String timestamp, Utente user, ArrayList<Report> listaReport) {
+		String serverAddress = Impostazione.getIndirizzo(db);
+		ArrayList<String> listaRetract = new ArrayList<String>();
+		
+		for(Report report: listaReport) {
+			listaRetract.add(report.getProlog());
+		}
+		
+		if (!XMLRPC.retract(user, serverAddress, listaRetract)) {
+			for(Report report: listaReport) {
+				Report.insert(db, report);
+			}
+		}
+		else
+			return false;
 		
 		return true;
 	}
 	
 	
-	@SuppressWarnings("unchecked")
-	public static boolean sendFatto(SQLiteDatabase db, Report report) {
-		Report.insert(db, report);
-		
-		ArrayList<Report> listaReport= Report.getListaNuovi(db);
-		for(Report r : listaReport) {
-			if (Rest.sendFactToServer(setFatto(r)))  {
-			
-				HashMap<String, Serializable> risultati = Rest.inferisci();
-				boolean stato = (Boolean) risultati.get("esito");
-				ArrayList<Report> listaFattiDedotti = null;
-				if(stato) {
-					listaFattiDedotti = (ArrayList<Report>) risultati.get("listaFattiDedotti");
-					if (listaFattiDedotti == null)
-						return false;
-					if (listaFattiDedotti.isEmpty())
-						return true;
-				}
-			
-				for(Report r1 : listaFattiDedotti) {
-					Report.insert(db, r1);
-					if (!r1.getItem().equals("")) {
-						if (r1.getStato() == 0)
-						Componente.OffClose(db, r1.getItem());
-					if (report.getStato() == 1)
-						Componente.OnOpen(db, r1.getItem());
-					}
-				}
-				return true;
-			}
-			else
-				return false;
-		}
-		return false;
-	}
-	
-	
-	private static Report isPresentUser(String timestamp, boolean presenza) {
+	public static Report isPresentUser(String timestamp, boolean presenza) {
 		if (presenza) 
-			return (new Report("L\'utente è presente in cucina", "",0, creaStringaFatto("is_present_yes("+timestamp+")", "1.0"), 0, 1));
+			return (new Report("L\'utente è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",kitchen)", "1.0"), 0, 1));
 		else
-			return (new Report("L\'utente non è presente in cucina", "",0, creaStringaFatto("is_present_no("+timestamp+")", "1.0"), 0, 1));
+			return (new Report("L\'utente non è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",out)", "1.0"), 0, 1));
 	}
-
+	
+	public static Report statoAttualeUser(String timestamp, boolean presenza, boolean esterno) {
+		if (presenza)
+			if (esterno)
+				return (new Report("L\'utente viene dall\'esterno", "",0, creaStringaFatto("came_from("+timestamp+",out)", "1.0"), 0, 1));
+			else
+				return (new Report("L\'utente viene da un\'altra camera", "",0, creaStringaFatto("came_from("+timestamp+",in)", "1.0"), 0, 1));
+		else
+			if (esterno)
+				return (new Report("L\'utente va all\'esterno", "",0, creaStringaFatto("go_to("+timestamp+",out)", "1.0"), 0, 1));
+			else
+				return (new Report("L\'utente va in un\'altra camera", "",0, creaStringaFatto("go_to("+timestamp+",in)", "1.0"), 0, 1));
+	}
+	
 	private static ArrayList<Report> componentiSimulazione(String timestamp, ArrayList<Componente> listaComp) {
 		
 		ArrayList<Report> listaFatti = new ArrayList<Report>();
 		for (Componente comp : listaComp) {
-			String fatto = comp.getProlog();
+			String fatto = comp.getProlog()+"_choice";
 			String stato = "";
-			if (comp.getTipo().equals(Componente.ACCESO_SPENTO) && comp.getStato() == 0)
-				stato = "off";
-			if (comp.getTipo().equals(Componente.ACCESO_SPENTO) && comp.getStato() == 1)
-				stato = "on";
-			if (comp.getTipo().equals(Componente.APERTO_CHIUSO) && comp.getStato() == 0)
-				stato = "close";
-			if (comp.getTipo().equals(Componente.APERTO_CHIUSO) && comp.getStato() == 1)
-				stato = "open";
-			listaFatti.add(new Report(comp.getNome()+" è "+stato , comp.getNome(), comp.getStato(), creaStringaFatto(fatto+"("+timestamp+","+stato+")", "1.0"), 0, 1));
-			
+			String statoAzione = "";
+			if(!(comp.getNome().equals("Dispensa") || comp.getNome().equals("Mobile") || comp.getNome().equals("Frigorifero"))) {
+				if (comp.getTipo().equals(Componente.ACCESO_SPENTO) && comp.getStato() == 0) {
+					stato = "off";
+					statoAzione = "spento";
+				}
+				if (comp.getTipo().equals(Componente.ACCESO_SPENTO) && comp.getStato() == 1) {
+					stato = "on";
+					statoAzione = "acceso";
+				}
+				if (comp.getProlog().equals("air_conditioner_choice"))
+					if(comp.getStato() == 1) {
+						stato = "low";
+						statoAzione = "acceso: potenza bassa";
+					}
+					if(comp.getStato() == 2) {
+						stato = "middle";
+						statoAzione = "acceso: potenza media";
+					}
+					if(comp.getStato() == 3) {
+						stato = "max";
+						statoAzione = "acceso: potenza massima";
+					}
+					if(comp.getStato() == 4) {
+						stato = "max";
+						statoAzione = "acceso: deumidificatore";
+					}
+				if (comp.getProlog().equals("microwave_oven_choice"))
+					if(comp.getStato() == 1) {
+						stato = "heat";
+						statoAzione = "acceso: riscaldamento";
+					}
+					if(comp.getStato() == 2) {
+						stato = "defrost";
+						statoAzione = "acceso: scongelamento";
+					}
+				if (comp.getTipo().equals(Componente.APERTO_CHIUSO) && comp.getStato() == 0) {
+					stato = "close";
+					statoAzione = "chiuso";
+				}
+				if (comp.getTipo().equals(Componente.APERTO_CHIUSO) && comp.getStato() == 1) {
+					stato = "open";
+					statoAzione = "aperto";
+				}
+				listaFatti.add(new Report(comp.getNome()+" è "+statoAzione , comp.getNome(), comp.getStato(), creaStringaFatto(fatto+"("+timestamp+","+stato+")", "1.0"), 0, 0));
+			}
 		}
 		
 		return listaFatti;
 	}
 	
+	private static ArrayList<Report> oggettiSimulazione(String timestamp, ArrayList<Oggetto> listaOgg) {
+	
+		ArrayList<Report> listaFatti = new ArrayList<Report>();
+		for (Oggetto ogg : listaOgg) {
+			listaFatti.add(new Report("Hai preso "+ogg.getNome(), ogg.getNome(), ogg.getStato(), creaStringaFatto("pick_up("+timestamp+","+ogg.getProlog()+")", "1.0"), 0, 0));
+		}
+		
+		return listaFatti;
+	}
+
 	private static Report dataSimulazione(String timestamp, long data) {
 	
 		Date dataSim = new Date();
 		dataSim.setTime(data);
 		@SuppressWarnings("deprecation")
 		int mese = dataSim.getMonth();
-		
+		String meseIta = "";
+		String meseFatto = "month_";
     	switch (mese) {
-		case 1: return (new Report("Mese", "", 0, creaStringaFatto("month_january("+timestamp+")", "1.0"), 0, 1));
-		case 2: return (new Report("Mese", "", 0, creaStringaFatto("month_february("+timestamp+")", "1.0"), 0, 1));
-		case 3: return (new Report("Mese", "", 0, creaStringaFatto("month_march("+timestamp+")", "1.0"), 0, 1));
-		case 4: return (new Report("Mese", "", 0, creaStringaFatto("month_april("+timestamp+")", "1.0"), 0, 1));
-		case 5: return (new Report("Mese", "", 0, creaStringaFatto("month_may("+timestamp+")", "1.0"), 0, 1));
-		case 6: return (new Report("Mese", "", 0, creaStringaFatto("month_june("+timestamp+")", "1.0"), 0, 1));
-		case 7: return (new Report("Mese", "", 0, creaStringaFatto("month_july("+timestamp+")", "1.0"), 0, 1));
-		case 8: return (new Report("Mese", "", 0, creaStringaFatto("month_august("+timestamp+")", "1.0"), 0, 1));
-		case 9: return (new Report("Mese", "", 0, creaStringaFatto("month_september("+timestamp+")", "1.0"), 0, 1));
-		case 10: return (new Report("Mese", "", 0, creaStringaFatto("month_october("+timestamp+")", "1.0"), 0, 1));
-		case 11: return (new Report("Mese", "", 0, creaStringaFatto("month_november("+timestamp+")", "1.0"), 0, 1));
-		case 12: return (new Report("Mese", "", 0, creaStringaFatto("month_december("+timestamp+")", "1.0"), 0, 1));
+		case 1: meseIta = "Gennaio";
+				meseFatto = meseFatto.replace("_", "_january");
+				break;
+		case 2: meseIta = "Febbraio";
+				meseFatto = meseFatto.replace("_", "_february");
+				break;
+		case 3: meseIta = "Marzo";
+				meseFatto = meseFatto.replace("_", "_march");
+				break;
+		case 4: meseIta = "aprile";
+				meseFatto = meseFatto.replace("_", "_april");
+				break;
+		case 5: meseIta = "Maggio";
+				meseFatto = meseFatto.replace("_", "_may");
+				break;
+		case 6: meseIta = "Giugno";
+				meseFatto = meseFatto.replace("_", "_june");
+				break;
+		case 7: meseIta = "Luglio";
+				meseFatto = meseFatto.replace("_", "_july");
+				break;
+		case 8: meseIta = "Agosto";
+				meseFatto = meseFatto.replace("_", "_august");
+				break;
+		case 9: meseIta = "Settembre";
+				meseFatto = meseFatto.replace("_", "_september");
+				break;
+		case 10: meseIta = "Ottobre";
+				meseFatto = meseFatto.replace("_", "_october");
+				break;
+		case 11: meseIta = "Novembre";
+				meseFatto = meseFatto.replace("_", "_november");
+				break;
+		case 12: meseIta = "Dicembre";
+				meseFatto = meseFatto.replace("_", "_december");
+				break;
 		}
-		return null;
+		return (new Report("E' il Mese di "+meseIta, "", 0, creaStringaFatto(meseFatto+"("+timestamp+")", "1.0"), 0, 0));
 		
 	}
 	
 	private static Report oraSimulazione(String timestamp, int ora) {
-		
-		switch (ora) {
-		case 1: return (new Report("Ora", "", 0, creaStringaFatto("time_1("+timestamp+")", "1.0"), 0, 1));
-		case 2: return (new Report("Ora", "", 0, creaStringaFatto("time_2("+timestamp+")", "1.0"), 0, 1));
-		case 3: return (new Report("Ora", "", 0, creaStringaFatto("time_3("+timestamp+")", "1.0"), 0, 1));
-		case 4: return (new Report("Ora", "", 0, creaStringaFatto("time_4("+timestamp+")", "1.0"), 0, 1));
-		case 5: return (new Report("Ora", "", 0, creaStringaFatto("time_5("+timestamp+")", "1.0"), 0, 1));
-		case 6: return (new Report("Ora", "", 0, creaStringaFatto("time_6("+timestamp+")", "1.0"), 0, 1));
-		case 7: return (new Report("Ora", "", 0, creaStringaFatto("time_7("+timestamp+")", "1.0"), 0, 1));
-		case 8: return (new Report("Ora", "", 0, creaStringaFatto("time_8("+timestamp+")", "1.0"), 0, 1));
-		case 9: return (new Report("Ora", "", 0, creaStringaFatto("time_9("+timestamp+")", "1.0"), 0, 1));
-		case 10: return (new Report("Ora", "", 0, creaStringaFatto("time_10("+timestamp+")", "1.0"), 0, 1));
-		case 11: return (new Report("Ora", "", 0, creaStringaFatto("time_11("+timestamp+")", "1.0"), 0, 1));
-		case 12: return (new Report("Ora", "", 0, creaStringaFatto("time_12("+timestamp+")", "1.0"), 0, 1));
-		case 13: return (new Report("Ora", "", 0, creaStringaFatto("time_13("+timestamp+")", "1.0"), 0, 1));
-		case 14: return (new Report("Ora", "", 0, creaStringaFatto("time_14("+timestamp+")", "1.0"), 0, 1));
-		case 15: return (new Report("Ora", "", 0, creaStringaFatto("time_15("+timestamp+")", "1.0"), 0, 1));
-		case 16: return (new Report("Ora", "", 0, creaStringaFatto("time_16("+timestamp+")", "1.0"), 0, 1));
-		case 17: return (new Report("Ora", "", 0, creaStringaFatto("time_17("+timestamp+")", "1.0"), 0, 1));
-		case 18: return (new Report("Ora", "", 0, creaStringaFatto("time_18("+timestamp+")", "1.0"), 0, 1));
-		case 19: return (new Report("Ora", "", 0, creaStringaFatto("time_19("+timestamp+")", "1.0"), 0, 1));
-		case 20: return (new Report("Ora", "", 0, creaStringaFatto("time_20("+timestamp+")", "1.0"), 0, 1));
-		case 21: return (new Report("Ora", "", 0, creaStringaFatto("time_21("+timestamp+")", "1.0"), 0, 1));
-		case 22: return (new Report("Ora", "", 0, creaStringaFatto("time_22("+timestamp+")", "1.0"), 0, 1));
-		case 23: return (new Report("Ora", "", 0, creaStringaFatto("time_23("+timestamp+")", "1.0"), 0, 1));
-		case 0: return (new Report("Ora", "", 0, creaStringaFatto("time_0("+timestamp+")", "1.0"), 0, 1));
-		
-		}
-		return null;
+		String fatto = "time_"+ora;
+		return (new Report("Sono le ore "+ora, "", 0, creaStringaFatto(fatto+"("+timestamp+")", "1.0"), 0, 0));
 	}
 	
 	private static Report umiditaSimulazione(String timestamp, int umidita, boolean interno ) {
-		String stato = null;
-		if (interno) 
-			stato = "int_";
-		else
-			stato = "ext_";
-		if (umidita>= 0 && umidita < 20) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v0_20("+timestamp+")", "1.0"), 0, 1));
+		String stato = "";
+		String statoIta = "Umidità ";
 		
-		if (umidita>= 20 && umidita < 30) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v20_30("+timestamp+")", "1.0"), 0, 1));
+		if (interno) {
+			stato = "int_humidity_v";
+			statoIta += "interna: "+umidita+"%";
+		}	
+		else {
+			stato = "ext_humidity_v";
+			statoIta += "esterna: "+umidita+"%";
+		}
 		
-		if (umidita>= 30 && umidita < 40) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v30_40("+timestamp+")", "1.0"), 0, 1));
+		if (umidita>= 0 && umidita < 20) stato = stato.replace("v","v0_20");
+		if (umidita>= 20 && umidita < 30) stato = stato.replace("v","v20_30");
+		if (umidita>= 30 && umidita < 40) stato = stato.replace("v","v30_40");
+		if (umidita>= 40 && umidita < 50) stato = stato.replace("v","v40_50");
+		if (umidita>= 50 && umidita < 60) stato = stato.replace("v","v50_60");
+		if (umidita>= 60 && umidita < 70) stato = stato.replace("v","v60_70");
+		if (umidita>= 70 && umidita < 80) stato = stato.replace("v","v70_80");
+		if (umidita>= 80 && umidita < 90) stato = stato.replace("v","v80_90");
+		if (umidita>= 90 && umidita <= 100) stato = stato.replace("v","v90_100");
 		
-		if (umidita>= 40 && umidita < 50) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v40_50("+timestamp+")", "1.0"), 0, 1));
-		
-		if (umidita>= 50 && umidita < 60) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v50_60("+timestamp+")", "1.0"), 0, 1));
-		
-		if (umidita>= 60 && umidita < 70) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v60_70("+timestamp+")", "1.0"), 0, 1));
-		
-		if (umidita>= 70 && umidita < 80) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v70_80("+timestamp+")", "1.0"), 0, 1));
-		
-		if (umidita>= 80 && umidita < 90) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v80_90("+timestamp+")", "1.0"), 0, 1));
-		
-		if (umidita>= 90 && umidita <= 100) return (new Report("Ora", "", 0, creaStringaFatto(stato+"humidity_v90_100("+timestamp+")", "1.0"), 0, 1));
-		
-		
-		return null;
+		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0));
 	}
 	
 	private static Report temperaturaSimulazione(String timestamp, int temperatura, boolean interno ) {
-		String stato = null;
-		if (interno) 
-			stato = "internal_";
-		else
-			stato = "external_";
-		if (temperatura < -10) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"vBelowMinus10("+timestamp+")", "1.0"), 0, 1));
+		String stato = "";
+		String statoIta = "Temperatura ";
 		
-		if (temperatura>= -10 && temperatura < 0) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_vMinus10_0("+timestamp+")", "1.0"), 0, 1));
+		if (interno) {
+			stato = "internal_temp_v";
+			statoIta += "interna: "+temperatura+ " C°";
+		}	
+		else {
+			stato = "external_temp_v";
+			statoIta += "esterna: "+temperatura+ " C°";
+		}
 		
-		if (temperatura>= 0 && temperatura < 10 && !interno) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_v0_10("+timestamp+")", "1.0"), 0, 1));
+		if (temperatura < -10) stato = stato.replace("v","vBelowMinus10");
+		if (temperatura>= -10 && temperatura < 0) stato = stato.replace("v","vMinus10_0");
+		if (temperatura>= 0 && temperatura < 10 && !interno) stato = stato.replace("v","v0_10");
+		if (temperatura>= 0 && temperatura < 5 && interno) stato = stato.replace("v","v0_5");
+		if (temperatura>= 5 && temperatura < 10 && interno) stato = stato.replace("v","v5_10");
+		if (temperatura>= 10 && temperatura < 20) stato = stato.replace("v","v10_20");
+		if (temperatura>= 20 && temperatura < 30) stato = stato.replace("v","v20_30");
+		if (temperatura>= 30 && temperatura < 40) stato = stato.replace("v","v30_40");
+		if (temperatura>= 40) stato = stato.replace("v","vPlus40");
 		
-		if (temperatura>= 0 && temperatura < 5 && interno) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_v0_5("+timestamp+")", "1.0"), 0, 1));
-		
-		if (temperatura>= 5 && temperatura < 10 && interno) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_v5_10("+timestamp+")", "1.0"), 0, 1));
-		
-		if (temperatura>= 10 && temperatura < 20) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_v10_20("+timestamp+")", "1.0"), 0, 1));
-		
-		if (temperatura>= 20 && temperatura < 30) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_v20_30("+timestamp+")", "1.0"), 0, 1));
-		
-		if (temperatura>= 30 && temperatura < 40) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_v30_40("+timestamp+")", "1.0"), 0, 1));
-		
-		if (temperatura>= 40) return (new Report("Temperatura "+stato, "", 0, creaStringaFatto(stato+"temp_vPlus40("+timestamp+")", "1.0"), 0, 1));
-		
-		
-		return null;
+		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0));
 	}
 	
 	private static Report ventoSimulazione(String timestamp, int vento) {
 		
-		if (vento >= 0 && vento <= 1) return (new Report("Vento", "", 0, creaStringaFatto("wind_calmo("+timestamp+")", "1.0"), 0, 1));
+		String stato = "";
 		
-    	if (vento >= 2 && vento <= 3) return (new Report("Vento", "", 0, creaStringaFatto("wind_bava_di_vento("+timestamp+")", "1.0"), 0, 1));
+		if (vento >= 0 && vento <= 1) stato = "calmo";
+		if (vento >= 2 && vento <= 3) stato = "bava_di_vento";
+		if (vento >= 4 && vento <= 6) stato = "brezza_leggera";
+		if (vento >= 7 && vento <= 10) stato = "brezza";
+		if (vento >= 11 && vento <= 16) stato = "brezza_vivace";
+		if (vento >= 17 && vento <= 21) stato = "brezza_tesa";
+		if (vento >= 22 && vento <= 27) stato = "vento_fresco";
+		if (vento >= 28 && vento <= 33) stato = "vento_forte";
+		if (vento >= 34 && vento <= 40) stato = "burrasca_moderata";
+		if (vento >= 41 && vento <= 47) stato = "burrasca_forte";
+		if (vento >= 48 && vento <= 55) stato = "tempesta";
+		if (vento >= 56 && vento <= 63) stato = "fortunale";
+		if (vento >= 64) stato = "uragano";
 		
-    	if (vento >= 4 && vento <= 6) return (new Report("Vento", "", 0, creaStringaFatto("wind_brezza_leggera("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 7 && vento <= 10) return (new Report("Vento", "", 0, creaStringaFatto("wind_brezza("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 11 && vento <= 16) return (new Report("Vento", "", 0, creaStringaFatto("wind_brezza_vivace("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 17 && vento <= 21) return (new Report("Vento", "", 0, creaStringaFatto("wind_brezza_tesa("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 22 && vento <= 27) return (new Report("Vento", "", 0, creaStringaFatto("wind_vento_fresco("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 28 && vento <= 33) return (new Report("Vento", "", 0, creaStringaFatto("wind_vento_forte("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 34 && vento <= 40) return (new Report("Vento", "", 0, creaStringaFatto("wind_burrasca_moderata("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 41 && vento <= 47) return (new Report("Vento", "", 0, creaStringaFatto("wind_burrasca_forte("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 48 && vento <= 55) return (new Report("Vento", "", 0, creaStringaFatto("wind_tempesta("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 56 && vento <= 63) return (new Report("Vento", "", 0, creaStringaFatto("wind_fortunale("+timestamp+")", "1.0"), 0, 1));
-		
-    	if (vento >= 64) return (new Report("Vento", "", 0, creaStringaFatto("wind_uragano("+timestamp+")", "1.0"), 0, 1));
-		
-		
-		return null;
+		return (new Report("Vento: "+stato.replace("_", " "), "", 0, creaStringaFatto("wind_"+stato+"("+timestamp+")", "1.0"), 0, 0));
 	}
+	
 	
 	public static String creaStringaFatto(String fatto,String certezza) {
 		
 		String newFatto = FORM_FATTO;
 		newFatto = newFatto.replace(FATTO, fatto);
 		newFatto = newFatto.replace(CERTEZZA, certezza);
-		LogView.info(newFatto);
 		return newFatto;
 	}
 	
-	private static String setFatto(Report r) {
+	public static String setFatto(Report r) {
 		
 		String newFatto = r.getProlog();
 		newFatto = newFatto.replace(ID, String.valueOf(r.getId()));
-		LogView.info(newFatto);
 		return newFatto;
 	}
 	
-	public static Report fattoDedottoToReport(String fattoDedotto) {
-		
-		final String ON = "SHE ha acceso ";
-		final String OFF = "SHE ha acceso ";
-		final String OPEN = "SHE ha aperto ";
-		final String CLOSE = "SHE ha chiuso ";
+	public static Report fattoDedottoToReport(SQLiteDatabase db, String fattoDedotto) {
+		final String CASA = "C@SA: ";
+		final String ON = " acceso";
+		final String OFF = " spento";
+		final String OPEN = " aperto";
+		final String CLOSE = " chiuso";
 		if (fattoDedotto != null) {
 			
-			fattoDedotto.replace("fact(", "");
-			String[] parti = fattoDedotto.split(",");
-			String fatto = parti[1];
-			
-			String[] parziale = fatto.split("(");
-			String azione = parziale[0];
-			String item = "";
 			int stato = 0;
+			String azione = "";
+			String item = "";
 			
-			if (fatto.contains("on")) {
-				stato = 1;
-				String[] partiItem = fatto.split("_");
-				item = partiItem[0];
-				azione = ON+item;
-			}
-			if (fatto.contains("off")) { 
-				stato = 0;
-				String[] partiItem = fatto.split("_");
-				item = partiItem[0];
-				azione = OFF+item;
-			}
-			if (fatto.contains("open")) {
-				stato = 1;
-				String[] partiItem = fatto.split("_");
-				item = partiItem[0];
-				azione = OPEN+item;
-			}
-			if (fatto.contains("close")) {
-				stato = 0;
-				String[] partiItem = fatto.split("_");
-				item = partiItem[0];
-				azione = CLOSE+item;
-			}
+			ArrayList<Componente> listaComp = Componente.getAllLista(db);
+			for (Componente comp : listaComp)
+				if(fattoDedotto.contains(comp.getProlog())) {
+					item = comp.getNome();
+				
+					if (comp.getProlog().contains("air_conditioner")) {
+						if (fattoDedotto.contains(",low")) {
+							stato = 1;
+							azione = CASA+item+ON+": potenza bassa";
+						}
+						if (fattoDedotto.contains(",middle")) {
+							stato = 2;
+							azione = CASA+item+ON+": potenza media";
+						}
+						if (fattoDedotto.contains(",max")) {
+							stato = 3;
+							azione = CASA+item+ON+": potenza massima";
+						}
+						if (fattoDedotto.contains(",dehumidifier")) {
+							stato = 4;
+							azione = CASA+item+ON+": deumidificatore";
+						}
+					}
+					
+					if (comp.getProlog().contains("microwave_oven")) {
+						if (fattoDedotto.contains(",heat")) {
+							stato = 1;
+							azione = CASA+item+ON+": riscaldamento";
+						}
+						if (fattoDedotto.contains(",defrost")) {
+							stato = 2;
+							azione = CASA+item+ON+": scongelamento";
+						}
+					}
+					
+					if (fattoDedotto.contains(",on")) {
+						stato = 1;
+						azione = CASA+item+ON;
+					}
+					if (fattoDedotto.contains(",off")) { 
+						stato = 0;
+						azione = CASA+item+OFF;
+					}
+					if (fattoDedotto.contains(",open")) {
+						stato = 1;
+						azione = CASA+item+OPEN;
+					}
+					if (fattoDedotto.contains(",close")) {
+						stato = 0;
+						azione = CASA+item+CLOSE;
+					}
+				}
+			
+			if(fattoDedotto.contains("season_winter")) 	azione = "C@SA: inverno";
+			if(fattoDedotto.contains("season_spring")) 	azione = "C@SA: primavera";
+			if(fattoDedotto.contains("season_summer")) 	azione = "C@SA: estate";
+			if(fattoDedotto.contains("season_fall")) 	azione = "C@SA: autunno";
+			if(fattoDedotto.contains("season_cold")) 	azione = "C@SA: stagione fredda";
+			if(fattoDedotto.contains("season_warm")) 	azione = "C@SA: stagione calda";
+			
+			if(fattoDedotto.contains("time_morning")) 	azione = "C@SA: mattina";
+			if(fattoDedotto.contains("time_afternoon")) azione = "C@SA: pomeriggio";
+			if(fattoDedotto.contains("time_evening")) 	azione = "C@SA: sera";
+			if(fattoDedotto.contains("time_night")) 	azione = "C@SA: notte";
+			if(fattoDedotto.contains("time_breakfast")) azione = "C@SA: ora della colazione";
+			if(fattoDedotto.contains("time_lunch")) 	azione = "C@SA: ora del pranzo";
+			if(fattoDedotto.contains("time_dinner")) 	azione = "C@SA: ora della cena";
+			if(fattoDedotto.contains("time_break")) 	azione = "C@SA: ora della pausa caffé";
+			
+			if(fattoDedotto.contains("humidier_equal")) 			azione = CASA+"umidità interna ed esterna sono uguali";
+			if(fattoDedotto.contains("humidier_inside_low")) 		azione = CASA+"umidità interna poco inferiore rispetto l'esterno";
+			if(fattoDedotto.contains("humidier_inside_middle"))		azione = CASA+"umidità interna abbastanza inferiore rispetto l'esterno";
+			if(fattoDedotto.contains("humidier_inside_high")) 		azione = CASA+"umidità interna molto inferiore rispetto l'esterno";
+			if(fattoDedotto.contains("humidier_outside_low")) 		azione = CASA+"umidità interna poco superiore rispetto l'esterno";
+			if(fattoDedotto.contains("humidier_outside_middle")) 	azione = CASA+"umidità esterna abbastanza superiore rispetto l'esterno";
+			if(fattoDedotto.contains("humidier_outside_high")) 		azione = CASA+"umidità esterna molto superiore rispetto l'esterno";
+			
+			if(fattoDedotto.contains("int_humidity_accettable_no_low")) 	azione = CASA+"umidità interna non accettabile: bassa";
+			if(fattoDedotto.contains("int_humidity_accettable_yes")) 		azione = CASA+"umidità interna accettabile: media";
+			if(fattoDedotto.contains("int_humidity_accettable_no_high")) 	azione = CASA+"umidità interna non accettabile: alta";
+			
+			if(fattoDedotto.contains("warmer_inside_low")) 		azione = CASA+"temp. interna poco superiore rispetto l'esterno";
+			if(fattoDedotto.contains("warmer_inside_middle")) 	azione = CASA+"temp. interna abbastanza superiore rispetto l'esterno";
+			if(fattoDedotto.contains("warmer_inside_high")) 	azione = CASA+"temp. interna molto superiore rispetto l'esterno";
+			if(fattoDedotto.contains("warmer_equal")) 			azione = CASA+"temp. interna ed esterna sono uguali";
+			if(fattoDedotto.contains("warmer_outside_low")) 	azione = CASA+"temp. interna poco inferiore rispetto l'esterno";
+			if(fattoDedotto.contains("warmer_outside_middle")) 	azione = CASA+"temp. interna abbastanza inferiore rispetto l'esterno";
+			if(fattoDedotto.contains("warmer_outside_high")) 	azione = CASA+"temp. interna molto inferiore rispetto l'esterno";
+			
+			if(fattoDedotto.contains("int_temperature_accettable_no_cold")) 	azione = CASA+"temp. interna non accettabile: fredda";
+			if(fattoDedotto.contains("int_temperature_accettable_yes")) 		azione = CASA+"temp. interna accettabile: ottimale";
+			if(fattoDedotto.contains("int_temperature_accettable_no_hod")) 		azione = CASA+"temp. interna non accettabile: calda";
+			
+			if(fattoDedotto.contains("is_cooking")) 	azione = CASA+"stai cucinando";
+			if(fattoDedotto.contains("is_breakfast")) 	azione = CASA+"stai facendo colazione";
+			if(fattoDedotto.contains("is_breaking")) 	azione = CASA+"stai facendo pausa";
+						
 			return (new Report(azione, item, stato, fattoDedotto, 1, 1));
 		}
 		else
@@ -359,5 +524,32 @@ public class Prolog {
 		
 	}
 
+	private static boolean checkDeduzioneRidondante(SQLiteDatabase db, String fatto, ArrayList<Report> listaFattiDedottiSalvati) {
+		if (listaFattiDedottiSalvati == null || listaFattiDedottiSalvati.isEmpty())
+			return false;
+		
+		if (fatto.contains("season") || fatto.contains("time") || fatto.contains("humidier") || fatto.contains("accettable") || fatto.contains("warmer")) {
+			String parti[] = fatto.split(",");
+			for (Report r : listaFattiDedottiSalvati) {
+				if (r.getProlog().contains(parti[1]))
+					return true;
+			}
+			return false;
+		}
+		else
+			return false;
+			
+	}
 	
+	public static String formatFatto(String fatto) {
+		String fattoIniziale = fatto;
+		String parziale = fattoIniziale.replace("fact(", "");
+		String parti[] = parziale.split(",");
+		
+		String fattoFinale = "fact(_id";
+		for (int i=1; i < parti.length; i++)
+			fattoFinale += ","+parti[i];
+		
+		return fattoFinale;
+	}
 }

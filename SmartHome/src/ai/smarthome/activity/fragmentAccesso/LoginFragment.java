@@ -36,7 +36,7 @@ public class LoginFragment extends Fragment {
                     String firstName = user.getFirstName();
                     String lastName = user.getLastName();
                     
-                    Utente utente= new Utente(fbId, null, null, lastName, firstName);
+                    Utente utente= new Utente(fbId, null, null, null, lastName, firstName);
                     Intent i = new Intent(getActivity(), MainActivity.class);
                     i.putExtra(UTENTE, utente);
                     startActivity(i);

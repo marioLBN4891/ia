@@ -1,0 +1,59 @@
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin" >
+
+	<TextView 
+    android:id="@+id/text_fragment_impostazioni"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/text_fragment_impostazioni" 
+    android:textSize="@dimen/font_text14" />
+	
+	<LinearLayout 
+    android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:layout_marginTop="@dimen/margin20" >
+
+	    <TextView 
+    	android:id="@+id/textIndirizzo"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:text="@string/indirizzo" 
+    	android:textSize="@dimen/font_text14" />
+	    
+		<EditText
+		android:id="@+id/editTextServer"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:inputType="text" />
+		
+	</LinearLayout>
+	
+	<RelativeLayout
+	android:id="@+id/rlImpostazioni"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+		<ImageButton
+    	android:id="@+id/cambiaImpostazioniButton"
+    	android:layout_width="@dimen/dimButtonSave"
+    	android:layout_height="@dimen/dimButtonSave"
+    	android:scaleType="fitXY"
+    	android:background="@null"
+    	android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+    	android:contentDescription="@string/cambiaImpostazioni"
+    	android:onClick="cambiaImpostazioni"
+    	android:src="@drawable/salva" />
+		
+	</RelativeLayout>
+	
+</LinearLayout>

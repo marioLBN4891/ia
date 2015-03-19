@@ -36,10 +36,11 @@ public class ReportActivity extends Activity {
 		TableLayout tableLayout = (TableLayout) findViewById(R.id.tableReport);
 	    TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
 	    lp.setMargins(10, 2, 10, 3);
-	        
+	    
+	    int indice = 1;
 	    for (Report r: lista) {
 	    	TextView textView1 = new TextView(this);
-		    textView1.setText("t" + r.getId());
+		    textView1.setText(String.valueOf(indice++));
 		    textView1.setTextColor(Color.BLUE);
 		    textView1.setTextSize(16);
 		    textView1.setLayoutParams(lp);

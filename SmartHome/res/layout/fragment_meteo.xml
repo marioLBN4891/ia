@@ -53,6 +53,29 @@ android:paddingTop="@dimen/activity_vertical_margin" >
 		android:layout_height="@dimen/margin30" >
 		
 	    	<TextView 
+    		android:id="@+id/textLocalita"
+    		android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_marginTop="@dimen/margin15"
+    		android:text="@string/localita"
+    		android:textStyle="bold"
+    		android:textSize="@dimen/font_text12" />
+	
+			<TextView 
+    		android:id="@+id/textEditLocalita"
+    		android:layout_weight="1"
+			android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_marginTop="@dimen/margin15"
+    		android:textSize="@dimen/font_text12" />
+	
+		</TableRow>
+		
+		<TableRow 
+    	android:layout_width="fill_parent"
+		android:layout_height="@dimen/margin30" >
+		
+	    	<TextView 
     		android:id="@+id/textMeteo"
     		android:layout_width="match_parent"
     		android:layout_height="wrap_content"

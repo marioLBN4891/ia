@@ -107,16 +107,27 @@ public class Oggetto implements Serializable {
 		return lista;
 	}
 	
-	public static void prendi(SQLiteDatabase db, String nome) {
+	public static ArrayList<Oggetto> getListaPresi(SQLiteDatabase db) {
+		ArrayList<Oggetto> lista = new ArrayList<Oggetto>();
+		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.STATO+" = "+ 1, null, null, null, OggettiTable.NOME);
+		if (cursore.getCount() > 0)
+			while (cursore.moveToNext()) 
+					lista.add(new Oggetto(cursore.getInt(0), cursore.getString(1), cursore.getString(2), cursore.getInt(3), cursore.getString(4)));
+		return lista;
+	}
+	
+	public static void cambiaStato(SQLiteDatabase db, String nome, int stato) {
 		ContentValues value = new ContentValues();
-		value.put(OggettiTable.STATO, 1);
+		value.put(OggettiTable.STATO, stato);
 		db.update(OggettiTable.TABLE_NAME, value, OggettiTable.NOME+" = \""+ nome+ "\"", null);
 	}
 	
-	public static void lascia(SQLiteDatabase db, String nome) {
-		ContentValues value = new ContentValues();
-		value.put(OggettiTable.STATO, 0);
-		db.update(OggettiTable.TABLE_NAME, value, OggettiTable.NOME+" = \""+ nome+ "\"", null);
+	public static String getProlog(SQLiteDatabase db, String nome) {
+		Cursor cursore = db.query(OggettiTable.TABLE_NAME, OggettiTable.COLUMNS, OggettiTable.NOME+" = \""+ nome+"\"", null, null, null, OggettiTable.NOME);
+		if (cursore.getCount() > 0)
+			while (cursore.moveToNext()) 
+					return cursore.getString(4);
+		return null;
 	}
 	
 	public static boolean checkOggetto(String tipo, int stato, SQLiteDatabase db) {

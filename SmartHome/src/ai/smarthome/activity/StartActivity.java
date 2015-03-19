@@ -44,7 +44,7 @@ public class StartActivity extends Activity {
         
 	    Session session = Session.openActiveSessionFromCache(this);
         
-        uiHelper = new UiLifecycleHelper(this, callback);
+	    uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         
         if (session == null) {
@@ -107,13 +107,17 @@ public class StartActivity extends Activity {
                     @Override
                     public void onCompleted(GraphUser user, Response response) {
                     	LogView.info("StartActivity.onSessionStateChange: avvio sessione FB");
-                    	
-                    	String fbId = user.getId();
-                        String firstName = user.getFirstName();
-                        String lastName = user.getLastName();
-                      
-                        Utente utente= new Utente(fbId, null, null, lastName, firstName);
-                        Intent i = new Intent(StartActivity.this, MainActivity.class);
+                    	Utente utente;
+                    	try {
+                    		String fbId = user.getId();
+                    		String firstName = user.getFirstName();
+                    		String lastName = user.getLastName();
+                    		
+                    		utente = new Utente(fbId, null, null, null, lastName, firstName);
+                    	} catch (Exception e) {
+                    		utente = new Utente("1", null, null, null, "", "");
+                    	}
+                    	Intent i = new Intent(StartActivity.this, MainActivity.class);
                         i.putExtra(Costanti.UTENTE, utente);
                         startActivity(i);
                         finish();

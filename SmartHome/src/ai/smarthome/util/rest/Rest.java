@@ -16,22 +16,24 @@ import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.util.LogView;
 import ai.smarthome.util.Prolog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 
 public class Rest  {
-	final private static String serverAddress = "http://192.168.228.1:8080/ReLay/she";
+	final private static String projectPath = "/ReLay/she";
 	final static String GETPARAMETRIMAIL = "getParametriMail()";
 	final static String GETMETEOLOCALE= "getMeteoLocale()";
+	final static int timeOut = 1000 * 5;
 	
-	public static void sendPosition(String user, String latitude, String longitude) {
+	public static void sendPosition(String serverAddress, String user, String latitude, String longitude) {
 		try {
-			URL url = new URL(serverAddress+"/sendPosition?user="+user+"+latitude="+latitude+"+longitude="+longitude);
+			URL url = new URL(serverAddress+projectPath+"/sendPosition?user="+user+"+latitude="+latitude+"+longitude="+longitude);
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -54,16 +56,53 @@ public class Rest  {
 		} 
 	}
 	
-	public static boolean startSimulazione() {
+	public static boolean startServer(String serverAddress) {
 		
 		try {
-			URL url = new URL(serverAddress+"/startSimulazione");
+			URL url = new URL(serverAddress+projectPath+"/start");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(timeOut);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			String esito = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				JSONObject json = new JSONObject(line);
+				esito = json.getString("esito");
+				if(esito.contains("errore")) {
+					LogView.info("Rest.startServer: ERRORE");
+					return false;
+				}
+			}
+			boolean stato = Boolean.valueOf(esito);
+			LogView.info("Rest.startServer: "+stato);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.startServer: ERRORE");
+			return false;
+		} 
+		
+	}
+
+	public static boolean startSimulazione(String serverAddress) {
+		
+		try {
+			URL url = new URL(serverAddress+projectPath+"/startSimulazione");
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -91,16 +130,16 @@ public class Rest  {
 		
 	}
 	
-	public static boolean stopSimulazione() {
+	public static boolean stopSimulazione(String serverAddress) {
 		
 		try {
-			URL url = new URL(serverAddress+"/stopSimulazione");
+			URL url = new URL(serverAddress+projectPath+"/stopSimulazione");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -128,16 +167,53 @@ public class Rest  {
 		
 	}
 
-	public static boolean sendFactToServer(String fatto) {
+	public static boolean nuovoRun(String serverAddress) {
 		
 		try {
-			URL url = new URL(serverAddress+"/send?fatto="+fatto);
+			URL url = new URL(serverAddress+projectPath+"/nuovorun");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(timeOut);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			String esito = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				JSONObject json = new JSONObject(line);
+				esito = json.getString("esito");
+				if(esito.contains("errore")) {
+					LogView.info("Rest.nuovoRun: ERRORE");
+					return false;
+				}
+			}
+			boolean stato = Boolean.valueOf(esito);
+			LogView.info("Rest.nuovoRun: "+stato);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.nuovoRun: ERRORE");
+			return false;
+		} 
+		
+	}
+
+	public static boolean sendFactToServer(String serverAddress, String fatto) {
+		
+		try {
+			URL url = new URL(serverAddress+projectPath+"/sendFact?fatto="+fatto);
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -164,7 +240,43 @@ public class Rest  {
 		
 	}
 
-	public static HashMap<String, Serializable> inferisci() {
+	public static boolean sendRetractToServer(String serverAddress, String retract) {
+		
+		try {
+			URL url = new URL(serverAddress+projectPath+"/sendRetract?retract="+retract);
+		
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(timeOut);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				json = new JSONObject(line);
+				if(line.contains("errore")) {
+					LogView.info("Rest.send: ERRORE");
+					return false;
+				}
+			}
+			boolean stato = Boolean.valueOf(json.getBoolean("esito"));
+			LogView.info("Rest.send: "+stato);
+			return stato;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.send: ERRORE");
+			return false;
+		} 
+		
+	}
+
+	public static HashMap<String, Serializable> inferisci(SQLiteDatabase db, String serverAddress) {
 		
 		HashMap<String, Serializable> risultati = new HashMap<String, Serializable>();
 		ArrayList<Report> listaFattiDedotti = new ArrayList<Report>();
@@ -174,13 +286,13 @@ public class Rest  {
 		
 		
 		try {
-			URL url = new URL(serverAddress+"/inferisci");
+			URL url = new URL(serverAddress+projectPath+"/inferisci");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 5);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -198,7 +310,7 @@ public class Rest  {
 			JSONArray jsonArray = json.getJSONArray("listaFatti");
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject jsonFatto = jsonArray.getJSONObject(i);
-				listaFattiDedotti.add(Prolog.fattoDedottoToReport(jsonFatto.getString("fatto")));
+				listaFattiDedotti.add(Prolog.fattoDedottoToReport(db, jsonFatto.getString("fatto")));
 			}
 			boolean stato = Boolean.valueOf(json.getBoolean("esito"));
 			LogView.info("Rest.inferisci: "+stato);
@@ -215,7 +327,8 @@ public class Rest  {
 		
 	}
 
-	public static HashMap<String, Serializable> request(String fatto) {
+	// metodo non più utilizzato
+	public static HashMap<String, Serializable> request(String serverAddress, String fatto) {
 		
 		HashMap<String, Serializable> risultati = new HashMap<String, Serializable>();
 		ArrayList<String> listaFatti = new ArrayList<String>();
@@ -225,13 +338,13 @@ public class Rest  {
 		
 		
 		try {
-			URL url = new URL(serverAddress+"/request?fatto="+fatto);
+			URL url = new URL(serverAddress+projectPath+"/request?fatto="+fatto);
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -266,7 +379,7 @@ public class Rest  {
 		
 	}
 
-	public static Map<String,String> getParametriMail() {
+	public static Map<String,String> getParametriMail(String serverAddress) {
 		
 		final String EMAIL_FROM = "email_from";
 		final String USERNAME = "username";
@@ -284,13 +397,13 @@ public class Rest  {
 		parametri.put(PORTA_SF, "465");
 		
 		try {
-			URL url = new URL(serverAddress+"/riceviParametriMail");
+			URL url = new URL(serverAddress+projectPath+"/riceviParametriMail");
 		
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 2);
+			conn.setConnectTimeout(timeOut);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -321,17 +434,20 @@ public class Rest  {
 		
 	}
 	
-	public static Map<String,Integer> getMeteoLocale(Context context, final String city) {
+	public static Map<String,Integer> getMeteoLocale(Context context, String city) {
 		
 		Map<String,Integer> parametri = null;
 		try {
+			if (city == null)
+				city = "Roma";
+			
 			URL url = new URL("http://5DayWeather.org/api.php?city="+city);
-		
+			LogView.info(url.toString());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			conn.setConnectTimeout(1000 * 5);
+			conn.setConnectTimeout(timeOut*10);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			BufferedReader rd;
 			conn.connect();
@@ -340,10 +456,13 @@ public class Rest  {
 			JSONObject json = null;
 			String line = null;
 			while ((line = rd.readLine()) != null) {
+				
 				json = new JSONObject(line);
 			}
 			
 			parametri = new HashMap<String,Integer>();
+			
+			LogView.info(json.getString("apiVersion")+ "AAAAAAAAAAAAA");
 			
 			JSONObject datiMeteo = json.getJSONObject("data");
 			

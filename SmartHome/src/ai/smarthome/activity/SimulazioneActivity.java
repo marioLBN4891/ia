@@ -14,6 +14,7 @@ import ai.smarthome.util.UtilConfigurazione;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -23,18 +24,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class SimulazioneActivity extends Activity  {
 
 	private Utente user;
 	private SQLiteDatabase db;
-	private Button apriButton, chiudiButton, accendiButton, spegniButton, prendiButton, lasciaButton, consentiButton, negaButton;
-	private String timestamp;
+	private Button apriButton, chiudiButton, accendiButton, spegniButton, prendiButton, riponiButton, negaButton;
+	private ToggleButton presenzaButton;
+	private String timestamp = UtilConfigurazione.setTimestamp();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +56,7 @@ public class SimulazioneActivity extends Activity  {
         }
         
         
-        String timestamp = UtilConfigurazione.setTimestamp();
-        
-        if (!Prolog.eseguiConfigurazione(db, timestamp)) {
+        if (!Prolog.eseguiConfigurazione(db, timestamp, user, null)) {
     		alertServerError();
     	}
         
@@ -63,22 +65,49 @@ public class SimulazioneActivity extends Activity  {
         accendiButton = (Button) findViewById(R.id.buttonAccendi);
         spegniButton = (Button) findViewById(R.id.buttonSpegni);
         prendiButton = (Button) findViewById(R.id.buttonPrendi);
-        lasciaButton = (Button) findViewById(R.id.buttonLascia);
-        consentiButton = (Button) findViewById(R.id.buttonConsenti);
+        riponiButton = (Button) findViewById(R.id.buttonRiporre);
         negaButton = (Button) findViewById(R.id.buttonNega);
+        presenzaButton = (ToggleButton) findViewById(R.id.togglebuttonPresenza);
         
-        apriButton.setEnabled(true);
-        chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
-        accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
-        spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
-        
-        lasciaButton.setEnabled(false);
-        
-        consentiButton.setEnabled(false);
-        negaButton.setEnabled(false);
-        
+        if (!user.isPresente()) {
+        	apriButton.setEnabled(false);
+            chiudiButton.setEnabled(false);
+            accendiButton.setEnabled(false);
+            spegniButton.setEnabled(false);
+            prendiButton.setEnabled(false);
+            riponiButton.setEnabled(false);
+            negaButton.setEnabled(false);
+            presenzaButton.setChecked(false);
+        }
+        else {
+        	apriButton.setEnabled(true);
+        	chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
+        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+        	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
+        	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
+            riponiButton.setEnabled(false);
+        	negaButton.setEnabled(Report.checkListaDedottiNuovi(db));
+        	presenzaButton.setChecked(true);
+        }
         refreshListaFatti();
-    }
+    
+        presenzaButton.setOnClickListener(new OnClickListener() {
+        	 
+    		@Override
+    		public void onClick(View v) {
+    			user.setPresente(user.isPresente() ? false : true);
+    			
+    			if (user.isPresente()) {
+    				timestamp = UtilConfigurazione.setTimestamp();
+    				domandaPresenza("Da dove arrivi?");
+    			}
+    				
+    			else
+    				domandaPresenza("Dove vai?");
+			}
+    	});
+
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -121,7 +150,7 @@ public class SimulazioneActivity extends Activity  {
         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-            	if (!Prolog.stopSimulazione()) {
+            	if (!Prolog.stopSimulazione(user, db)) {
             		new AlertDialog.Builder(getApplicationContext())
          			.setTitle("Errore")
          			.setMessage("Impossibile chiudere correttamente la sessione.")
@@ -158,17 +187,17 @@ public class SimulazioneActivity extends Activity  {
 			 					public void onClick(DialogInterface dialog,int id) {
 			 						ListView lw = ((AlertDialog)dialog).getListView();
 			 						String checkedItem1 = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-			 						String fatto = "preso("+timestamp+","+checkedItem1+")";
+			 						String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem1)+",pick_up)";
 			 						Report report = new Report("Hai preso "+checkedItem1, checkedItem1, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-			 						if (Prolog.sendFatto(db, report)) {
-			 							Oggetto.prendi(db, checkedItem1);
-			 							lasciaButton.setEnabled(true);
+		 							if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+		 								Oggetto.cambiaStato(db, checkedItem1, 1);
+			 							riponiButton.setEnabled(true);
 			 							refreshListaFatti();
 			 						}
-			 						else
+			 						else {
 			 							alertServerError();
-			 						
 			 						}
+			 					}
 			 				})
 			 				.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
 			 					public void onClick(DialogInterface dialog,int id) {
@@ -178,15 +207,17 @@ public class SimulazioneActivity extends Activity  {
 						alertDialogBuilder2.create().show();
 					}
 					else {
-						String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",open)";
+						String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",open)";
 						Report report = new Report("Hai aperto "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-						if (Prolog.sendFatto(db, report)) {
-							Componente.OnOpen(db, checkedItem);
+						if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+							//Report.cambiaStatoComponente(db, checkedItem);
+							Componente.cambiaStato(db, checkedItem, 1);
 							chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
 							refreshListaFatti();
 						}
-						else
+						else {
 							alertServerError();
+						}
 					}
 				}
 			})
@@ -208,16 +239,18 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",close)";
+					String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",close)";
 					Report report = new Report("Hai chiuso "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-					if (Prolog.sendFatto(db, report)) {
-						Componente.OffClose(db, checkedItem);
+					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+						Componente.cambiaStato(db, checkedItem, 0);
+						//Report.cambiaStatoComponente(db, checkedItem);
 						apriButton.setEnabled(true);
 						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
 						refreshListaFatti();
 					}
-					else
+					else {
 						alertServerError();
+					}
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -238,16 +271,18 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",on)";
+					String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",on)";
 					Report report = new Report("Hai acceso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-					if (Prolog.sendFatto(db, report)) {
-						Componente.OnOpen(db, checkedItem);
+					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+						Componente.cambiaStato(db, checkedItem, 1);
+						//Report.cambiaStatoComponente(db, checkedItem);
 						spegniButton.setEnabled(true);
 						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
 						refreshListaFatti();
 					}
-					else
+					else {
 						alertServerError();
+					}
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -268,16 +303,18 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					String fatto = Componente.getProlog(db, checkedItem)+"("+timestamp+",on)";
+					String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",on)";
 					Report report = new Report("Hai spento "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-					if (Prolog.sendFatto(db, report)) {
-						Componente.OffClose(db, checkedItem);
+					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+						Componente.cambiaStato(db, checkedItem, 0);
+						//Report.cambiaStatoComponente(db, checkedItem);
 						accendiButton.setEnabled(true);
 						spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
 						refreshListaFatti();
 					}
-					else
+					else {
 						alertServerError();
+					}
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -298,11 +335,11 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					String fatto = "preso("+timestamp+","+checkedItem+")";
+					String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem)+",pick_up)";
 					Report report = new Report("Hai preso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-					if (Prolog.sendFatto(db, report)) {
-						Oggetto.prendi(db, checkedItem);
-						lasciaButton.setEnabled(true);
+					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+						Oggetto.cambiaStato(db, checkedItem, 0);
+						riponiButton.setEnabled(true);
 						prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
 						refreshListaFatti();
 					}
@@ -319,43 +356,27 @@ public class SimulazioneActivity extends Activity  {
  			
 	}
 	
-	public void exeLascia(View view) {
+	public void exeRiponi(View view) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder
- 			.setTitle("Lascia")
+ 			.setTitle("Riporre")
  			.setSingleChoiceItems(Oggetto.getListaCharSequence(null, 1, db), 0, null)
 			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					String fatto = "lascia("+timestamp+","+checkedItem+")";
-					Report report = new Report("Hai lasciato "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
-					if (Prolog.sendFatto(db, report)) {
-						Oggetto.lascia(db, checkedItem);
-						lasciaButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
+					String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem)+",put_away)";
+					Report report = new Report("Hai riposto "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
+						Oggetto.cambiaStato(db, checkedItem, 0);
+						riponiButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
 						prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
 						refreshListaFatti();
 					}
-					else
+					else {
+						Oggetto.cambiaStato(db, checkedItem, 1);
 						alertServerError();
-				}
-			})
-			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
-					dialog.cancel();
-				}
-			});
- 		alertDialogBuilder.create().show();
- 			
-	}
-	
-	public void exeConsenti(View view) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		alertDialogBuilder
- 			.setTitle("Consenti?")
- 			.setPositiveButton("Consenti",new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
-					
+					}
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -368,12 +389,44 @@ public class SimulazioneActivity extends Activity  {
 	}
 	
 	public void exeNega(View view) {
+		final CharSequence myList[] = Report.getListaDedottiNuoviCharSequence(db);
+		final ArrayList<Integer> selList = new ArrayList<Integer>();
+		boolean bl[] = new boolean[myList.length];
+		
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder
- 			.setTitle("Nega?")
- 			.setPositiveButton("Nega",new DialogInterface.OnClickListener() {
+ 			.setTitle("Nega azioni C@SA")
+ 			.setMultiChoiceItems(myList, bl, new OnMultiChoiceClickListener() {
+ 				@Override
+ 				public void onClick(DialogInterface arg0, int arg1, boolean arg2) {
+ 					if(arg2) 
+ 						selList.add(arg1);
+ 					else 
+ 						if (selList.contains(arg1))
+ 							selList.remove(Integer.valueOf(arg1));
+ 				} 
+ 			  }) 		
+			.setPositiveButton("Nega",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					
+					ArrayList<Report> listaReport = new ArrayList<Report>();
+					for (int i=0; i < selList.size(); i++) {
+						Report report = Report.getProlog(db, String.valueOf(myList[selList.get(i)]));
+						String fatto = "retract("+report.getProlog()+")";
+						Report reportNuovo = new Report("Non confermi: "+report.getAzione(),report.getItem(), report.getStato() == 0 ? 1:0, fatto.trim(), 0, 1);
+						listaReport.add(reportNuovo);
+					}	
+					if (Prolog.retract(db, timestamp, user, listaReport)) {
+						for(Report r: listaReport) {
+							Componente.cambiaStato(db, r.getItem(), r.getStato());
+							Report.cambiaStatoComponente(db, r.getItem());
+						}
+						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
+	    	        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+	    	        	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
+						refreshListaFatti();
+					}
+					else
+						alertServerError();
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -394,11 +447,11 @@ public class SimulazioneActivity extends Activity  {
 	    ArrayList<Report> lista = Report.getLista(db);
 	    
 	    tableLayout.removeAllViews();
-	    
+	    int indice = 1;
 	    for (Report r: lista) {
 	    	TextView textView1 = new TextView(this);
 	    	TextView textView2 = new TextView(this);
-		    textView1.setText(r.getId());
+		    textView1.setText(String.valueOf(indice++));
 	    	textView2.setText(r.getAzione());
 		    textView1.setTextSize(16);
 		    textView2.setTextSize(16);
@@ -428,11 +481,10 @@ public class SimulazioneActivity extends Activity  {
 		    tableLayout.addView(riga, 0);
 		}
 	    
-	    Report.updateReport(db);
 	}
 	
 	private void alertServerError() {
-		new AlertDialog.Builder(getApplicationContext())
+		new AlertDialog.Builder(this)
 		.setIcon(R.drawable.attenzione).setTitle("Errore")
 			.setMessage("Impossibile contattare il Server.")
 			.setPositiveButton("Indietro",new DialogInterface.OnClickListener() {
@@ -441,4 +493,71 @@ public class SimulazioneActivity extends Activity  {
 			}
 		}).show();
 	}
+	
+	private void domandaPresenza(String messaggio) {
+		new AlertDialog.Builder(this)
+		.setTitle("Domanda")
+		.setMessage(messaggio)
+		.setPositiveButton("Altra camera",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				user.setEsterno(false);
+				if (Prolog.eseguiConfigurazione(db, timestamp, user, null)) {
+					refreshListaFatti();
+					if (!user.isPresente()) {
+	    	        	apriButton.setEnabled(false);
+	    	            chiudiButton.setEnabled(false);
+	    	            accendiButton.setEnabled(false);
+	    	            spegniButton.setEnabled(false);
+	    	            prendiButton.setEnabled(false);
+	    	            riponiButton.setEnabled(false);
+	    	            negaButton.setEnabled(false);
+	    	            presenzaButton.setChecked(false);
+	    	        }
+	    	        else {
+	    	        	apriButton.setEnabled(true);
+	    	        	chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
+	    	        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+	    	        	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
+	    	        	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
+	    	            riponiButton.setEnabled(false);
+	    	        	negaButton.setEnabled(false);
+	    	        	presenzaButton.setChecked(true);
+	    	        }
+	    		}
+				else
+					alertServerError();
+			}
+		})
+		.setNegativeButton("Esterno",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				user.setEsterno(true);
+				if (Prolog.eseguiConfigurazione(db, timestamp, user, null)) {
+					refreshListaFatti();
+					if (!user.isPresente()) {
+	    	        	apriButton.setEnabled(false);
+	    	            chiudiButton.setEnabled(false);
+	    	            accendiButton.setEnabled(false);
+	    	            spegniButton.setEnabled(false);
+	    	            prendiButton.setEnabled(false);
+	    	            riponiButton.setEnabled(false);
+	    	            negaButton.setEnabled(false);
+	    	            presenzaButton.setChecked(false);
+	    	        }
+	    	        else {
+	    	        	apriButton.setEnabled(true);
+	    	        	chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
+	    	        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+	    	        	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
+	    	        	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
+	    	            riponiButton.setEnabled(false);
+	    	        	negaButton.setEnabled(false);
+	    	        	presenzaButton.setChecked(true);
+	    	        }
+	    		}
+				else
+					alertServerError();
+			}
+		}).show();
+	}
+	
 }

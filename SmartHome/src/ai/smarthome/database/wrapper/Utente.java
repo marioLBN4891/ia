@@ -14,15 +14,22 @@ public class Utente implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String ID;
 	private String MAIL;
+	private String USERNAME;
 	private String PASSWORD;
 	private String COGNOME;
 	private String NOME;
+	
+	private boolean presente = true;
+	
+	private boolean esterno = false;
+	
 	private int posizioneFragment;
 	
 	
-	public Utente (String id, String mail, String password, String cognome, String nome) {
+	public Utente (String id, String mail, String username, String password, String cognome, String nome) {
 		this.ID = id;
 		this.MAIL = mail;
+		this.USERNAME = username;
 		this.PASSWORD = password;
 		this.COGNOME = cognome;
 		this.NOME = nome;
@@ -36,7 +43,23 @@ public class Utente implements Serializable {
 	public int getPosizione() {
 		return this.posizioneFragment;
 	}
+	
+	public void setPresente(boolean presente) {
+		this.presente = presente;
+	}
 		
+	public boolean isPresente() {
+		return this.presente;
+	}
+	
+	public boolean getEsterno() {
+		return this.esterno;
+	}
+	
+	public void setEsterno(boolean esterno) {
+		this.esterno = esterno;
+	}
+	
 	public static void setUtente(SQLiteDatabase db, String mail, String password, String cognome, String nome) {
 		ContentValues value = new ContentValues();
 		value.put(UtentiTable.MAIL, mail);
@@ -107,7 +130,7 @@ public class Utente implements Serializable {
 		
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) {
-				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4)));
+				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4), cursore.getString(5)));
 			}
 		
 		return null;
@@ -126,7 +149,7 @@ public class Utente implements Serializable {
 		
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) {
-				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4)));
+				return (new Utente(cursore.getString(0), cursore.getString(1), cursore.getString(2), cursore.getString(3), cursore.getString(4), cursore.getString(5)));
 			}
 		
 		return null;
@@ -167,6 +190,10 @@ public class Utente implements Serializable {
 		this.ID = id;
 	}
 	
+	public void setUsername(String username) {
+		this.USERNAME = username;
+	}
+	
 	public void setPassword(String password) {
 		this.PASSWORD = password;
 	}
@@ -185,6 +212,10 @@ public class Utente implements Serializable {
 	
 	public String getId() {
 		return this.ID;
+	}
+	
+	public String getUsername() {
+		return this.USERNAME;
 	}
 	
 	public String getPassword() {

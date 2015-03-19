@@ -76,28 +76,28 @@ android:paddingTop="@dimen/margin5" >
     	android:onClick="exePrendi" />
             
     	<Button
-   	 	android:id="@+id/buttonLascia"
-    	android:text="@string/lascia"
+   	 	android:id="@+id/buttonRiporre"
+    	android:text="@string/riponi"
     	android:textSize="@dimen/font_textButtonSim"
     	android:layout_width="@dimen/dimButtonSim"
 		android:layout_height="wrap_content"
-		android:onClick="exeLascia" />
+		android:onClick="exeRiponi" />
     	
-    	<Button
-    	android:id="@+id/buttonConsenti"
-    	android:text="@string/consenti"
-    	android:textSize="@dimen/font_textButtonSim"
-    	android:layout_width="@dimen/dimButtonSim"
-		android:layout_height="wrap_content"
-    	android:onClick="exeConsenti" />
-            
     	<Button
    	 	android:id="@+id/buttonNega"
     	android:text="@string/rifiuta"
     	android:textSize="@dimen/font_textButtonSim"
     	android:layout_width="@dimen/dimButtonSim"
 		android:layout_height="wrap_content"
-		android:onClick="exeRifiuta" />
+		android:onClick="exeNega" />
+
+    	<ToggleButton
+    	android:id="@+id/togglebuttonPresenza"
+    	android:textSize="@dimen/font_textButtonSim"
+    	android:textOn="@string/esci"
+        android:textOff="@string/entra"
+        android:layout_width="@dimen/dimButtonSim"
+		android:layout_height="wrap_content" />
     	
     </LinearLayout>
  

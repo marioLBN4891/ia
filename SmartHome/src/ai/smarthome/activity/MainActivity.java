@@ -5,19 +5,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import com.facebook.Session;
-
 import ai.smarthome.R;
 import ai.smarthome.activity.fragmentMain.AvvioVeloceFragment;
 import ai.smarthome.activity.fragmentMain.ComponentiFragment;
 import ai.smarthome.activity.fragmentMain.DataFragment;
-import ai.smarthome.activity.fragmentMain.InfoPersonaliFragment;
+import ai.smarthome.activity.fragmentMain.ImpostazioniFragment;
+import ai.smarthome.activity.fragmentMain.InfoUtenteFragment;
 import ai.smarthome.activity.fragmentMain.MeteoFragment;
 import ai.smarthome.activity.fragmentMain.SensoriFragment;
-import ai.smarthome.async.AsyncPosition;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Componente;
 import ai.smarthome.database.wrapper.Configurazione;
+import ai.smarthome.database.wrapper.Impostazione;
 import ai.smarthome.database.wrapper.Oggetto;
 import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Sensore;
@@ -28,6 +27,7 @@ import ai.smarthome.util.Prolog;
 import ai.smarthome.util.UtilConfigurazione;
 import ai.smarthome.util.Utilities;
 import ai.smarthome.util.rest.Rest;
+import ai.smarthome.util.xmlrpc.XMLRPC;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -47,13 +47,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.facebook.Session;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
@@ -64,8 +68,8 @@ public class MainActivity extends Activity {
 
     private CharSequence intestazioneDrawer, intestazioneActivity;
     private String[] intestazioneOpzioni; 
-    private AsyncPosition asyncPosition= new AsyncPosition(this);
-    private SQLiteDatabase db;
+   // private AsyncPosition asyncPosition= new AsyncPosition(this);
+    public SQLiteDatabase db;
     private Utente user;
     
     @Override
@@ -85,10 +89,13 @@ public class MainActivity extends Activity {
         	if(bundle.get(Costanti.UTENTE) != null) 
         		user = (Utente) bundle.get(Costanti.UTENTE);
         
-        
-        asyncPosition.execute();
+        user.setUsername("labianca");
+		user.setPassword("mariol");
+		
+		
+       // asyncPosition.execute();
        
-        Report.reset(db);
+        Componente.reset(db);
         Oggetto.reset(db);
         
         setContentView(R.layout.activity_main);
@@ -102,7 +109,7 @@ public class MainActivity extends Activity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerListView = (ListView) findViewById(R.id.left_drawer);
         
-        intestazioneOpzioni[intestazioneOpzioni.length-1] += ": " + user.getNome() + " " + user.getCognome();
+        // intestazioneOpzioni[intestazioneOpzioni.length-1] += ": " + user.getNome() + " " + user.getCognome();
         
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START); // set a custom shadow that overlays the main content when the drawer opens
         drawerListView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, intestazioneOpzioni));  // set up the drawer's list view with items and click listener
@@ -203,7 +210,8 @@ public class MainActivity extends Activity {
         if (position == 2 ) fragment = new MeteoFragment();
         if (position == 3 ) fragment = new ComponentiFragment();
         if (position == 4 ) fragment = new SensoriFragment();
-        if (position == 5 ) fragment = new InfoPersonaliFragment();
+        if (position == 5 ) fragment = new InfoUtenteFragment();
+        if (position == 6 ) fragment = new ImpostazioniFragment();
         
         fragment.setArguments(args);
 
@@ -246,59 +254,57 @@ public class MainActivity extends Activity {
         Utilities.chiudiApplicazione(this);
     }
     
-    public void cambiaInfoPersonali(View view) {
+    public void cambiaInfoUtente(View view) {
+    	CheckBox presenza = (CheckBox) findViewById(R.id.checkBoxPresenza);
+    	RadioButton rbAltracamera = (RadioButton) findViewById(R.id.radioButtonCamera);
+        RadioButton rbEsterno = (RadioButton) findViewById(R.id.radioButtonEsterno);
+        
+        if (!rbAltracamera.isChecked() && !rbEsterno.isChecked())
+        	Toast.makeText(getApplicationContext(), "Seleziona una risposta alla domanda", Toast.LENGTH_SHORT).show();
+        
+        if(rbEsterno.isChecked())
+        	user.setEsterno(true);
+        else
+        	user.setEsterno(false);
+        user.setPresente(presenza.isChecked());
     	
-    	EditText mail = (EditText) findViewById(R.id.mailEditText); 
-    	EditText vecchiaPass = (EditText) findViewById(R.id.vecchiaPasswordEditText); 
-    	EditText nuovaPass = (EditText) findViewById(R.id.nuovaPasswordEditText); 
-    	EditText nuovaPass2 = (EditText) findViewById(R.id.password2EditText);
-    	
-    	if (!mail.getText().toString().trim().equals(user.getMail())) {
-				if (mail.getText().toString().trim().equals("")) {
-					Toast.makeText(getApplicationContext(), "Email è obbligatorio", Toast.LENGTH_SHORT).show();
-					return;
-				}
-				if (!Utilities.emailValida(mail.getText().toString().trim())) {
-					Toast.makeText(getApplicationContext(), "Email non valida", Toast.LENGTH_SHORT).show();
-					return;
-				}
-				if (Utente .isMailRegistered(db, mail.getText().toString().trim())) {
-					Toast.makeText(getApplicationContext(), "Email già registrata", Toast.LENGTH_SHORT).show();
-					return;
-				}
-			}
-			
-			if (vecchiaPass.getText().toString().trim().equals("") || vecchiaPass.getText().toString().trim().length() < 5 || Utilities.checkSpace(vecchiaPass.getText().toString())) {
-				Toast.makeText(getApplicationContext(), "Password attuale è un campo obbligatorio", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (!vecchiaPass.getText().toString().trim().equals(user.getPassword())) {
-				Toast.makeText(getApplicationContext(), "Password attuale non valida", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (nuovaPass.getText().toString().trim().equals("") || nuovaPass.getText().toString().trim().length() < 5 || Utilities.checkSpace(nuovaPass.getText().toString())) {
-				Toast.makeText(getApplicationContext(), "Nuova Password è un campo obbligatorio di almeno 5 caratteri  non vuoti", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (nuovaPass2.getText().toString().trim().equals("") || nuovaPass2.getText().toString().trim().length() < 5 || Utilities.checkSpace(nuovaPass2.getText().toString())) {
-				Toast.makeText(getApplicationContext(), "Inserire nuovamente la nuova password", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (!nuovaPass2.getText().toString().equals(nuovaPass.getText().toString())) {
-				Toast.makeText(getApplicationContext(), "Password digitata non corretta", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			
-			Utente.updateUtente(db, mail.getText().toString().trim(), nuovaPass.getText().toString().trim());
-			
-			Toast.makeText(getApplicationContext(), "Modifiche avvenute con successo", Toast.LENGTH_SHORT).show();
-			user.setMail(mail.getText().toString().trim());
-			user.setMail(nuovaPass.getText().toString().trim());
-			
-			vecchiaPass.setText("");
-		    nuovaPass.setText("");
-		    nuovaPass2.setText("");
+    	Toast.makeText(getApplicationContext(), "Dati modificati con successo", Toast.LENGTH_SHORT).show();
     }
+    
+    public void cambiaImpostazioni(View view) {
+    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+    	alert.setTitle("Conferma operazione");
+    	alert.setMessage("Inserisci password di sistema:");
+
+    	final EditText input = new EditText(this);
+    	input.setText("smartkitchen");
+    	alert.setView(input);
+
+    	alert.setPositiveButton("Conferma", new DialogInterface.OnClickListener() {
+    		public void onClick(DialogInterface dialog, int whichButton) {
+    			String value = input.getText().toString();
+    			String accesso = "smartkitchen";
+    			if (value.equals(accesso)) {
+    				Toast.makeText(getApplicationContext(), "Password corretta", Toast.LENGTH_SHORT).show();
+    				EditText indirizzo = (EditText) findViewById(R.id.editTextServer);
+    				Impostazione.updateIndirizzo(db, indirizzo.getText().toString().trim());
+    				if (XMLRPC.startServer(user, indirizzo.getText().toString().trim())) 
+    					Toast.makeText(getApplicationContext(), "Server avviato con successo", Toast.LENGTH_SHORT).show();
+    				else
+    					Toast.makeText(getApplicationContext(), "Impossibile avviare il server", Toast.LENGTH_SHORT).show();
+    			}
+    			else
+    				Toast.makeText(getApplicationContext(), "Password non corretta", Toast.LENGTH_SHORT).show();
+		  }
+    	});
+
+    	alert.setNegativeButton("Annulla", null);
+
+    	alert.show();
+    	
+    }
+    
     
     @SuppressLint("SimpleDateFormat")
 	public void cambiaData(View view) {
@@ -316,7 +322,11 @@ public class MainActivity extends Activity {
     }
     
     public void startSimulazione(View view) {
-    	if (Prolog.startSimulazione()) {
+    	Report.reset(db);
+		
+		Toast.makeText(getApplicationContext(), "Inizializzazione in corso...", Toast.LENGTH_SHORT).show();
+		
+    	if (Prolog.startSimulazione(user, db)) {
     		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     		intent.putExtra(Costanti.UTENTE, user);
     		startActivity(intent);
@@ -353,7 +363,7 @@ public class MainActivity extends Activity {
     }
    
     public void cambiaMeteo(View view) {
-    	
+    	TextView textLoc = (TextView)findViewById(R.id.textEditLocalita);
     	SeekBar seekMeteo = (SeekBar)findViewById(R.id.seekMeteo);
     	SeekBar seekTempInt = (SeekBar)findViewById(R.id.seekTemperaturaInterna);
     	SeekBar seekTempEst = (SeekBar)findViewById(R.id.seekTemperaturaEsterna);
@@ -361,7 +371,7 @@ public class MainActivity extends Activity {
     	SeekBar seekUmiditaEst = (SeekBar)findViewById(R.id.seekUmiditaEsterna);
     	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
     	
-    	UtilConfigurazione.updateMeteo(db, "-", seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress());
+    	UtilConfigurazione.updateMeteo(db, (String)textLoc.getText(), seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress());
     	
         Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
     }
@@ -410,14 +420,16 @@ public class MainActivity extends Activity {
 	    	
 			String localita = (new GPSTracker(this)).getLocality(this);
 			parametri = Rest.getMeteoLocale(this, localita);
-		
-			SeekBar seekMeteo = (SeekBar) findViewById(R.id.seekMeteo);
+			
+			TextView textLoc = (TextView) findViewById(R.id.textEditLocalita);
+	        SeekBar seekMeteo = (SeekBar) findViewById(R.id.seekMeteo);
 			SeekBar seekTempInt = (SeekBar) findViewById(R.id.seekTemperaturaInterna);
 			SeekBar seekTempEst = (SeekBar) findViewById(R.id.seekTemperaturaEsterna);
 			SeekBar seekUmiditaInt = (SeekBar) findViewById(R.id.seekUmiditaInterna);
 			SeekBar seekUmiditaEst = (SeekBar) findViewById(R.id.seekUmiditaEsterna);
 			SeekBar seekVento = (SeekBar) findViewById(R.id.seekVento);
 	        
+			textLoc.setText(localita);
 	        seekMeteo.setProgress(parametri.get("meteo"));
 	        seekTempInt.setProgress(parametri.get("tempInt"));
 	        seekTempEst.setProgress(parametri.get("tempEst"));

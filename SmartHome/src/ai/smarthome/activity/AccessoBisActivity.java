@@ -1,5 +1,6 @@
 package ai.smarthome.activity;
 
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,27 +33,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class AccessoActivity extends FragmentActivity implements TabListener {
+public class AccessoBisActivity extends FragmentActivity implements TabListener {
 
-	private EditText  mail;
-	private EditText  password;
-	private EditText  password2;
-	private EditText  cognome;
-	private EditText  nome;
+	private EditText  mail, password, password2, cognome, nome, user;
 	private SQLiteDatabase db;
-	
-	private UiLifecycleHelper uiHelper;
-    private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		uiHelper = new UiLifecycleHelper(this, statusCallback);
-        uiHelper.onCreate(savedInstanceState);
-        
-		setContentView(R.layout.activity_accesso);
 		
-		db = new DatabaseHelper(this).getWritableDatabase();
+		setContentView(R.layout.activity_accesso);
 		
 		Componente.reset(db);
 		Oggetto.reset(db);
@@ -75,67 +65,26 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
    	
 	}
 	
-	private Session.StatusCallback statusCallback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-            	Log.i("SmartHomeEnvironment", "Facebook session opened");
-            } 
-            if (state.isClosed()) {
-                Log.i("SmartHomeEnvironment", "Facebook session closed");
-            }
-        }
-    };
-    
-    public boolean checkPermissions() {
-        Session s = Session.getActiveSession();
-        if (s != null) 
-            return s.getPermissions().contains("publish_actions");
-        else
-            return false;
-    }
-
-    public void requestPermissions() {
-        Session s = Session.getActiveSession();
-        if (s != null)
-            s.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
-    }
-
-    @Override
+	@Override
     public void onResume() {
         super.onResume();
-        uiHelper.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        uiHelper.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        uiHelper.onDestroy();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        uiHelper.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedState) {
-        super.onSaveInstanceState(savedState);
-        uiHelper.onSaveInstanceState(savedState);
-    }
-    
-	public void fastLogin() {
+    public void fastLogin() {
 		
 		Utente user = Utente.getConnessioneVeloce(db);
         if (user != null) {
-        	Intent i = new Intent(AccessoActivity.this, MainActivity.class);
+        	Intent i = new Intent(AccessoBisActivity.this, MainActivity.class);
         	i.putExtra(Costanti.UTENTE, user);
             startActivity(i);
             finish();
@@ -185,21 +134,29 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 
 	
 	public void saveReg(View arg0) {
-		mail = (EditText)findViewById(R.id.mailEditText);
+		user = (EditText)findViewById(R.id.userEditText);
+	    mail = (EditText)findViewById(R.id.mailEditText);
 	    password = (EditText)findViewById(R.id.passwordEditText);
 	    password2 = (EditText)findViewById(R.id.password2EditText);
 	    cognome = (EditText)findViewById(R.id.cognomeEditText);
 	    nome = (EditText)findViewById(R.id.nomeEditText);
 	    
-	    if (mail.getText().toString().trim().equals("")) {
+	    String email = mail.getText().toString().trim();
+	    String username = user.getText().toString().trim();
+	    String pwd = password.getText().toString().trim();
+	    String pwd2 = password2.getText().toString().trim();
+	    String name = nome.getText().toString().trim();
+	    String surname = cognome.getText().toString().trim();
+	    
+	    if (email.equals("")) {
 			Toast.makeText(getApplicationContext(), "Email è obbligatorio", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (cognome.getText().toString().trim().equals("")) {
+		if (surname.equals("")) {
 			Toast.makeText(getApplicationContext(), "Cognome è obbligatorio", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (nome.getText().toString().trim().equals("")) {
+		if (name.equals("")) {
 			Toast.makeText(getApplicationContext(), "Nome è obbligatorio", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -211,15 +168,15 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 			Toast.makeText(getApplicationContext(), "Email già registrata", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (password.getText().toString().trim().equals("") || password.getText().toString().trim().length() < 5 || Utilities.checkSpace(password.getText().toString())) {
+		if (pwd.equals("") || pwd.length() < 5 || Utilities.checkSpace(password.getText().toString())) {
 			Toast.makeText(getApplicationContext(), "Password è un campo obbligatorio di almeno 5 caratteri  non vuoti", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (password2.getText().toString().trim().equals("") || password2.getText().toString().trim().length() < 5 || Utilities.checkSpace(password2.getText().toString())) {
+		if (pwd2.trim().equals("") || pwd2.length() < 5 || Utilities.checkSpace(password2.getText().toString())) {
 			Toast.makeText(getApplicationContext(), "Inserire nuovamente la password", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (!password2.getText().toString().equals(password.getText().toString())) {
+		if (!pwd2.equals(pwd)) {
 			Toast.makeText(getApplicationContext(), "Password digitata non corretta", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -238,7 +195,7 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 				Utente user = Utente.isUtenteRegistered(db, mail.getText().toString().trim(), password.getText().toString().trim());
 		        if (user != null) {
 		        	Utente.setConnessioneVeloce(db, user.getMail(), user.getPassword());
-			        Intent i = new Intent(AccessoActivity.this, MainActivity.class);
+			        Intent i = new Intent(AccessoBisActivity.this, MainActivity.class);
 			        i.putExtra(Costanti.UTENTE, user);
 			        startActivity(i);
 			        finish();
@@ -252,7 +209,5 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 		else
 			Toast.makeText(getApplicationContext(), "Inserire email", Toast.LENGTH_SHORT).show();
 	}
-	
-		
-   
+	   
 }

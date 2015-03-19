@@ -1,0 +1,84 @@
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin" >
+
+	<TextView 
+    android:id="@+id/text_fragment_infopersonali"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/text_fragment_infoutente" 
+    android:textSize="@dimen/font_text14" />
+	
+	<LinearLayout 
+    android:id="@+id/llInfoUtente"    
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:layout_marginTop="@dimen/margin20">
+
+	    <TextView 
+    	android:id="@+id/textUtente"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:text="@string/utente" 
+    	android:textSize="@dimen/font_text14" />
+	    
+		<CheckBox
+		android:id="@+id/checkBoxPresenza"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/checkUserPresentTrue" />
+
+	</LinearLayout>
+	
+	<TextView 
+    android:id="@+id/textDomanda_presenza"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/font_text14"
+    android:layout_marginTop="@dimen/margin20" />
+	
+	<RadioGroup
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+		<RadioButton
+		android:id="@+id/radioButtonCamera"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/margin10" />
+
+		<RadioButton
+		android:id="@+id/radioButtonEsterno"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/margin10" />
+	    
+	</RadioGroup>
+	
+	<RelativeLayout
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+		<ImageButton
+    	android:id="@+id/cambiaInfoUtenteButton"
+    	android:layout_width="@dimen/dimButtonSave"
+    	android:layout_height="@dimen/dimButtonSave"
+    	android:scaleType="fitXY"
+    	android:background="@null"
+    	android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+    	android:contentDescription="@string/cambiaInfoUtente"
+    	android:onClick="cambiaInfoUtente"
+    	android:src="@drawable/salva" />
+		
+	</RelativeLayout>
+	
+</LinearLayout>
