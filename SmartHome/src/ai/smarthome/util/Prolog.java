@@ -30,15 +30,16 @@ public class Prolog {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static boolean eseguiConfigurazione(SQLiteDatabase db, String timestamp, Utente user, Report report) {
+	public static boolean eseguiConfigurazione(SQLiteDatabase db, String timestamp, Utente user, Report reportAction) {
 		String serverAddress = Impostazione.getIndirizzo(db);
 		
 		Report.updateReportLetti(db);
+		
 		ArrayList<Report> listaFatti = new ArrayList<Report>();
-		listaFatti = Report.getListaReportIniziali(db);
+		
+		listaFatti = Report.getListaToUse(db);
 			
 		if (listaFatti == null || listaFatti.isEmpty()) {
-			
 			Configurazione meteo = Configurazione.getConfigurazione(db);
 			listaFatti.add(dataSimulazione(timestamp, meteo.getData()));
 			listaFatti.add(oraSimulazione(timestamp, meteo.getOra()));
@@ -50,37 +51,37 @@ public class Prolog {
 			
 			ArrayList<Report> listaFattiComponenti = new ArrayList<Report>();
 			listaFattiComponenti = componentiSimulazione(timestamp, Componente.getAllLista(db));
-			for(Report fattoComp : listaFattiComponenti)
+			for(Report fattoComp : listaFattiComponenti) {
 				listaFatti.add(fattoComp);
-			
-			listaFatti.add(isPresentUser(timestamp, user.isPresente()));
-			listaFatti.add(statoAttualeUser(timestamp, user.isPresente(), user.getEsterno()));
-			
-			int indice = 1;
-			for(Report reportListaFatti : listaFatti) {
-				reportListaFatti.setId(indice);
-				reportListaFatti.setProlog(setFatto(reportListaFatti));
-				indice++;
-				Report.insert(db, reportListaFatti);
 			}
+			for(Report r : listaFatti) 
+				Report.insert(db, r);
 		}
 		
-		if (report != null) 
-			listaFatti.add(Report.addNuovoFatto(db, report));
-		else
-			listaFatti = checkFattiUser(db, timestamp, user, listaFatti);
+		if (reportAction != null) {
+			Report r1 = isPresentUser(timestamp, user.isPresente(), true);
+			Report r2 = statoAttualeUser(timestamp, user.isPresente(), user.getEsterno(), true);
+			listaFatti.add(r1);
+			listaFatti.add(r2);
+			listaFatti.add(reportAction);
+			Report.insert(db, reportAction);
+		}
+		else {
+			Report r1 = isPresentUser(timestamp, user.isPresente(), true);
+			Report r2 = statoAttualeUser(timestamp, user.isPresente(), user.getEsterno(), true);
+			listaFatti.add(r1);
+			listaFatti.add(r2);
+			Report.insert(db, r1);
+			Report.insert(db, r2);
+		}
 		
-		int maxId = getMaxIdListaFatti(listaFatti);
 		ArrayList<Oggetto> listaOggetti = Oggetto.getListaPresi(db);
 		if(!listaOggetti.isEmpty() && listaOggetti != null) {
 			ArrayList<Report> listaFattiOggetti = new ArrayList<Report>();
 			listaFattiOggetti = oggettiSimulazione(timestamp, listaOggetti);
 			for(Report fattoOgg : listaFattiOggetti) {
-				fattoOgg.setId(++maxId);
-				fattoOgg.setProlog(setFatto(fattoOgg));
 				listaFatti.add(fattoOgg);
 			}
-					
 		}
 		
 		ArrayList<String> listaProlog = new ArrayList<String>();
@@ -101,71 +102,34 @@ public class Prolog {
 		else
 			return false;
 		
-		ArrayList<Report> listaFattiDedottiSalvati = Report.getListaFattiDedottiSalvati(db);
+	//	ArrayList<Report> listaFattiDedottiSalvati = Report.getListaFattiDedottiSalvati(db);
 		for(Report dedtToSave : listaFattiDedotti) {
-			if (!checkDeduzioneRidondante(db, dedtToSave.getProlog(), listaFattiDedottiSalvati)) {
-				Report.addNuovoFattoDedotto(db, dedtToSave);
+	//		if (!checkDeduzioneRidondante(db, dedtToSave.getProlog(), listaFattiDedottiSalvati)) {
+				Report.insert(db, dedtToSave);
 				if (!dedtToSave.getItem().equals("")) {
 					Componente.cambiaStato(db, dedtToSave.getItem(), dedtToSave.getStato());
-					Report.cambiaStatoComponente(db, dedtToSave.getItem());
+					Report.cambiaStatoComponente(db, dedtToSave.getItem(), dedtToSave.getStato());
 				}
-			}
+	//		}
 		}
-		Report.stampaLista(db);
+		
 		return true;
 		
 	}
 	
-	private static int getMaxIdListaFatti(ArrayList<Report> listaFatti) {
-		int maxId = 0;
-		for(Report r : listaFatti)
-			if(maxId < r.getId())
-				maxId = r.getId();
-		return maxId;
-	}
-
-	public static ArrayList<Report> checkFattiUser(SQLiteDatabase db, String timestamp, Utente user, ArrayList<Report> listaFatti) {
-		
-		Report rPres = isPresentUser(timestamp, user.isPresente());
-		Report rAtt = statoAttualeUser(timestamp, user.isPresente(), user.getEsterno());
-		ArrayList<Report> listaFattiAggiornata = new ArrayList<Report>();
-		
-		for (Report r : listaFatti) {
-			if (r.getProlog().contains("is_present")) {
-				rPres.setId(r.getId());
-				rPres.setProlog(setFatto(rPres));
-				listaFattiAggiornata.add(rPres);
-				Report.updateFattiUser(db, rPres.getProlog(), rPres.getId());
-			}
-			else
-				if (r.getProlog().contains("came_from")) {
-					rAtt.setId(r.getId());
-					rAtt.setProlog(setFatto(rAtt));
-					listaFattiAggiornata.add(rAtt);
-					Report.updateFattiUser(db, rAtt.getProlog(), rAtt.getId());
-				}
-				else
-					if (r.getProlog().contains("go_to")) {
-						rAtt.setId(r.getId());
-						rAtt.setProlog(setFatto(rAtt));
-						listaFattiAggiornata.add(rAtt);
-						Report.updateFattiUser(db, rAtt.getProlog(), rAtt.getId());
-					}
-					else
-						listaFattiAggiornata.add(r);
-		}
-		return listaFattiAggiornata;
-	}
 	
 	public static boolean retract(SQLiteDatabase db, String timestamp, Utente user, ArrayList<Report> listaReport) {
 		String serverAddress = Impostazione.getIndirizzo(db);
+		
+		Report.updateReportLetti(db);
+		
 		ArrayList<String> listaRetract = new ArrayList<String>();
 		
 		for(Report report: listaReport) {
 			listaRetract.add(report.getProlog());
 		}
 		
-		if (!XMLRPC.retract(user, serverAddress, listaRetract)) {
+		if (XMLRPC.retract(user, serverAddress, listaRetract)) {
 			for(Report report: listaReport) {
 				Report.insert(db, report);
 			}
@@ -177,24 +141,30 @@ public class Prolog {
 	}
 	
 	
-	public static Report isPresentUser(String timestamp, boolean presenza) {
+	public static Report isPresentUser(String timestamp, boolean presenza, boolean attuale) {
+		int nuovo = 0;
+		if (attuale)
+			nuovo = 1;
 		if (presenza) 
-			return (new Report("L\'utente è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",kitchen)", "1.0"), 0, 1));
+			return (new Report("L\'utente è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",kitchen)", "1.0"), 0, nuovo, 1, 0));
 		else
-			return (new Report("L\'utente non è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",out)", "1.0"), 0, 1));
+			return (new Report("L\'utente non è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",out)", "1.0"), 0, nuovo, 1, 0));
 	}
 	
-	public static Report statoAttualeUser(String timestamp, boolean presenza, boolean esterno) {
+	public static Report statoAttualeUser(String timestamp, boolean presenza, boolean esterno, boolean attuale) {
+		int nuovo = 0;
+		if (attuale)
+			nuovo = 1;
 		if (presenza)
 			if (esterno)
-				return (new Report("L\'utente viene dall\'esterno", "",0, creaStringaFatto("came_from("+timestamp+",out)", "1.0"), 0, 1));
+				return (new Report("L\'utente viene dall\'esterno", "",0, creaStringaFatto("came_from("+timestamp+",out)", "1.0"), 0, nuovo, 1, 0));
 			else
-				return (new Report("L\'utente viene da un\'altra camera", "",0, creaStringaFatto("came_from("+timestamp+",in)", "1.0"), 0, 1));
+				return (new Report("L\'utente viene da un\'altra camera", "",0, creaStringaFatto("came_from("+timestamp+",in)", "1.0"), 0, nuovo, 1, 0));
 		else
 			if (esterno)
-				return (new Report("L\'utente va all\'esterno", "",0, creaStringaFatto("go_to("+timestamp+",out)", "1.0"), 0, 1));
+				return (new Report("L\'utente va all\'esterno", "",0, creaStringaFatto("go_to("+timestamp+",out)", "1.0"), 0, 1, 1, 0));
 			else
-				return (new Report("L\'utente va in un\'altra camera", "",0, creaStringaFatto("go_to("+timestamp+",in)", "1.0"), 0, 1));
+				return (new Report("L\'utente va in un\'altra camera", "",0, creaStringaFatto("go_to("+timestamp+",in)", "1.0"), 0, 1, 1, 0));
 	}
 	
 	private static ArrayList<Report> componentiSimulazione(String timestamp, ArrayList<Componente> listaComp) {
@@ -247,7 +217,7 @@ public class Prolog {
 					stato = "open";
 					statoAzione = "aperto";
 				}
-				listaFatti.add(new Report(comp.getNome()+" è "+statoAzione , comp.getNome(), comp.getStato(), creaStringaFatto(fatto+"("+timestamp+","+stato+")", "1.0"), 0, 0));
+				listaFatti.add(new Report(comp.getNome()+" è "+statoAzione , comp.getNome(), comp.getStato(), creaStringaFatto(fatto+"("+timestamp+","+stato+")", "1.0"), 0, 0, 1, 1));
 			}
 		}
 		
@@ -258,7 +228,7 @@ public class Prolog {
 	
 		ArrayList<Report> listaFatti = new ArrayList<Report>();
 		for (Oggetto ogg : listaOgg) {
-			listaFatti.add(new Report("Hai preso "+ogg.getNome(), ogg.getNome(), ogg.getStato(), creaStringaFatto("pick_up("+timestamp+","+ogg.getProlog()+")", "1.0"), 0, 0));
+			listaFatti.add(new Report("Hai preso "+ogg.getNome(), ogg.getNome(), ogg.getStato(), creaStringaFatto("pick("+timestamp+","+ogg.getProlog()+")", "1.0"), 0, 0, 1, 0));
 		}
 		
 		return listaFatti;
@@ -310,13 +280,13 @@ public class Prolog {
 				meseFatto = meseFatto.replace("_", "_december");
 				break;
 		}
-		return (new Report("E' il Mese di "+meseIta, "", 0, creaStringaFatto(meseFatto+"("+timestamp+")", "1.0"), 0, 0));
+		return (new Report("E' il Mese di "+meseIta, "", 0, creaStringaFatto(meseFatto+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 		
 	}
 	
 	private static Report oraSimulazione(String timestamp, int ora) {
 		String fatto = "time_"+ora;
-		return (new Report("Sono le ore "+ora, "", 0, creaStringaFatto(fatto+"("+timestamp+")", "1.0"), 0, 0));
+		return (new Report("Sono le ore "+ora, "", 0, creaStringaFatto(fatto+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 	}
 	
 	private static Report umiditaSimulazione(String timestamp, int umidita, boolean interno ) {
@@ -342,7 +312,7 @@ public class Prolog {
 		if (umidita>= 80 && umidita < 90) stato = stato.replace("v","v80_90");
 		if (umidita>= 90 && umidita <= 100) stato = stato.replace("v","v90_100");
 		
-		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0));
+		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 	}
 	
 	private static Report temperaturaSimulazione(String timestamp, int temperatura, boolean interno ) {
@@ -368,7 +338,7 @@ public class Prolog {
 		if (temperatura>= 30 && temperatura < 40) stato = stato.replace("v","v30_40");
 		if (temperatura>= 40) stato = stato.replace("v","vPlus40");
 		
-		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0));
+		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 	}
 	
 	private static Report ventoSimulazione(String timestamp, int vento) {
@@ -389,7 +359,7 @@ public class Prolog {
 		if (vento >= 56 && vento <= 63) stato = "fortunale";
 		if (vento >= 64) stato = "uragano";
 		
-		return (new Report("Vento: "+stato.replace("_", " "), "", 0, creaStringaFatto("wind_"+stato+"("+timestamp+")", "1.0"), 0, 0));
+		return (new Report("Vento: "+stato.replace("_", " "), "", 0, creaStringaFatto("wind_"+stato+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 	}
 	
 	
@@ -401,10 +371,10 @@ public class Prolog {
 		return newFatto;
 	}
 	
-	public static String setFatto(Report r) {
+	public static String setFatto(String fatto, int indice) {
 		
-		String newFatto = r.getProlog();
-		newFatto = newFatto.replace(ID, String.valueOf(r.getId()));
+		String newFatto = fatto;
+		newFatto = newFatto.replace(ID, String.valueOf(indice));
 		return newFatto;
 	}
 	
@@ -414,12 +384,12 @@ public class Prolog {
 		final String OFF = " spento";
 		final String OPEN = " aperto";
 		final String CLOSE = " chiuso";
+		
+		int stato = 0;
+		String azione = "";
+		String item = "";
+	
 		if (fattoDedotto != null) {
-			
-			int stato = 0;
-			String azione = "";
-			String item = "";
-			
 			ArrayList<Componente> listaComp = Componente.getAllLista(db);
 			for (Componente comp : listaComp)
 				if(fattoDedotto.contains(comp.getProlog())) {
@@ -484,10 +454,10 @@ public class Prolog {
 			if(fattoDedotto.contains("time_afternoon")) azione = "C@SA: pomeriggio";
 			if(fattoDedotto.contains("time_evening")) 	azione = "C@SA: sera";
 			if(fattoDedotto.contains("time_night")) 	azione = "C@SA: notte";
-			if(fattoDedotto.contains("time_breakfast")) azione = "C@SA: ora della colazione";
-			if(fattoDedotto.contains("time_lunch")) 	azione = "C@SA: ora del pranzo";
-			if(fattoDedotto.contains("time_dinner")) 	azione = "C@SA: ora della cena";
-			if(fattoDedotto.contains("time_break")) 	azione = "C@SA: ora della pausa caffé";
+			if(fattoDedotto.contains("time_breakfast") && fattoDedotto.contains(",yes")) azione = "C@SA: ora della colazione";
+			if(fattoDedotto.contains("time_lunch") && fattoDedotto.contains(",yes")) 	azione = "C@SA: ora del pranzo";
+			if(fattoDedotto.contains("time_dinner") && fattoDedotto.contains(",yes")) 	azione = "C@SA: ora della cena";
+			if(fattoDedotto.contains("time_break") && fattoDedotto.contains(",yes")) 	azione = "C@SA: ora del break";
 			
 			if(fattoDedotto.contains("humidier_equal")) 			azione = CASA+"umidità interna ed esterna sono uguali";
 			if(fattoDedotto.contains("humidier_inside_low")) 		azione = CASA+"umidità interna poco inferiore rispetto l'esterno";
@@ -517,13 +487,14 @@ public class Prolog {
 			if(fattoDedotto.contains("is_breakfast")) 	azione = CASA+"stai facendo colazione";
 			if(fattoDedotto.contains("is_breaking")) 	azione = CASA+"stai facendo pausa";
 						
-			return (new Report(azione, item, stato, fattoDedotto, 1, 1));
+			return (new Report(azione, item, stato, fattoDedotto, 1, 1, 1, 0));
 		}
 		else
 			return null;
 		
 	}
 
+	@SuppressWarnings("unused")
 	private static boolean checkDeduzioneRidondante(SQLiteDatabase db, String fatto, ArrayList<Report> listaFattiDedottiSalvati) {
 		if (listaFattiDedottiSalvati == null || listaFattiDedottiSalvati.isEmpty())
 			return false;

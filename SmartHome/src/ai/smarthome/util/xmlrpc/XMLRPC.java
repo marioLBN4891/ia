@@ -118,17 +118,20 @@ public class XMLRPC {
 			ReasoningServiceClientOrganization client = new ReasoningServiceClientOrganization(url, username, password);
 			
 			Object[] lista = new Object[listaProlog.size()];
-			int i = 0;
+			int indice = 0;
 			for(String fatto: listaProlog) {
-				lista[i++] = fatto;
+				lista[indice] = Prolog.setFatto(fatto, indice);
+				indice++;
 			}
 			
 			Object[] risultati = client.inferisci(lista);
 			
 			if(risultati != null) {
 				if(risultati.length > 0) {
-					for(i=0; i < risultati.length; i++) {
-						listaDedotti.add(Prolog.fattoDedottoToReport(db,(String) risultati[i]));
+					for(int i=0; i < risultati.length; i++) {
+						String fattoDedotto = (String) risultati[i];
+						if (!(fattoDedotto.contains("action") || fattoDedotto.contains(",no")))
+							listaDedotti.add(Prolog.fattoDedottoToReport(db,fattoDedotto));
 					}
 					map.put("esito", true);
 					map.put("listaDedotti", listaDedotti);

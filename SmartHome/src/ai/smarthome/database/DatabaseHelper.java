@@ -64,8 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		String sqlConfigurazioneTable = "CREATE TABLE {0} ({1} INTEGER NOT NULL, {2} TEXT NOT NULL, {3} INTEGER NOT NULL, {4} INTEGER NOT NULL, {5} INTEGER NOT NULL, {6} INTEGER NOT NULL, {7} INTEGER NOT NULL, {8} INTEGER NOT NULL, {9} LONG NOT NULL, {10} INTEGER NOT NULL, {11} INTEGER NOT NULL, {12} INTEGER NOT NULL);";
 		db.execSQL(MessageFormat.format(sqlConfigurazioneTable, ConfigurazioneTable.TABLE_NAME, BaseColumns._ID, ConfigurazioneTable.LOCALITA, ConfigurazioneTable.METEO, ConfigurazioneTable.TEMPERATURAINT, ConfigurazioneTable.TEMPERATURAEST, ConfigurazioneTable.UMIDITAINT, ConfigurazioneTable.UMIDITAEST, ConfigurazioneTable.VENTO, ConfigurazioneTable.DATA, ConfigurazioneTable.ORA, ConfigurazioneTable.MINUTI, ConfigurazioneTable.COMPONENTI));
 	
-		String sqlReportTable = "CREATE TABLE {0} ({1} INTEGER NOT NULL, {2} TEXT NOT NULL, {3} TEXT, {4} INTEGER, {5} TEXT NOT NULL, {6} INTEGER NOT NULL, {7} INTEGER NOT NULL, {8} INTEGER NOT NULL);";
-		db.execSQL(MessageFormat.format(sqlReportTable, ReportTable.TABLE_NAME, BaseColumns._ID, ReportTable.AZIONE, ReportTable.ITEM, ReportTable.STATO, ReportTable.PROLOG, ReportTable.SENTRECEIVED, ReportTable.NUOVO, ReportTable.LETTO));
+		String sqlReportTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT, {4} INTEGER, {5} TEXT NOT NULL, {6} INTEGER NOT NULL, {7} INTEGER NOT NULL, {8} INTEGER NOT NULL, {9} INTEGER NOT NULL);";
+		db.execSQL(MessageFormat.format(sqlReportTable, ReportTable.TABLE_NAME, BaseColumns._ID, ReportTable.AZIONE, ReportTable.ITEM, ReportTable.STATO, ReportTable.PROLOG, ReportTable.SENTRECEIVED, ReportTable.NUOVO, ReportTable.LETTO, ReportTable.USE));
 		
 	}
 

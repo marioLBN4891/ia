@@ -13,6 +13,7 @@ public interface ReportTable extends BaseColumns
 	String SENTRECEIVED= "sentreceived";
 	String NUOVO = "nuovo";
 	String LETTO = "letto";
+	String USE = "use";
 	
 	String[] COLUMNS = new String[] {
 			_ID,
@@ -22,7 +23,8 @@ public interface ReportTable extends BaseColumns
 			PROLOG,
 			SENTRECEIVED,
 			NUOVO,
-			LETTO
+			LETTO,
+			USE
 	};
 
 }

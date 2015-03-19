@@ -9,6 +9,7 @@ import ai.smarthome.database.wrapper.Oggetto;
 import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
+import ai.smarthome.util.LogView;
 import ai.smarthome.util.Prolog;
 import ai.smarthome.util.UtilConfigurazione;
 import android.app.Activity;
@@ -97,11 +98,8 @@ public class SimulazioneActivity extends Activity  {
     		public void onClick(View v) {
     			user.setPresente(user.isPresente() ? false : true);
     			
-    			if (user.isPresente()) {
-    				timestamp = UtilConfigurazione.setTimestamp();
+    			if (user.isPresente()) 
     				domandaPresenza("Da dove arrivi?");
-    			}
-    				
     			else
     				domandaPresenza("Dove vai?");
 			}
@@ -187,8 +185,8 @@ public class SimulazioneActivity extends Activity  {
 			 					public void onClick(DialogInterface dialog,int id) {
 			 						ListView lw = ((AlertDialog)dialog).getListView();
 			 						String checkedItem1 = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-			 						String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem1)+",pick_up)";
-			 						Report report = new Report("Hai preso "+checkedItem1, checkedItem1, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+			 						String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem1)+",pick)";
+			 						Report report = new Report("Hai preso "+checkedItem1, checkedItem1, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 		 							if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 		 								Oggetto.cambiaStato(db, checkedItem1, 1);
 			 							riponiButton.setEnabled(true);
@@ -208,7 +206,7 @@ public class SimulazioneActivity extends Activity  {
 					}
 					else {
 						String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",open)";
-						Report report = new Report("Hai aperto "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+						Report report = new Report("Hai aperto "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 						if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 							//Report.cambiaStatoComponente(db, checkedItem);
 							Componente.cambiaStato(db, checkedItem, 1);
@@ -240,7 +238,7 @@ public class SimulazioneActivity extends Activity  {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
 					String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",close)";
-					Report report = new Report("Hai chiuso "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					Report report = new Report("Hai chiuso "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 						Componente.cambiaStato(db, checkedItem, 0);
 						//Report.cambiaStatoComponente(db, checkedItem);
@@ -272,7 +270,7 @@ public class SimulazioneActivity extends Activity  {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
 					String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",on)";
-					Report report = new Report("Hai acceso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					Report report = new Report("Hai acceso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 						Componente.cambiaStato(db, checkedItem, 1);
 						//Report.cambiaStatoComponente(db, checkedItem);
@@ -304,7 +302,7 @@ public class SimulazioneActivity extends Activity  {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
 					String fatto = "action("+timestamp+","+Componente.getProlog(db, checkedItem)+",on)";
-					Report report = new Report("Hai spento "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					Report report = new Report("Hai spento "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 						Componente.cambiaStato(db, checkedItem, 0);
 						//Report.cambiaStatoComponente(db, checkedItem);
@@ -335,8 +333,8 @@ public class SimulazioneActivity extends Activity  {
 				public void onClick(DialogInterface dialog,int id) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
-					String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem)+",pick_up)";
-					Report report = new Report("Hai preso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem)+",pick)";
+					Report report = new Report("Hai preso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 						Oggetto.cambiaStato(db, checkedItem, 0);
 						riponiButton.setEnabled(true);
@@ -366,7 +364,7 @@ public class SimulazioneActivity extends Activity  {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
 					String fatto = "action("+timestamp+","+Oggetto.getProlog(db, checkedItem)+",put_away)";
-					Report report = new Report("Hai riposto "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1);
+					Report report = new Report("Hai riposto "+checkedItem, checkedItem, 0, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
 						Oggetto.cambiaStato(db, checkedItem, 0);
 						riponiButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
@@ -389,7 +387,7 @@ public class SimulazioneActivity extends Activity  {
 	}
 	
 	public void exeNega(View view) {
-		final CharSequence myList[] = Report.getListaDedottiNuoviCharSequence(db);
+		final CharSequence myList[] = Report.getListaDedottiNuoviCharSequenceV2(db);
 		final ArrayList<Integer> selList = new ArrayList<Integer>();
 		boolean bl[] = new boolean[myList.length];
 		
@@ -412,13 +410,13 @@ public class SimulazioneActivity extends Activity  {
 					for (int i=0; i < selList.size(); i++) {
 						Report report = Report.getProlog(db, String.valueOf(myList[selList.get(i)]));
 						String fatto = "retract("+report.getProlog()+")";
-						Report reportNuovo = new Report("Non confermi: "+report.getAzione(),report.getItem(), report.getStato() == 0 ? 1:0, fatto.trim(), 0, 1);
+						Report reportNuovo = new Report("Non confermi: "+report.getAzione().replace("C@SA: ", ""), report.getItem(), report.getStato() == 0 ? 1:0, fatto.trim(), 0, 1, 1,0);
 						listaReport.add(reportNuovo);
 					}	
 					if (Prolog.retract(db, timestamp, user, listaReport)) {
 						for(Report r: listaReport) {
 							Componente.cambiaStato(db, r.getItem(), r.getStato());
-							Report.cambiaStatoComponente(db, r.getItem());
+							Report.cambiaStatoComponente(db, r.getItem(), r.getStato());
 						}
 						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
 	    	        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
