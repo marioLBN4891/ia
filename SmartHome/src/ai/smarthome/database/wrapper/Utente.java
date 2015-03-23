@@ -25,6 +25,25 @@ public class Utente implements Serializable {
 	
 	private int posizioneFragment;
 	
+	public Utente (String username, String password, String nome, String cognome, String mail) {
+		this.ID = "";
+		this.MAIL = mail;
+		this.USERNAME = username;
+		this.PASSWORD = password;
+		this.COGNOME = cognome;
+		this.NOME = nome;
+		this.posizioneFragment = 0;
+	}
+	
+	public Utente (String username, String password) {
+		this.ID = "";
+		this.MAIL = "";
+		this.USERNAME = username;
+		this.PASSWORD = password;
+		this.COGNOME = "";
+		this.NOME = "";
+		this.posizioneFragment = 0;
+	}
 	
 	public Utente (String id, String mail, String username, String password, String cognome, String nome) {
 		this.ID = id;

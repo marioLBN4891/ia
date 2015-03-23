@@ -327,42 +327,42 @@ public class Report implements Serializable {
 				if  (cursore.getString(4).contains("_choice")) {
 					Report rep = new Report(cursore.getInt(0), cursore.getString(1), cursore.getString(2), (cursore.getInt(3) == 0? 1:0), cursore.getString(4), cursore.getInt(5), cursore.getInt(6), cursore.getInt(7), cursore.getInt(8));
 					
-					if (rep.getProlog().contains(",open"))
-						rep.setProlog(rep.getProlog().replace(",open", ",close"));
-					if (rep.getProlog().contains(",close"))
-						rep.setProlog(rep.getProlog().replace(",close", ",open"));
+					if (rep.getProlog().contains("_open"))
+						rep.setProlog(rep.getProlog().replace("_open", "_close"));
+					if (rep.getProlog().contains("_close"))
+						rep.setProlog(rep.getProlog().replace("_close", "_open"));
 					
-					if (rep.getProlog().contains(",on"))
-						rep.setProlog(rep.getProlog().replace(",on", ",off"));
-					if (rep.getProlog().contains(",off") && !rep.getProlog().contains("air_conditioner") && !rep.getProlog().contains("microwave"))
-						rep.setProlog(rep.getProlog().replace(",off", ",on"));
+					if (rep.getProlog().contains("_on"))
+						rep.setProlog(rep.getProlog().replace("_on", "_off"));
+					if (rep.getProlog().contains("_off") && !rep.getProlog().contains("air_conditioner") && !rep.getProlog().contains("microwave"))
+						rep.setProlog(rep.getProlog().replace("_off", "_on"));
 					
-					if (rep.getProlog().contains(",low"))
-						rep.setProlog(rep.getProlog().replace(",low", ",off"));
-					if (rep.getProlog().contains(",middle"))
-						rep.setProlog(rep.getProlog().replace(",middle", ",off"));
-					if (rep.getProlog().contains(",max"))
+					if (rep.getProlog().contains("_low"))
+						rep.setProlog(rep.getProlog().replace("_low", "_off"));
+					if (rep.getProlog().contains("_middle"))
+						rep.setProlog(rep.getProlog().replace("_middle", "_off"));
+					if (rep.getProlog().contains("_max"))
 						rep.setProlog(rep.getProlog().replace(",max", ",off"));
 					if (rep.getProlog().contains(",dehumidifier"))
-						rep.setProlog(rep.getProlog().replace(",dehumidifier", ",off"));
-					if (rep.getProlog().contains(",cook)"))
-						rep.setProlog(rep.getProlog().replace(",cook", ",off"));
-					if (rep.getProlog().contains(",defrost"))
-						rep.setProlog(rep.getProlog().replace(",defrost", ",off"));
+						rep.setProlog(rep.getProlog().replace("_dehumidifier", "_off"));
+					if (rep.getProlog().contains("_cook)"))
+						rep.setProlog(rep.getProlog().replace("_cook", "_off"));
+					if (rep.getProlog().contains("_defrost"))
+						rep.setProlog(rep.getProlog().replace("_defrost", "_off"));
 					
-					if (rep.getProlog().contains(",off") && rep.getProlog().contains("air_conditioner") && stato == 1)
-						rep.setProlog(rep.getProlog().replace(",off", ",low"));
-					if (rep.getProlog().contains(",off") && rep.getProlog().contains("air_conditioner") && stato == 2)
-						rep.setProlog(rep.getProlog().replace(",off", ",middle"));
-					if (rep.getProlog().contains(",off") && rep.getProlog().contains("air_conditioner") && stato == 3)
-						rep.setProlog(rep.getProlog().replace(",off", ",max"));
-					if (rep.getProlog().contains(",off") && rep.getProlog().contains("air_conditioner") && stato == 4)
-						rep.setProlog(rep.getProlog().replace(",off", ",dehumidifier"));
+					if (rep.getProlog().contains("_off") && rep.getProlog().contains("air_conditioner") && stato == 1)
+						rep.setProlog(rep.getProlog().replace("_off", "_low"));
+					if (rep.getProlog().contains("-off") && rep.getProlog().contains("air_conditioner") && stato == 2)
+						rep.setProlog(rep.getProlog().replace("_off", "_middle"));
+					if (rep.getProlog().contains("_off") && rep.getProlog().contains("air_conditioner") && stato == 3)
+						rep.setProlog(rep.getProlog().replace("_off", "_max"));
+					if (rep.getProlog().contains("_off") && rep.getProlog().contains("air_conditioner") && stato == 4)
+						rep.setProlog(rep.getProlog().replace("_off", "_dehumidifier"));
 					
-					if (rep.getProlog().contains(",off") && rep.getProlog().contains("microwave") && stato == 1)
-						rep.setProlog(rep.getProlog().replace(",off", ",heat"));
-					if (rep.getProlog().contains(",off") && rep.getProlog().contains("microwave") && stato == 2)
-						rep.setProlog(rep.getProlog().replace(",off", ",defrost"));
+					if (rep.getProlog().contains("_off") && rep.getProlog().contains("microwave") && stato == 1)
+						rep.setProlog(rep.getProlog().replace("_off", "_heat"));
+					if (rep.getProlog().contains("_off") && rep.getProlog().contains("microwave") && stato == 2)
+						rep.setProlog(rep.getProlog().replace("_off", "_defrost"));
 					updateFattiComponente(db, rep.getProlog(), rep.getId());
 				}
 	}

@@ -45,6 +45,7 @@ public class AvvioVeloceFragment extends Fragment {
         TextView textUmiditaInt = (TextView) rootView.findViewById(R.id.textUmiditaInterna);
         TextView textUmiditaEst = (TextView) rootView.findViewById(R.id.textUmiditaEsterna);
         TextView textVento = (TextView) rootView.findViewById(R.id.textVento);
+        TextView textLumi = (TextView) rootView.findViewById(R.id.textLumi);
         TextView textComponenti = (TextView) rootView.findViewById(R.id.textComponenti);
         
         textLoc.setText(UtilConfigurazione.setTextViewLocalita(configurazione.getLocalita()));
@@ -55,6 +56,7 @@ public class AvvioVeloceFragment extends Fragment {
         textUmiditaInt.setText(UtilConfigurazione.setTextViewUmidita(configurazione.getUmiditaInt()));
         textUmiditaEst.setText(UtilConfigurazione.setTextViewUmidita(configurazione.getUmiditaEst()));
         textVento.setText(UtilConfigurazione.setTextViewVento(configurazione.getVento()));
+        textLumi.setText(UtilConfigurazione.setTextViewLumi(configurazione.getLuminosita()));
         textComponenti.setText(UtilConfigurazione.setTextViewComponenti(configurazione.getComponenti()));
 
         db.close();

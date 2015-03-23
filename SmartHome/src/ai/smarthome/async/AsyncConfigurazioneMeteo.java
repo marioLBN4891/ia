@@ -44,11 +44,11 @@ public class AsyncConfigurazioneMeteo extends AsyncTask<Void, String, Map<String
     	long data = new Date().getTime();
     	
 		if (parametri != null) {
-			Configurazione.updateConfigurazione(db, localita, parametri.get("meteo"), parametri.get("tempInt"), parametri.get("tempEst"), parametri.get("umiditaInt"), parametri.get("umiditaEst"), parametri.get("vento"), data, hour, minute, 0);
+			Configurazione.updateConfigurazione(db, localita, parametri.get("meteo"), parametri.get("tempInt"), parametri.get("tempEst"), parametri.get("umiditaInt"), parametri.get("umiditaEst"), parametri.get("vento"), parametri.get("luminosita"), data, hour, minute, 0);
 			LogView.info("AsyncConfigurazioneMeteo.onPostExecute: OK");
 		}
 		else {
-			Configurazione.updateConfigurazione(db, "-", 50, 20, 30, 50, 50, 0, data, hour, minute, 0);
+			Configurazione.updateConfigurazione(db, "-", 50, 20, 30, 50, 50, 0, 50, data, hour, minute, 0);
 			LogView.info("AsyncConfigurazioneMeteo.onPostExecute: ERRORE");
 		}
 			

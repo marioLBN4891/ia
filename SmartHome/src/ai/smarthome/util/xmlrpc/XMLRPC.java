@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import ai.smarthome.database.wrapper.Report;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.LogView;
 import ai.smarthome.util.Prolog;
+import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
 
 public class XMLRPC {
@@ -101,6 +101,7 @@ public class XMLRPC {
 		} 
 	}
 
+	@SuppressLint("DefaultLocale")
 	public static HashMap<String, Serializable> inferisci(Utente user, SQLiteDatabase db, String serverAddress, ArrayList<String> listaProlog) {
 		
 		HashMap<String, Serializable> map = new HashMap<String, Serializable>();
@@ -117,10 +118,11 @@ public class XMLRPC {
 			
 			ReasoningServiceClientOrganization client = new ReasoningServiceClientOrganization(url, username, password);
 			
-			Object[] lista = new Object[listaProlog.size()];
-			int indice = 0;
+			Object[] lista = new Object[listaProlog.size()+1];
+			lista[0] = Prolog.setFatto("fact(_id,utente("+user.getNome().toLowerCase()+"),1.0).", 1);
+			int indice = 1;
 			for(String fatto: listaProlog) {
-				lista[indice] = Prolog.setFatto(fatto, indice);
+				lista[indice] = Prolog.setFatto(fatto, indice+1);
 				indice++;
 			}
 			
@@ -130,7 +132,17 @@ public class XMLRPC {
 				if(risultati.length > 0) {
 					for(int i=0; i < risultati.length; i++) {
 						String fattoDedotto = (String) risultati[i];
-						if (!(fattoDedotto.contains("action") || fattoDedotto.contains(",no")))
+						if ( ! (fattoDedotto.contains("tot_lux") || 
+								fattoDedotto.contains("condition_window") || 
+								fattoDedotto.contains("soggetto1") || 
+								fattoDedotto.contains("_setting") || 
+								fattoDedotto.contains("action") ||
+								fattoDedotto.contains("pick_") || 
+								fattoDedotto.contains("put_away_") || 
+								fattoDedotto.contains("humidier") || 
+								fattoDedotto.contains("warm") || 
+								fattoDedotto.contains("cold") || 
+								fattoDedotto.contains("_no")))
 							listaDedotti.add(Prolog.fattoDedottoToReport(db,fattoDedotto));
 					}
 					map.put("esito", true);
@@ -147,6 +159,34 @@ public class XMLRPC {
 			e.printStackTrace();
 			return map;
 		}
+	}
+
+	public static Utente loginUtente(Utente user, String serverAddress) {
+		try {
+			String username = user.getUsername();
+			String password = user.getPassword(); 
+			
+			URL url = new URL(serverAddress);
+			
+			ReasoningServiceClientOrganization client = new ReasoningServiceClientOrganization(url, username, password);
+			
+			Object[] lista = client.loginUtente(username, password);
+			if(lista != null) {
+				LogView.info("XMLRPC.loginUtente: true");
+				return new Utente(username, password, (String) lista[0], (String) lista[1], (String) lista[2]);
+			}
+			else {
+				LogView.info("XMLRPC.loginUtente: false");
+				return null;
+			}
+					
+			
+			
+		} catch (Exception e) {
+			LogView.info("XMLRPC.loginUtente: ERRORE");
+			e.printStackTrace();
+			return null;
+		} 
 	}
 
 }

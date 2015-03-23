@@ -61,8 +61,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		String sqlOggettiTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT NOT NULL, {4} INTEGER NOT NULL, {5} TEXT NOT NULL);";
 		db.execSQL(MessageFormat.format(sqlOggettiTable, OggettiTable.TABLE_NAME, BaseColumns._ID, OggettiTable.NOME, OggettiTable.CLASSE, OggettiTable.STATO, OggettiTable.PROLOG));
 		
-		String sqlConfigurazioneTable = "CREATE TABLE {0} ({1} INTEGER NOT NULL, {2} TEXT NOT NULL, {3} INTEGER NOT NULL, {4} INTEGER NOT NULL, {5} INTEGER NOT NULL, {6} INTEGER NOT NULL, {7} INTEGER NOT NULL, {8} INTEGER NOT NULL, {9} LONG NOT NULL, {10} INTEGER NOT NULL, {11} INTEGER NOT NULL, {12} INTEGER NOT NULL);";
-		db.execSQL(MessageFormat.format(sqlConfigurazioneTable, ConfigurazioneTable.TABLE_NAME, BaseColumns._ID, ConfigurazioneTable.LOCALITA, ConfigurazioneTable.METEO, ConfigurazioneTable.TEMPERATURAINT, ConfigurazioneTable.TEMPERATURAEST, ConfigurazioneTable.UMIDITAINT, ConfigurazioneTable.UMIDITAEST, ConfigurazioneTable.VENTO, ConfigurazioneTable.DATA, ConfigurazioneTable.ORA, ConfigurazioneTable.MINUTI, ConfigurazioneTable.COMPONENTI));
+		String sqlConfigurazioneTable = "CREATE TABLE {0} ({1} INTEGER NOT NULL, {2} TEXT NOT NULL, {3} INTEGER NOT NULL, {4} INTEGER NOT NULL, {5} INTEGER NOT NULL, {6} INTEGER NOT NULL, {7} INTEGER NOT NULL, {8} INTEGER NOT NULL, {9} INTEGER NOT NULL, {10} LONG NOT NULL, {11} INTEGER NOT NULL, {12} INTEGER NOT NULL, {13} INTEGER NOT NULL);";
+		db.execSQL(MessageFormat.format(sqlConfigurazioneTable, ConfigurazioneTable.TABLE_NAME, BaseColumns._ID, ConfigurazioneTable.LOCALITA, ConfigurazioneTable.METEO, ConfigurazioneTable.TEMPERATURAINT, ConfigurazioneTable.TEMPERATURAEST, ConfigurazioneTable.UMIDITAINT, ConfigurazioneTable.UMIDITAEST, ConfigurazioneTable.VENTO, ConfigurazioneTable.LUMINOSITA, ConfigurazioneTable.DATA, ConfigurazioneTable.ORA, ConfigurazioneTable.MINUTI, ConfigurazioneTable.COMPONENTI));
 	
 		String sqlReportTable = "CREATE TABLE {0} ({1} INTEGER PRIMARY KEY AUTOINCREMENT, {2} TEXT NOT NULL, {3} TEXT, {4} INTEGER, {5} TEXT NOT NULL, {6} INTEGER NOT NULL, {7} INTEGER NOT NULL, {8} INTEGER NOT NULL, {9} INTEGER NOT NULL);";
 		db.execSQL(MessageFormat.format(sqlReportTable, ReportTable.TABLE_NAME, BaseColumns._ID, ReportTable.AZIONE, ReportTable.ITEM, ReportTable.STATO, ReportTable.PROLOG, ReportTable.SENTRECEIVED, ReportTable.NUOVO, ReportTable.LETTO, ReportTable.USE));
@@ -82,22 +82,26 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		Oggetto.setConfigurazione(db, "Pane", Oggetto.DISPENSA, 0, "bread");
 		Oggetto.setConfigurazione(db, "Pancarré", Oggetto.DISPENSA, 0, "sliced_bread");
 		Oggetto.setConfigurazione(db, "Pasta", Oggetto.DISPENSA, 0, "pasta");
+		Oggetto.setConfigurazione(db, "Passata", Oggetto.DISPENSA, 0, "tomato");
 		Oggetto.setConfigurazione(db, "Caffè in polvere", Oggetto.DISPENSA, 0, "coffee");
 		Oggetto.setConfigurazione(db, "Bustina del thè", Oggetto.DISPENSA, 0, "tea_pocket");
+		Oggetto.setConfigurazione(db, "Busta di patatine", Oggetto.DISPENSA, 0, "chips");
 		Oggetto.setConfigurazione(db, "Biscotti", Oggetto.DISPENSA, 0, "biscuits");
+		Oggetto.setConfigurazione(db, "Cibo in scatola", Oggetto.DISPENSA, 0, "canned_food");
 		
 		Oggetto.setConfigurazione(db, "Pentola", Oggetto.MOBILE, 0, "pot");
 		Oggetto.setConfigurazione(db, "Padella", Oggetto.MOBILE, 0, "pan");
 		Oggetto.setConfigurazione(db, "Teglia da forno", Oggetto.MOBILE, 0, "baking_pan");
 		Oggetto.setConfigurazione(db, "Teglia da microonde", Oggetto.MOBILE, 0, "microwave_pan");
 		Oggetto.setConfigurazione(db, "Bollitore", Oggetto.MOBILE, 0, "boiler");
-		Oggetto.setConfigurazione(db, "Piatto", Oggetto.MOBILE, 0, "dish");
-		Oggetto.setConfigurazione(db, "Posate", Oggetto.MOBILE, 0, "silverware");
+		Oggetto.setConfigurazione(db, "Tazza", Oggetto.MOBILE, 0, "cup");
+		Oggetto.setConfigurazione(db, "Tazzina", Oggetto.MOBILE, 0, "coffee_cup");
 		Oggetto.setConfigurazione(db, "Bicchiere", Oggetto.MOBILE, 0, "glass");
 		
 		Oggetto.setConfigurazione(db, "Latte", Oggetto.FRIGORIFERO, 0, "milk");
 		Oggetto.setConfigurazione(db, "Acqua", Oggetto.FRIGORIFERO, 0, "water");
-		Oggetto.setConfigurazione(db, "Uova", Oggetto.FRIGORIFERO, 0, "eggs");
+		Oggetto.setConfigurazione(db, "Uova", Oggetto.FRIGORIFERO, 0, "egg");
+		Oggetto.setConfigurazione(db, "Carne", Oggetto.FRIGORIFERO, 0, "meat");
 		Oggetto.setConfigurazione(db, "Cibo surgelato", Oggetto.FRIGORIFERO, 0, "frozen_food");
 		
 		Oggetto.setConfigurazione(db, "Sale", Oggetto.CUCINA, 0, "salt");
@@ -109,7 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		Componente.setConfigurazione(db, "Televisione", Componente.ACCESO_SPENTO, 0, "television");
 		Componente.setConfigurazione(db, "Radio", Componente.ACCESO_SPENTO, 0, "radio");
 		Componente.setConfigurazione(db, "Condizionatore", Componente.ACCESO_SPENTO, 0, "air_conditioner");
-		Componente.setConfigurazione(db, "Termosifoni", Componente.ACCESO_SPENTO, 0, "radiators");
+		Componente.setConfigurazione(db, "Termosifone", Componente.ACCESO_SPENTO, 0, "radiator");
 		Componente.setConfigurazione(db, "Balcone", Componente.APERTO_CHIUSO, 0, "window");
 		Componente.setConfigurazione(db, "Macchina del caffè", Componente.ACCESO_SPENTO, 0, "coffee_machine");
 		Componente.setConfigurazione(db, "Tostapane", Componente.ACCESO_SPENTO, 0, "toaster");
@@ -135,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		final Calendar c = Calendar.getInstance();
     	int hour = c.get(Calendar.HOUR_OF_DAY);
     	int minute = c.get(Calendar.MINUTE);
-		Configurazione.setConfigurazione(db, "-", 50, 50, 50, 50, 50, 50, new Date().getTime(), hour, minute, 0);
+		Configurazione.setConfigurazione(db, "-", 50, 50, 50, 50, 50, 50, 50, new Date().getTime(), hour, minute, 0);
 	}
 	
 	private void popolaUtentiTable(SQLiteDatabase db) {
@@ -143,6 +147,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	}
 	
 	private void popolaImpostazioniTable(SQLiteDatabase db) {
-		Impostazione.setConfigurazione(db, "http://192.168.228.1:8080");
+		Impostazione.setConfigurazione(db, "http://192.168.228.1:8082/RPC2");
 	}
 }

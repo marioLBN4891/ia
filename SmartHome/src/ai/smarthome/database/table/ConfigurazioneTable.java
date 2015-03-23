@@ -13,6 +13,7 @@ public interface ConfigurazioneTable extends BaseColumns
 		String UMIDITAINT = "umiditaInt";
 		String UMIDITAEST = "umiditaEst";
 		String VENTO = "vento";
+		String LUMINOSITA = "luminosita";
 		String DATA = "data";
 		String ORA = "ora";
 		String MINUTI = "minuti";
@@ -27,6 +28,7 @@ public interface ConfigurazioneTable extends BaseColumns
 				UMIDITAINT,
 				UMIDITAEST,
 				VENTO,
+				LUMINOSITA,
 				DATA,
 				ORA,
 				MINUTI,

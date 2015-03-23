@@ -16,4 +16,6 @@ public interface IReasoningServiceClientOrganization {
 	
 	public Object[] inferisci(Object[] listaProlog) throws Exception;
 
+	public Object[] loginUtente(String username, String pwd) throws Exception;
+
 }

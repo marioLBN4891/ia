@@ -53,6 +53,12 @@ public class ReasoningServiceClientOrganization implements IReasoningServiceClie
 	}
 
 	@Override
+	public Object[] loginUtente(String username, String pwd) throws Exception {
+		Object[] params = new Object[] {username, pwd};
+		return (Object[]) _invokeMethod("SMARTKITCHEN.loginUtente", params);
+	}
+	
+	@Override
 	public boolean startServer() throws Exception {
 		Object[] params = new Object[] {};
 		return (Boolean) _invokeMethod("SMARTKITCHEN.startServer", params);

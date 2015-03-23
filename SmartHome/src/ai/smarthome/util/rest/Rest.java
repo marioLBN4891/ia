@@ -442,7 +442,6 @@ public class Rest  {
 				city = "Roma";
 			
 			URL url = new URL("http://5DayWeather.org/api.php?city="+city);
-			LogView.info(url.toString());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
@@ -461,8 +460,6 @@ public class Rest  {
 			}
 			
 			parametri = new HashMap<String,Integer>();
-			
-			LogView.info(json.getString("apiVersion")+ "AAAAAAAAAAAAA");
 			
 			JSONObject datiMeteo = json.getJSONObject("data");
 			
@@ -494,11 +491,11 @@ public class Rest  {
 			parametri.put("meteo", meteoClima);
 			parametri.put("visibilita", meteoClima);
 			
-			parametri.put("umiditaEst", datiMeteo.getInt("humidity"));
-			parametri.put("umiditaInt", datiMeteo.getInt("humidity"));
+			parametri.put("umiditaEst", datiMeteo.getInt("humidity")/10);
+			parametri.put("umiditaInt", datiMeteo.getInt("humidity")/10);
 			int vento = datiMeteo.getInt("wind");
 			parametri.put("vento", vento);
-			
+			parametri.put("luminosita", meteoClima/10);
 			LogView.info("Rest.getMeteoLocale: OK");
 			return parametri;
 					

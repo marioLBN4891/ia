@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import ai.smarthome.R;
 import ai.smarthome.database.DatabaseHelper;
 import ai.smarthome.database.wrapper.Report;
+import ai.smarthome.database.wrapper.Utente;
+import ai.smarthome.util.Costanti;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 public class ReportActivity extends Activity {
 
 	private SQLiteDatabase db;
+	private Utente user;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,13 @@ public class ReportActivity extends Activity {
 		setContentView(R.layout.activity_report);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
+		Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            user = (Utente) bundle.get(Costanti.UTENTE);
+        }
+        Intent intent = new Intent();
+    	intent.putExtra(Costanti.UTENTE, user);
+        
 		ArrayList<Report> lista = Report.getLista(db);
 		
 		TableLayout tableLayout = (TableLayout) findViewById(R.id.tableReport);

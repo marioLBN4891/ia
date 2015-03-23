@@ -48,6 +48,7 @@ public class Prolog {
 			listaFatti.add(umiditaSimulazione(timestamp, meteo.getUmiditaInt(), true));
 			listaFatti.add(umiditaSimulazione(timestamp, meteo.getUmiditaInt(), false));
 			listaFatti.add(ventoSimulazione(timestamp, meteo.getVento()));
+			listaFatti.add(luminositaSimulazione(timestamp, meteo.getLuminosita()));
 			
 			ArrayList<Report> listaFattiComponenti = new ArrayList<Report>();
 			listaFattiComponenti = componentiSimulazione(timestamp, Componente.getAllLista(db));
@@ -146,9 +147,9 @@ public class Prolog {
 		if (attuale)
 			nuovo = 1;
 		if (presenza) 
-			return (new Report("L\'utente è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",kitchen)", "1.0"), 0, nuovo, 1, 0));
+			return (new Report("L\'utente è presente in cucina", "",0, creaStringaFatto("is_present_kitchen("+timestamp+")", "1.0"), 0, nuovo, 1, 0));
 		else
-			return (new Report("L\'utente non è presente in cucina", "",0, creaStringaFatto("is_present("+timestamp+",out)", "1.0"), 0, nuovo, 1, 0));
+			return (new Report("L\'utente non è presente in cucina", "",0, creaStringaFatto("is_present_kitchen_out("+timestamp+")", "1.0"), 0, nuovo, 1, 0));
 	}
 	
 	public static Report statoAttualeUser(String timestamp, boolean presenza, boolean esterno, boolean attuale) {
@@ -157,14 +158,14 @@ public class Prolog {
 			nuovo = 1;
 		if (presenza)
 			if (esterno)
-				return (new Report("L\'utente viene dall\'esterno", "",0, creaStringaFatto("came_from("+timestamp+",out)", "1.0"), 0, nuovo, 1, 0));
+				return (new Report("L\'utente viene dall\'esterno", "",0, creaStringaFatto("came_out("+timestamp+")", "1.0"), 0, nuovo, 1, 0));
 			else
-				return (new Report("L\'utente viene da un\'altra camera", "",0, creaStringaFatto("came_from("+timestamp+",in)", "1.0"), 0, nuovo, 1, 0));
+				return (new Report("L\'utente viene da un\'altra camera", "",0, creaStringaFatto("came_in("+timestamp+")", "1.0"), 0, nuovo, 1, 0));
 		else
 			if (esterno)
-				return (new Report("L\'utente va all\'esterno", "",0, creaStringaFatto("go_to("+timestamp+",out)", "1.0"), 0, 1, 1, 0));
+				return (new Report("L\'utente va all\'esterno", "",0, creaStringaFatto("go_out("+timestamp+")", "1.0"), 0, 1, 1, 0));
 			else
-				return (new Report("L\'utente va in un\'altra camera", "",0, creaStringaFatto("go_to("+timestamp+",in)", "1.0"), 0, 1, 1, 0));
+				return (new Report("L\'utente va in un\'altra camera", "",0, creaStringaFatto("go_in("+timestamp+")", "1.0"), 0, 1, 1, 0));
 	}
 	
 	private static ArrayList<Report> componentiSimulazione(String timestamp, ArrayList<Componente> listaComp) {
@@ -183,7 +184,8 @@ public class Prolog {
 					stato = "on";
 					statoAzione = "acceso";
 				}
-				if (comp.getProlog().equals("air_conditioner_choice"))
+				
+				if (comp.getProlog().equals("air_conditioner")) {
 					if(comp.getStato() == 1) {
 						stato = "low";
 						statoAzione = "acceso: potenza bassa";
@@ -200,7 +202,38 @@ public class Prolog {
 						stato = "max";
 						statoAzione = "acceso: deumidificatore";
 					}
-				if (comp.getProlog().equals("microwave_oven_choice"))
+				}
+				if (comp.getProlog().equals("radiator")) {
+					if(comp.getStato() == 1) {
+						stato = "low";
+						statoAzione = "acceso: potenza bassa";
+					}
+					if(comp.getStato() == 2) {
+						stato = "middle";
+						statoAzione = "acceso: potenza media";
+					}
+					if(comp.getStato() == 3) {
+						stato = "max";
+						statoAzione = "acceso: potenza massima";
+					}
+				}
+				
+				if (comp.getProlog().equals("lighting")) {
+					if(comp.getStato() == 1) {
+						stato = "100";
+						statoAzione = "acceso: intensità bassa";
+					}
+					if(comp.getStato() == 2) {
+						stato = "middle";
+						statoAzione = "acceso: intensità media";
+					}
+					if(comp.getStato() == 3) {
+						stato = "max";
+						statoAzione = "acceso: intensità massima";
+					}
+				}
+				
+				if (comp.getProlog().equals("microwave_oven"))
 					if(comp.getStato() == 1) {
 						stato = "heat";
 						statoAzione = "acceso: riscaldamento";
@@ -209,6 +242,7 @@ public class Prolog {
 						stato = "defrost";
 						statoAzione = "acceso: scongelamento";
 					}
+					
 				if (comp.getTipo().equals(Componente.APERTO_CHIUSO) && comp.getStato() == 0) {
 					stato = "close";
 					statoAzione = "chiuso";
@@ -217,7 +251,7 @@ public class Prolog {
 					stato = "open";
 					statoAzione = "aperto";
 				}
-				listaFatti.add(new Report(comp.getNome()+" è "+statoAzione , comp.getNome(), comp.getStato(), creaStringaFatto(fatto+"("+timestamp+","+stato+")", "1.0"), 0, 0, 1, 1));
+				listaFatti.add(new Report(comp.getNome()+" è "+statoAzione , comp.getNome(), comp.getStato(), creaStringaFatto(fatto+"_"+stato+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 			}
 		}
 		
@@ -228,7 +262,7 @@ public class Prolog {
 	
 		ArrayList<Report> listaFatti = new ArrayList<Report>();
 		for (Oggetto ogg : listaOgg) {
-			listaFatti.add(new Report("Hai preso "+ogg.getNome(), ogg.getNome(), ogg.getStato(), creaStringaFatto("pick("+timestamp+","+ogg.getProlog()+")", "1.0"), 0, 0, 1, 0));
+			listaFatti.add(new Report("Hai preso "+ogg.getNome(), ogg.getNome(), ogg.getStato(), creaStringaFatto("pick_"+ogg.getProlog()+"("+timestamp+")", "1.0"), 0, 0, 1, 0));
 		}
 		
 		return listaFatti;
@@ -240,9 +274,10 @@ public class Prolog {
 		dataSim.setTime(data);
 		@SuppressWarnings("deprecation")
 		int mese = dataSim.getMonth();
+		
 		String meseIta = "";
 		String meseFatto = "month_";
-    	switch (mese) {
+    	switch (mese+1) {
 		case 1: meseIta = "Gennaio";
 				meseFatto = meseFatto.replace("_", "_january");
 				break;
@@ -252,7 +287,7 @@ public class Prolog {
 		case 3: meseIta = "Marzo";
 				meseFatto = meseFatto.replace("_", "_march");
 				break;
-		case 4: meseIta = "aprile";
+		case 4: meseIta = "Aprile";
 				meseFatto = meseFatto.replace("_", "_april");
 				break;
 		case 5: meseIta = "Maggio";
@@ -311,6 +346,22 @@ public class Prolog {
 		if (umidita>= 70 && umidita < 80) stato = stato.replace("v","v70_80");
 		if (umidita>= 80 && umidita < 90) stato = stato.replace("v","v80_90");
 		if (umidita>= 90 && umidita <= 100) stato = stato.replace("v","v90_100");
+		
+		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
+	}
+	
+	private static Report luminositaSimulazione(String timestamp, int luminosita) {
+		String stato = "tot_lux_v";
+		String statoIta = "Luminosità esterna: "+luminosita+"0 Lux";
+		
+		if (luminosita>= 0 && luminosita < 10) stato = stato.replace("v","v0_100");
+		if (luminosita>= 10 && luminosita < 20) stato = stato.replace("v","v100_200");
+		if (luminosita>= 20 && luminosita < 30) stato = stato.replace("v","v200_300");
+		if (luminosita>= 30 && luminosita < 40) stato = stato.replace("v","v300_400");
+		if (luminosita>= 40 && luminosita < 50) stato = stato.replace("v","v400_500");
+		if (luminosita>= 50 && luminosita < 60) stato = stato.replace("v","v500_600");
+		if (luminosita>= 60 && luminosita < 80) stato = stato.replace("v","v600_800");
+		if (luminosita>= 80 && luminosita <= 100) stato = stato.replace("v","v800_1000");
 		
 		return (new Report(statoIta, "", 0, creaStringaFatto(stato+"("+timestamp+")", "1.0"), 0, 0, 1, 1));
 	}
@@ -396,48 +447,78 @@ public class Prolog {
 					item = comp.getNome();
 				
 					if (comp.getProlog().contains("air_conditioner")) {
-						if (fattoDedotto.contains(",low")) {
+						if (fattoDedotto.contains("_low")) {
 							stato = 1;
 							azione = CASA+item+ON+": potenza bassa";
 						}
-						if (fattoDedotto.contains(",middle")) {
+						if (fattoDedotto.contains("_middle")) {
 							stato = 2;
 							azione = CASA+item+ON+": potenza media";
 						}
-						if (fattoDedotto.contains(",max")) {
+						if (fattoDedotto.contains("_max")) {
 							stato = 3;
 							azione = CASA+item+ON+": potenza massima";
 						}
-						if (fattoDedotto.contains(",dehumidifier")) {
+						if (fattoDedotto.contains("_dehumidifier")) {
 							stato = 4;
 							azione = CASA+item+ON+": deumidificatore";
 						}
 					}
 					
+					if (comp.getProlog().contains("radiator")) {
+						if (fattoDedotto.contains("_low")) {
+							stato = 1;
+							azione = CASA+item+ON+": potenza bassa";
+						}
+						if (fattoDedotto.contains("_middle")) {
+							stato = 2;
+							azione = CASA+item+ON+": potenza media";
+						}
+						if (fattoDedotto.contains("_max")) {
+							stato = 3;
+							azione = CASA+item+ON+": potenza massima";
+						}
+					}
+					
 					if (comp.getProlog().contains("microwave_oven")) {
-						if (fattoDedotto.contains(",heat")) {
+						if (fattoDedotto.contains("_heat")) {
 							stato = 1;
 							azione = CASA+item+ON+": riscaldamento";
 						}
-						if (fattoDedotto.contains(",defrost")) {
+						if (fattoDedotto.contains("_defrost")) {
 							stato = 2;
 							azione = CASA+item+ON+": scongelamento";
 						}
 					}
 					
-					if (fattoDedotto.contains(",on")) {
+					if (comp.getProlog().contains("lighting")) {
+						if (fattoDedotto.contains("_100")) {
+							stato = 1;
+							azione = CASA+item+ON+": intensità bassa";
+						}
+						if (fattoDedotto.contains("_200")) {
+							stato = 2;
+							azione = CASA+item+ON+": intensità media";
+						}
+						if (fattoDedotto.contains("_300")) {
+							stato = 3;
+							azione = CASA+item+ON+": intensità alta";
+						}
+					}
+					
+					if (fattoDedotto.contains("_on")) {
 						stato = 1;
 						azione = CASA+item+ON;
 					}
-					if (fattoDedotto.contains(",off")) { 
+					if (fattoDedotto.contains("_off")) { 
 						stato = 0;
 						azione = CASA+item+OFF;
 					}
-					if (fattoDedotto.contains(",open")) {
+					if (fattoDedotto.contains("_open")) {
 						stato = 1;
 						azione = CASA+item+OPEN;
 					}
-					if (fattoDedotto.contains(",close")) {
+					if (fattoDedotto.contains("_close")) {
 						stato = 0;
 						azione = CASA+item+CLOSE;
 					}
@@ -454,11 +535,11 @@ public class Prolog {
 			if(fattoDedotto.contains("time_afternoon")) azione = "C@SA: pomeriggio";
 			if(fattoDedotto.contains("time_evening")) 	azione = "C@SA: sera";
 			if(fattoDedotto.contains("time_night")) 	azione = "C@SA: notte";
-			if(fattoDedotto.contains("time_breakfast") && fattoDedotto.contains(",yes")) azione = "C@SA: ora della colazione";
-			if(fattoDedotto.contains("time_lunch") && fattoDedotto.contains(",yes")) 	azione = "C@SA: ora del pranzo";
-			if(fattoDedotto.contains("time_dinner") && fattoDedotto.contains(",yes")) 	azione = "C@SA: ora della cena";
-			if(fattoDedotto.contains("time_break") && fattoDedotto.contains(",yes")) 	azione = "C@SA: ora del break";
-			
+			if(fattoDedotto.contains("time_breakfast_yes")) azione = "C@SA: ora della colazione";
+			if(fattoDedotto.contains("time_lunch_yes")) 	azione = "C@SA: ora del pranzo";
+			if(fattoDedotto.contains("time_dinner_yes")) 	azione = "C@SA: ora della cena";
+			if(fattoDedotto.contains("time_break_yes")) 	azione = "C@SA: ora del break";
+		/*	
 			if(fattoDedotto.contains("humidier_equal")) 			azione = CASA+"umidità interna ed esterna sono uguali";
 			if(fattoDedotto.contains("humidier_inside_low")) 		azione = CASA+"umidità interna poco inferiore rispetto l'esterno";
 			if(fattoDedotto.contains("humidier_inside_middle"))		azione = CASA+"umidità interna abbastanza inferiore rispetto l'esterno";
@@ -466,11 +547,11 @@ public class Prolog {
 			if(fattoDedotto.contains("humidier_outside_low")) 		azione = CASA+"umidità interna poco superiore rispetto l'esterno";
 			if(fattoDedotto.contains("humidier_outside_middle")) 	azione = CASA+"umidità esterna abbastanza superiore rispetto l'esterno";
 			if(fattoDedotto.contains("humidier_outside_high")) 		azione = CASA+"umidità esterna molto superiore rispetto l'esterno";
-			
+		*/
 			if(fattoDedotto.contains("int_humidity_accettable_no_low")) 	azione = CASA+"umidità interna non accettabile: bassa";
 			if(fattoDedotto.contains("int_humidity_accettable_yes")) 		azione = CASA+"umidità interna accettabile: media";
 			if(fattoDedotto.contains("int_humidity_accettable_no_high")) 	azione = CASA+"umidità interna non accettabile: alta";
-			
+		/*	
 			if(fattoDedotto.contains("warmer_inside_low")) 		azione = CASA+"temp. interna poco superiore rispetto l'esterno";
 			if(fattoDedotto.contains("warmer_inside_middle")) 	azione = CASA+"temp. interna abbastanza superiore rispetto l'esterno";
 			if(fattoDedotto.contains("warmer_inside_high")) 	azione = CASA+"temp. interna molto superiore rispetto l'esterno";
@@ -478,7 +559,7 @@ public class Prolog {
 			if(fattoDedotto.contains("warmer_outside_low")) 	azione = CASA+"temp. interna poco inferiore rispetto l'esterno";
 			if(fattoDedotto.contains("warmer_outside_middle")) 	azione = CASA+"temp. interna abbastanza inferiore rispetto l'esterno";
 			if(fattoDedotto.contains("warmer_outside_high")) 	azione = CASA+"temp. interna molto inferiore rispetto l'esterno";
-			
+		*/	
 			if(fattoDedotto.contains("int_temperature_accettable_no_cold")) 	azione = CASA+"temp. interna non accettabile: fredda";
 			if(fattoDedotto.contains("int_temperature_accettable_yes")) 		azione = CASA+"temp. interna accettabile: ottimale";
 			if(fattoDedotto.contains("int_temperature_accettable_no_hod")) 		azione = CASA+"temp. interna non accettabile: calda";

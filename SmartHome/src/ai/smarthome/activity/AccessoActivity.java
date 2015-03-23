@@ -1,21 +1,14 @@
 package ai.smarthome.activity;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-
 import ai.smarthome.R;
 import ai.smarthome.activity.fragmentAccesso.LoginFragment;
 import ai.smarthome.activity.fragmentAccesso.RegistrazioneFragment;
 import ai.smarthome.database.DatabaseHelper;
-import ai.smarthome.database.wrapper.Componente;
-import ai.smarthome.database.wrapper.Oggetto;
+import ai.smarthome.database.wrapper.Impostazione;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
 import ai.smarthome.util.Utilities;
+import ai.smarthome.util.xmlrpc.XMLRPC;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -25,7 +18,6 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,21 +33,13 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 	private EditText  nome;
 	private SQLiteDatabase db;
 	
-	private UiLifecycleHelper uiHelper;
-    private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		uiHelper = new UiLifecycleHelper(this, statusCallback);
-        uiHelper.onCreate(savedInstanceState);
-        
+	    
 		setContentView(R.layout.activity_accesso);
 		
 		db = new DatabaseHelper(this).getWritableDatabase();
-		
-		Componente.reset(db);
-		Oggetto.reset(db);
 		
 		ActionBar ab = getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -75,71 +59,35 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
    	
 	}
 	
-	private Session.StatusCallback statusCallback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-            	Log.i("SmartHomeEnvironment", "Facebook session opened");
-            } 
-            if (state.isClosed()) {
-                Log.i("SmartHomeEnvironment", "Facebook session closed");
-            }
-        }
-    };
-    
-    public boolean checkPermissions() {
-        Session s = Session.getActiveSession();
-        if (s != null) 
-            return s.getPermissions().contains("publish_actions");
-        else
-            return false;
-    }
-
-    public void requestPermissions() {
-        Session s = Session.getActiveSession();
-        if (s != null)
-            s.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
-    }
-
+	
     @Override
     public void onResume() {
-        super.onResume();
-        uiHelper.onResume();
+    	super.onResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
-        uiHelper.onPause();
+    	super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        uiHelper.onDestroy();
+    	super.onDestroy();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        uiHelper.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedState) {
-        super.onSaveInstanceState(savedState);
-        uiHelper.onSaveInstanceState(savedState);
-    }
-    
-	public void fastLogin() {
+    public void fastLogin() {
 		
 		Utente user = Utente.getConnessioneVeloce(db);
-        if (user != null) {
+		String serverAddress = Impostazione.getIndirizzo(db);
+        user = XMLRPC.loginUtente(user, serverAddress);
+		if (user != null) {
         	Intent i = new Intent(AccessoActivity.this, MainActivity.class);
         	i.putExtra(Costanti.UTENTE, user);
             startActivity(i);
             finish();
 		}	
+		else
+			Toast.makeText(getApplicationContext(), "Username/password non valide.Riprova", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -230,27 +178,28 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 		
 
 	public void login(View arg0) { 
-		mail = (EditText)findViewById(R.id.mailEditText);
- 	    password = (EditText)findViewById(R.id.passwordEditText);
+		EditText username = (EditText)findViewById(R.id.usernameEditText);
+		EditText password = (EditText)findViewById(R.id.passwordEditText);
  	    
-		if (!mail.getText().toString().equals("")) {
+		if (!username.getText().toString().equals("")) { 
 			if (!password.getText().toString().equals("")) {
-				Utente user = Utente.isUtenteRegistered(db, mail.getText().toString().trim(), password.getText().toString().trim());
-		        if (user != null) {
-		        	Utente.setConnessioneVeloce(db, user.getMail(), user.getPassword());
-			        Intent i = new Intent(AccessoActivity.this, MainActivity.class);
-			        i.putExtra(Costanti.UTENTE, user);
-			        startActivity(i);
-			        finish();
+				Utente user = new Utente(username.getText().toString(), password.getText().toString());
+				String serverAddress = Impostazione.getIndirizzo(db);
+		        user = XMLRPC.loginUtente(user, serverAddress); 
+				if (user != null) {
+		        	Intent i = new Intent(AccessoActivity.this, MainActivity.class);
+		        	i.putExtra(Costanti.UTENTE, user);
+		            startActivity(i);
+		            finish();
 				}	
 				else 
-					Toast.makeText(getApplicationContext(), "Mail/password non valide.Riprova", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "Username/password non valide.Riprova", Toast.LENGTH_SHORT).show();
 			}
 			else
-				Toast.makeText(getApplicationContext(), "Inserire password", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Inserire Password", Toast.LENGTH_SHORT).show();
 		}
 		else
-			Toast.makeText(getApplicationContext(), "Inserire email", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Inserire Username", Toast.LENGTH_SHORT).show();
 	}
 	
 		

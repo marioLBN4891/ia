@@ -14,6 +14,7 @@ public class Configurazione {
 	private int umiditaInt;
 	private int umiditaEst;
 	private int vento;
+	private int luminosita;
 	private long data;
 	private int ora;
 	private int minuti;
@@ -24,7 +25,7 @@ public class Configurazione {
 		
 	}
 	
-	public Configurazione(String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, long data, int ora, int minuti, int componenti) {
+	public Configurazione(String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, int luminosita, long data, int ora, int minuti, int componenti) {
 		this.localita = localita;
 		this.meteo = meteo;
 		this.temperaturaInt = temperaturaInt;
@@ -32,6 +33,7 @@ public class Configurazione {
 		this.umiditaInt = umiditaInt;
 		this.umiditaEst = umiditaEst;
 		this.vento = vento;
+		this.luminosita = luminosita;
 		this.data = data;
 		this.ora = ora;
 		this.minuti = minuti;
@@ -66,10 +68,13 @@ public class Configurazione {
 		return this.vento;
 	}
 	
+	public int getLuminosita() {
+		return this.luminosita;
+	}
+	
 	public long getData() {
 		return this.data;
 	}
-	
 	public int getOra() {
 		return this.ora;
 	}
@@ -82,7 +87,7 @@ public class Configurazione {
 		return this.componenti;
 	}
 	
-	public static void setConfigurazione(SQLiteDatabase db, String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, long data, int ora, int minuti, int componenti) {
+	public static void setConfigurazione(SQLiteDatabase db, String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, int luminosita, long data, int ora, int minuti, int componenti) {
 		ContentValues value = new ContentValues();
 		value.put(ConfigurazioneTable._ID, 1);
 		value.put(ConfigurazioneTable.LOCALITA, localita);
@@ -92,6 +97,7 @@ public class Configurazione {
 		value.put(ConfigurazioneTable.UMIDITAINT, umiditaInt);
 		value.put(ConfigurazioneTable.UMIDITAEST, umiditaEst);
 		value.put(ConfigurazioneTable.VENTO, vento);
+		value.put(ConfigurazioneTable.LUMINOSITA, luminosita);
 		value.put(ConfigurazioneTable.DATA, data);
 		value.put(ConfigurazioneTable.ORA, ora);
 		value.put(ConfigurazioneTable.MINUTI, minuti);
@@ -99,7 +105,7 @@ public class Configurazione {
 		db.insert(ConfigurazioneTable.TABLE_NAME, null, value);
 	}
 
-	public static void updateConfigurazione(SQLiteDatabase db, String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, long data, int ora, int minuti, int componenti) {
+	public static void updateConfigurazione(SQLiteDatabase db, String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, int luminosita, long data, int ora, int minuti, int componenti) {
 		ContentValues value = new ContentValues();
 		value.put(ConfigurazioneTable.LOCALITA, localita);
 		value.put(ConfigurazioneTable.METEO, meteo);
@@ -108,6 +114,7 @@ public class Configurazione {
 		value.put(ConfigurazioneTable.UMIDITAINT, umiditaInt);
 		value.put(ConfigurazioneTable.UMIDITAEST, umiditaEst);
 		value.put(ConfigurazioneTable.VENTO, vento);
+		value.put(ConfigurazioneTable.LUMINOSITA, luminosita);
 		value.put(ConfigurazioneTable.DATA, data);
 		value.put(ConfigurazioneTable.ORA, ora);
 		value.put(ConfigurazioneTable.MINUTI, minuti);
@@ -115,7 +122,7 @@ public class Configurazione {
 		db.update(ConfigurazioneTable.TABLE_NAME, value, ConfigurazioneTable._ID +" = 1", null);
 	}
 	
-	public static void updateMeteo(SQLiteDatabase db, String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento) {
+	public static void updateMeteo(SQLiteDatabase db, String localita, int meteo, int temperaturaInt, int temperaturaEst, int umiditaInt, int umiditaEst, int vento, int luminosita) {
 		ContentValues value = new ContentValues();
 		value.put(ConfigurazioneTable.LOCALITA, localita);
 		value.put(ConfigurazioneTable.METEO, meteo);
@@ -124,6 +131,7 @@ public class Configurazione {
 		value.put(ConfigurazioneTable.UMIDITAINT, umiditaInt);
 		value.put(ConfigurazioneTable.UMIDITAEST, umiditaEst);
 		value.put(ConfigurazioneTable.VENTO, vento);
+		value.put(ConfigurazioneTable.LUMINOSITA, luminosita);
 		db.update(ConfigurazioneTable.TABLE_NAME, value, ConfigurazioneTable._ID +" = 1", null);
 	}
 	
@@ -150,7 +158,7 @@ public class Configurazione {
 		Cursor cursore = db.query(ConfigurazioneTable.TABLE_NAME, ConfigurazioneTable.COLUMNS, null, null, null, null, ConfigurazioneTable.LOCALITA);
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
-					return new Configurazione(cursore.getString(1), cursore.getInt(2), cursore.getInt(3), cursore.getInt(4), cursore.getInt(5), cursore.getInt(6), cursore.getInt(7), cursore.getLong(8), cursore.getInt(9), cursore.getInt(10), cursore.getInt(11));
+					return new Configurazione(cursore.getString(1), cursore.getInt(2), cursore.getInt(3), cursore.getInt(4), cursore.getInt(5), cursore.getInt(6), cursore.getInt(7), cursore.getInt(8), cursore.getLong(9), cursore.getInt(10), cursore.getInt(11), cursore.getInt(12));
 		return null;
 	}
 	

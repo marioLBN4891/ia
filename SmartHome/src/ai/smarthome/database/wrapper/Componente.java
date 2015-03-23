@@ -61,15 +61,18 @@ public class Componente {
 		db.update(ComponentiTable.TABLE_NAME, value, null, null);
 	}
 	
-	public static void update(SQLiteDatabase db, String nome, boolean stato) {
+	public static void update(SQLiteDatabase db, String nome, int stato) {
 		ContentValues value = new ContentValues();
-		value.put(ComponentiTable.STATO, (stato) ? 1 : 0);
+		value.put(ComponentiTable.STATO, stato);
 		db.update(ComponentiTable.TABLE_NAME, value, ComponentiTable.NOME +" = \""+ nome+"\"", null);
 	}
 	
 	public static ArrayList<Componente> getLista(String tipo, int stato, SQLiteDatabase db) {
 		ArrayList<Componente> lista = new ArrayList<Componente>();
-		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+		String condizione = " = ";
+		if(stato > 0) 
+			condizione = " > ";
+		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+ condizione + stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
 		
 		if (cursore.getCount() > 0)
 			while (cursore.moveToNext()) 
@@ -80,11 +83,21 @@ public class Componente {
 	
 	public static CharSequence[] getListaCharSequence(String tipo, int stato, SQLiteDatabase db) {
 		List<String> listItems = new ArrayList<String>();
-		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
-		
-		if (cursore.getCount() > 0)
-			while (cursore.moveToNext()) 
-				listItems.add(cursore.getString(1));
+		Cursor cursore;
+		if(stato == 0) {
+			cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = 0 AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+			if (cursore.getCount() > 0)
+				while (cursore.moveToNext()) 
+					listItems.add(cursore.getString(1));
+		}
+		if(stato == 1) {
+			for(int i = 1; i<=3; i++) {
+				cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+i+" AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+				if (cursore.getCount() > 0)
+					while (cursore.moveToNext()) 
+						listItems.add(cursore.getString(1));
+			}
+		}
 		
 		CharSequence[] charSequenceItems = listItems.toArray(new CharSequence[listItems.size()]);;
 		
@@ -115,11 +128,30 @@ public class Componente {
 	}
 	
 	public static boolean checkComponente(String tipo, int stato, SQLiteDatabase db) {
-		Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+" = "+ stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
-		if (cursore.getCount() > 0)
-			return true;
-		else
-			return false;
+		if(stato == 0) {
+			Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+ " = " + stato + " AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+			if (cursore.getCount() > 0)
+				return true;
+			else
+				return false;
+		}
+		if(stato == 1) {
+			Cursor cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+ " = 1 AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+			if (cursore.getCount() > 0)
+				return true;
+			cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+ " = 2 AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+			if (cursore.getCount() > 0)
+				return true;
+			cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+ " = 3 AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+			if (cursore.getCount() > 0)
+				return true;
+			cursore = db.query(ComponentiTable.TABLE_NAME, ComponentiTable.COLUMNS, ComponentiTable.STATO+ " = 4 AND "+ComponentiTable.TIPO+" = \""+ tipo +"\"",	null, null, null, ComponentiTable.NOME);
+			if (cursore.getCount() > 0)
+				return true;
+			else
+				return false;			
+		}
+		return false;
 	}
 	
 	

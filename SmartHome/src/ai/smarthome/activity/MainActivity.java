@@ -23,7 +23,6 @@ import ai.smarthome.database.wrapper.Sensore;
 import ai.smarthome.database.wrapper.Utente;
 import ai.smarthome.util.Costanti;
 import ai.smarthome.util.GPSTracker;
-import ai.smarthome.util.Prolog;
 import ai.smarthome.util.UtilConfigurazione;
 import ai.smarthome.util.Utilities;
 import ai.smarthome.util.rest.Rest;
@@ -89,10 +88,7 @@ public class MainActivity extends Activity {
         	if(bundle.get(Costanti.UTENTE) != null) 
         		user = (Utente) bundle.get(Costanti.UTENTE);
         
-        user.setUsername("labianca");
-		user.setPassword("mariol");
-		
-		
+       
        // asyncPosition.execute();
        
         Componente.reset(db);
@@ -324,19 +320,11 @@ public class MainActivity extends Activity {
     public void startSimulazione(View view) {
     	Report.reset(db);
 		
-		Toast.makeText(getApplicationContext(), "Inizializzazione in corso...", Toast.LENGTH_SHORT).show();
-		
-    	if (Prolog.startSimulazione(user, db)) {
-    		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
-    		intent.putExtra(Costanti.UTENTE, user);
-    		startActivity(intent);
-    		finish();
-    	}
-    	else {
-    		new AlertDialog.Builder(this).setIcon(R.drawable.attenzione).setTitle("Errore")
-            .setMessage("Impossibile contattare il Server")
-            .setPositiveButton("Indietro", null).show();
-    	}
+		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
+    	intent.putExtra(Costanti.UTENTE, user);
+    	startActivity(intent);
+    	finish();
+    	
     }
     
     public void cambiaSensori(View view) {
@@ -355,7 +343,37 @@ public class MainActivity extends Activity {
 	    for(Componente c : lista) {
 	    	if (!(c.getNome().equals("Dispensa") || c.getNome().equals("Mobile") || c.getNome().equals("Frigorifero"))) {
 	    		Switch switchComponente = (Switch)findViewById(c.getId());
-	    		Componente.update(db, c.getNome(), switchComponente.isChecked());
+	    		boolean stato = switchComponente.isChecked();
+        		if (stato) {
+        			if(c.getNome().equals("Condizionatore")) {
+    	    			Bundle bundle = getIntent().getExtras();
+    	    	        if(bundle != null) 
+    	    	        	if(bundle.get(c.getNome()) != null) 
+    	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
+            		}
+            		
+            		if(switchComponente.getText().equals("Termosifone")) {
+            			Bundle bundle = getIntent().getExtras();
+    	    	        if(bundle != null) 
+    	    	        	if(bundle.get(c.getNome()) != null) 
+    	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
+            		}
+            		
+            		if(switchComponente.getText().equals("Forno a microonde")) {
+            			Bundle bundle = getIntent().getExtras();
+    	    	        if(bundle != null) 
+    	    	        	if(bundle.get(c.getNome()) != null) 
+    	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
+            		}
+            		
+            		if(switchComponente.getText().equals("Illuminazione")) {
+            			Bundle bundle = getIntent().getExtras();
+    	    	        if(bundle != null) 
+    	    	        	if(bundle.get(c.getNome()) != null) 
+    	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
+            		}
+            	}
+	    		Componente.update(db, c.getNome(), ((stato) ? 1:0));
 	    	}
 	    }
 	    UtilConfigurazione.updateComponenti(db, 1);
@@ -370,14 +388,15 @@ public class MainActivity extends Activity {
     	SeekBar seekUmiditaInt = (SeekBar)findViewById(R.id.seekUmiditaInterna);
     	SeekBar seekUmiditaEst = (SeekBar)findViewById(R.id.seekUmiditaEsterna);
     	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
+    	SeekBar seekLumi = (SeekBar)findViewById(R.id.seekLumi);
     	
-    	UtilConfigurazione.updateMeteo(db, (String)textLoc.getText(), seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress());
+    	UtilConfigurazione.updateMeteo(db, (String)textLoc.getText(), seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress(), seekLumi.getProgress());
     	
         Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
     }
     
     public void cambiaMeteoSole(View view) {
- 		UtilConfigurazione.updateMeteo(db, "-", 90, 25, 40, 80, 90, 0);
+ 		UtilConfigurazione.updateMeteo(db, "-", 90, 25, 40, 80, 90, 0, 100);
  		Date data = new Date();
  		data.setMonth(Calendar.AUGUST);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -385,7 +404,7 @@ public class MainActivity extends Activity {
  	}
  	
     public void cambiaMeteoSereno(View view) {
- 		UtilConfigurazione.updateMeteo(db, "-", 70, 20, 30, 50, 60, 2); 
+ 		UtilConfigurazione.updateMeteo(db, "-", 70, 20, 30, 50, 60, 2, 70); 
  		Date data = new Date();
  		data.setMonth(Calendar.MAY);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -393,7 +412,7 @@ public class MainActivity extends Activity {
  	}
  		
     public void cambiaMeteoNuvole(View view) {
- 		UtilConfigurazione.updateMeteo(db, "-", 40, 15, 25, 45, 50, 4);
+ 		UtilConfigurazione.updateMeteo(db, "-", 40, 15, 25, 40, 50, 4, 40);
  		Date data = new Date();
  		data.setMonth(Calendar.NOVEMBER);
  		UtilConfigurazione.updateData(db, data.getTime());
@@ -401,7 +420,7 @@ public class MainActivity extends Activity {
  	}
  	
 	public void cambiaMeteoPioggia(View view) {
-    	UtilConfigurazione.updateMeteo(db, "-", 20, 10, 25, 70, 80, 7);
+    	UtilConfigurazione.updateMeteo(db, "-", 20, 10, 25, 70, 80, 7, 20);
  		Date data = new Date();
  		data.setMonth(Calendar.JANUARY);
  		UtilConfigurazione.updateData(db, data.getTime());

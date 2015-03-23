@@ -109,7 +109,7 @@
     <string name="localita">Località:</string>
     <string name="umidita">Umidità:\n</string>
     <string name="vento">Vento:\n</string>
-    <string name="visibilita">Visibilità:</string>
+    <string name="lumi">Luminosità esterna:\n</string>
     <string name="temperaturaInterna">Temperatura interna:\n</string>
     <string name="temperaturaEsterna">Temperatura esterna:\n</string>
     <string name="umiditaInterna">Umidità interna:\n</string>
@@ -143,6 +143,7 @@
     <string name="umidin">Umidità interna</string>
     <string name="umidout">Umidità esterna</string>
     <string name="vent">Vento</string>
+    <string name="lum">Luminosità interna</string>
     <string name="data">Data e Ora</string>
     <string name="comp">Configurazione Componenti</string>
     

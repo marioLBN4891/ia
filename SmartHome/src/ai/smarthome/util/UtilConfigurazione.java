@@ -63,7 +63,11 @@ public class UtilConfigurazione {
 	public static String setTextViewUmidita(int progress) {
     	return progress+"%";
 	}
-
+	
+	public static String setTextViewLumi(int progress) {
+    	return progress+"0 Lux";
+	}
+	
 	public static String setTextViewComponenti(int progress) {
 		if (progress == 1) 
 			return "Personalizzata";
@@ -71,8 +75,8 @@ public class UtilConfigurazione {
 			return "Standard";
 	}
 	
-	public static void updateMeteo(SQLiteDatabase db, String loc, int meteo, int tempInt, int tempEst, int umiditaInt, int umiditaEst, int vento) {
-    	Configurazione.updateMeteo(db, loc, meteo, tempInt, tempEst, umiditaInt, umiditaEst, vento);
+	public static void updateMeteo(SQLiteDatabase db, String loc, int meteo, int tempInt, int tempEst, int umiditaInt, int umiditaEst, int vento, int lumi) {
+    	Configurazione.updateMeteo(db, loc, meteo, tempInt, tempEst, umiditaInt, umiditaEst, vento, lumi);
     }
 
 	public static void updateData(SQLiteDatabase db, long data) {
@@ -114,6 +118,7 @@ public class UtilConfigurazione {
 		timestamp = timestamp.replace(".", "");
 		timestamp = timestamp.replace(" ", "");
         
-        return timestamp;
+        return "time"+timestamp;
     }
+
 }
