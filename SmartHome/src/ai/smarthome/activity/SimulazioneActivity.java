@@ -85,7 +85,7 @@ public class SimulazioneActivity extends Activity  {
         	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
         	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
         	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-            riponiButton.setEnabled(false);
+            riponiButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
         	negaButton.setEnabled(Report.checkListaDedottiNuovi(db));
         	presenzaButton.setChecked(true);
         }
@@ -605,7 +605,7 @@ public class SimulazioneActivity extends Activity  {
     	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
     	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
     	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-        riponiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 1, db));
+        riponiButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
     	negaButton.setEnabled(Report.checkListaDedottiNuovi(db));
     	presenzaButton.setChecked(true);
     	
@@ -650,7 +650,7 @@ public class SimulazioneActivity extends Activity  {
 	    	        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
 	    	        	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
 	    	        	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-	    	            riponiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 1, db));
+	    	            riponiButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
 	    	        	negaButton.setEnabled(Report.checkListaDedottiNuovi(db));
 	    	        	presenzaButton.setChecked(true);
 	    	        }
@@ -680,7 +680,7 @@ public class SimulazioneActivity extends Activity  {
 	    	        	accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
 	    	        	spegniButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 1, db));
 	    	        	prendiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 0, db));
-	    	            riponiButton.setEnabled(Oggetto.checkOggetto(Oggetto.CUCINA, 1, db));
+	    	            riponiButton.setEnabled(Oggetto.checkOggetto(null, 1, db));
 	    	        	negaButton.setEnabled(Report.checkListaDedottiNuovi(db));
 	    	        	presenzaButton.setChecked(true);
 	    	        }
