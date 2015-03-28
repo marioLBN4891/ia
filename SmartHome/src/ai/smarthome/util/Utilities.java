@@ -27,6 +27,10 @@ public class Utilities {
 		((Activity)context).getMenuInflater().inflate(R.menu.logout, menu);
 	}
 	
+	public static void getServerAddressMenuOnActivity(final Context context, Menu menu) {
+		((Activity)context).getMenuInflater().inflate(R.menu.server, menu);
+	}
+	
 	public static boolean emailValida(String email) {
 		final Pattern EMAIL = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+");
 		Pattern pattern = EMAIL;

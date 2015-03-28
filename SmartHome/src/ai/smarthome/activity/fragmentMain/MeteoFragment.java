@@ -46,9 +46,9 @@ public class MeteoFragment extends Fragment {
         seekVento = (SeekBar) rootView.findViewById(R.id.seekVento);
         seekLumi = (SeekBar) rootView.findViewById(R.id.seekLumi);
         
-        textLoc = (TextView) rootView.findViewById(R.id.textEditLocalita);
-        textLoc.setText(meteo.getLocalita());
-        
+//        textLoc = (TextView) rootView.findViewById(R.id.textEditLocalita);
+//        textLoc.setText(meteo.getLocalita());
+//        
         textMeteo = (TextView) rootView.findViewById(R.id.textMeteo);
         textTempInt = (TextView) rootView.findViewById(R.id.textTemperaturaInterna);
         textTempEst = (TextView) rootView.findViewById(R.id.textTemperaturaEsterna);

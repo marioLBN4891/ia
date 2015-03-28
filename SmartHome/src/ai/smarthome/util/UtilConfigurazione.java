@@ -40,10 +40,10 @@ public class UtilConfigurazione {
     }
 	
 	public static String setTextViewMeteo(int progress) {
-		if (progress <= 35) return "Piovoso";
-		if (progress > 35 && progress <= 65) return "Nuvoloso";
-		if (progress > 65 && progress <= 80) return "Sereno";
-		if (progress > 80) return "Soleggiato";
+		if (progress <= 35) return " Giornata piovosa";
+		if (progress > 35 && progress <= 65) return "Giornata nuvolosa";
+		if (progress > 65 && progress <= 80) return "Giornata serena";
+		if (progress > 80) return "Giornata soleggiata";
 		return "";
 	}
     

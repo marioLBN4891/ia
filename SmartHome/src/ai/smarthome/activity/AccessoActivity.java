@@ -1,5 +1,6 @@
 package ai.smarthome.activity;
 
+
 import ai.smarthome.R;
 import ai.smarthome.activity.fragmentAccesso.LoginFragment;
 import ai.smarthome.activity.fragmentAccesso.RegistrazioneFragment;
@@ -87,12 +88,19 @@ public class AccessoActivity extends FragmentActivity implements TabListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		return true;
+		Utilities.getServerAddressMenuOnActivity(this, menu);
+        return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		return super.onOptionsItemSelected(item);
+		switch(item.getItemId()) {
+        case R.id.server:
+        	    	Intent intent = new Intent(AccessoActivity.this, ImpostazioniActivity.class);
+                    startActivity(intent);
+        default:
+            return super.onOptionsItemSelected(item);
+        }
 	}
 	
 	@Override

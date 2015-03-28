@@ -56,7 +56,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.facebook.Session;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
@@ -170,8 +169,6 @@ public class MainActivity extends Activity {
             .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                	Session.getActiveSession().closeAndClearTokenInformation();
-                	
                 	Utente.deleteConnessioneVeloce(db);
                 	Intent intent = new Intent(MainActivity.this, AccessoActivity.class);
                     startActivity(intent);
@@ -250,6 +247,42 @@ public class MainActivity extends Activity {
         Utilities.chiudiApplicazione(this);
     }
     
+    public void cambiaImpostazioni(View view) {
+    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+    	alert.setTitle("Conferma operazione");
+    	alert.setMessage("Inserisci password di sistema:");
+
+    	final EditText input = new EditText(this);
+    	input.setText("smartkitchen");
+    	alert.setView(input);
+
+    	alert.setPositiveButton("Conferma", new DialogInterface.OnClickListener() {
+    		public void onClick(DialogInterface dialog, int whichButton) {
+    			String value = input.getText().toString();
+    			String accesso = "smartkitchen";
+    			if (value.equals(accesso)) {
+    				Toast.makeText(getApplicationContext(), "Password corretta", Toast.LENGTH_SHORT).show();
+    				String serverAddress = Impostazione.getIndirizzo(db);
+    				if(XMLRPC.startServer(user, serverAddress)) {
+    					EditText indirizzo = (EditText) findViewById(R.id.editTextServer);
+    					Impostazione.updateIndirizzo(db, indirizzo.getText().toString().trim());
+    					Toast.makeText(getApplicationContext(), "Server avviato con successo", Toast.LENGTH_SHORT).show();
+    				}
+    				else
+    					Toast.makeText(getApplicationContext(), "Impossibile avviare il Server", Toast.LENGTH_SHORT).show();
+    			}
+    			else
+    				Toast.makeText(getApplicationContext(), "Password non corretta", Toast.LENGTH_SHORT).show();
+		  }
+    	});
+
+    	alert.setNegativeButton("Annulla", null);
+
+    	alert.show();
+    	
+    }
+    
     public void cambiaInfoUtente(View view) {
     	CheckBox presenza = (CheckBox) findViewById(R.id.checkBoxPresenza);
     	RadioButton rbAltracamera = (RadioButton) findViewById(R.id.radioButtonCamera);
@@ -267,41 +300,7 @@ public class MainActivity extends Activity {
     	Toast.makeText(getApplicationContext(), "Dati modificati con successo", Toast.LENGTH_SHORT).show();
     }
     
-    public void cambiaImpostazioni(View view) {
-    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-    	alert.setTitle("Conferma operazione");
-    	alert.setMessage("Inserisci password di sistema:");
-
-    	final EditText input = new EditText(this);
-    	input.setText("smartkitchen");
-    	alert.setView(input);
-
-    	alert.setPositiveButton("Conferma", new DialogInterface.OnClickListener() {
-    		public void onClick(DialogInterface dialog, int whichButton) {
-    			String value = input.getText().toString();
-    			String accesso = "smartkitchen";
-    			if (value.equals(accesso)) {
-    				Toast.makeText(getApplicationContext(), "Password corretta", Toast.LENGTH_SHORT).show();
-    				EditText indirizzo = (EditText) findViewById(R.id.editTextServer);
-    				Impostazione.updateIndirizzo(db, indirizzo.getText().toString().trim());
-    				if (XMLRPC.startServer(user, indirizzo.getText().toString().trim())) 
-    					Toast.makeText(getApplicationContext(), "Server avviato con successo", Toast.LENGTH_SHORT).show();
-    				else
-    					Toast.makeText(getApplicationContext(), "Impossibile avviare il server", Toast.LENGTH_SHORT).show();
-    			}
-    			else
-    				Toast.makeText(getApplicationContext(), "Password non corretta", Toast.LENGTH_SHORT).show();
-		  }
-    	});
-
-    	alert.setNegativeButton("Annulla", null);
-
-    	alert.show();
-    	
-    }
-    
-    
+        
     @SuppressLint("SimpleDateFormat")
 	public void cambiaData(View view) {
     	
@@ -381,7 +380,7 @@ public class MainActivity extends Activity {
     }
    
     public void cambiaMeteo(View view) {
-    	TextView textLoc = (TextView)findViewById(R.id.textEditLocalita);
+   // 	TextView textLoc = (TextView)findViewById(R.id.textEditLocalita);
     	SeekBar seekMeteo = (SeekBar)findViewById(R.id.seekMeteo);
     	SeekBar seekTempInt = (SeekBar)findViewById(R.id.seekTemperaturaInterna);
     	SeekBar seekTempEst = (SeekBar)findViewById(R.id.seekTemperaturaEsterna);
@@ -390,7 +389,7 @@ public class MainActivity extends Activity {
     	SeekBar seekVento = (SeekBar)findViewById(R.id.seekVento);
     	SeekBar seekLumi = (SeekBar)findViewById(R.id.seekLumi);
     	
-    	UtilConfigurazione.updateMeteo(db, (String)textLoc.getText(), seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress(), seekLumi.getProgress());
+    	UtilConfigurazione.updateMeteo(db, "-", seekMeteo.getProgress(), seekTempInt.getProgress(), seekTempEst.getProgress(), seekUmiditaInt.getProgress(), seekUmiditaEst.getProgress(), seekVento.getProgress(), seekLumi.getProgress());
     	
         Toast.makeText(getApplicationContext(), "Clima modificato con successo", Toast.LENGTH_SHORT).show();
     }
@@ -440,7 +439,7 @@ public class MainActivity extends Activity {
 			String localita = (new GPSTracker(this)).getLocality(this);
 			parametri = Rest.getMeteoLocale(this, localita);
 			
-			TextView textLoc = (TextView) findViewById(R.id.textEditLocalita);
+		//	TextView textLoc = (TextView) findViewById(R.id.textEditLocalita);
 	        SeekBar seekMeteo = (SeekBar) findViewById(R.id.seekMeteo);
 			SeekBar seekTempInt = (SeekBar) findViewById(R.id.seekTemperaturaInterna);
 			SeekBar seekTempEst = (SeekBar) findViewById(R.id.seekTemperaturaEsterna);
@@ -448,7 +447,7 @@ public class MainActivity extends Activity {
 			SeekBar seekUmiditaEst = (SeekBar) findViewById(R.id.seekUmiditaEsterna);
 			SeekBar seekVento = (SeekBar) findViewById(R.id.seekVento);
 	        
-			textLoc.setText(localita);
+		//	textLoc.setText(localita);
 	        seekMeteo.setProgress(parametri.get("meteo"));
 	        seekTempInt.setProgress(parametri.get("tempInt"));
 	        seekTempEst.setProgress(parametri.get("tempEst"));

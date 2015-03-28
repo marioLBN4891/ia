@@ -22,7 +22,7 @@ public class ImpostazioniFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	
     	Utente user = (Utente) getArguments().getSerializable(Costanti.UTENTE);
-    	rootView = inflater.inflate(R.layout.fragment_impostazioni, container, false);
+    	rootView = inflater.inflate(R.layout.activity_impostazioni, container, false);
         String intestazione = getResources().getStringArray(R.array.opzioni_array)[user.getPosizione()];
         getActivity().setTitle(intestazione);
         

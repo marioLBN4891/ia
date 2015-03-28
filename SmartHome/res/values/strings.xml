@@ -65,6 +65,7 @@
     <string name="password_accesso">Inserisci password per accedere:</string>
 	<string name="indirizzo">Modifica URL del Server:</string>
 	<string name="server">Avvia il Web Server cliccando sul pulsante sottostante:</string>
+	<string name="impserver">Impostazioni app</string>
 	
 	<string name="avvia_server">Avvia Server</string>
 	<string name="cambiaImpostazioni">Impostazioni</string>

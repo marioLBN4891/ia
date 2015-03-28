@@ -44,7 +44,7 @@ public class ComponentiFragment extends Fragment {
 	    
 	    LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.llComponenti);
         LayoutParams layoutParam = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParam.setMargins(0, 12, 0, 0);
+        layoutParam.setMargins(0, 8, 0, 0);
         
         for(Componente c : lista) {
         	if (!(c.getNome().equals("Dispensa") || c.getNome().equals("Mobile") || c.getNome().equals("Frigorifero"))) {

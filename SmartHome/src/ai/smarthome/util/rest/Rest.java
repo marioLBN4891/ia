@@ -507,5 +507,75 @@ public class Rest  {
 		
 	}
 	
-	
+public static Map<String,Integer> getMeteoLocale2(Context context, String city) {
+		
+		Map<String,Integer> parametri = null;
+		try {
+			if (city == null)
+				city = "Roma";
+			
+			URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q="+city);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(timeOut*10);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			BufferedReader rd;
+			conn.connect();
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			JSONObject json = null;
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				
+				json = new JSONObject(line);
+			}
+			
+			parametri = new HashMap<String,Integer>();
+			JSONArray datiWeather = json.getJSONArray("weather");
+			JSONObject weather = datiWeather.getJSONObject(0);
+			String mainWeather = weather.getString("main");
+			
+			JSONObject datiMain = json.getJSONObject("main");
+			JSONObject datiWind = json.getJSONObject("wind");
+			
+			long temp = datiMain.getLong("temp");
+			long humidity = datiMain.getLong("humidity");
+			long speed = datiWind.getLong("speed");
+			
+			int umiditaEst = 0, umiditaInt = 0, vento = 0, tempEst = 0, tempInt = 0, visibilita = 0, meteoClima = 0, luminosita = 0;
+			
+		
+			if(mainWeather.equals("Clear")) meteoClima = 70;
+			if(mainWeather.equals("Clouds")) meteoClima = 40;
+			if(mainWeather.equals("Rain")) meteoClima = 20;
+			
+			umiditaInt = (int) humidity;
+			if(umiditaInt > 50) 
+				umiditaEst = umiditaInt-15;
+			else
+				umiditaEst = umiditaInt+20;
+			
+			
+			vento = (int) speed;
+			
+			parametri.put("tempEst", tempEst);
+			parametri.put("tempInt", tempInt);
+			parametri.put("meteo", meteoClima);
+			parametri.put("visibilita", visibilita);
+			parametri.put("umiditaEst", umiditaEst);
+			parametri.put("umiditaInt", umiditaInt);
+			parametri.put("vento", vento);
+			parametri.put("luminosita", luminosita);
+			LogView.info("Rest.getMeteoLocale: OK");
+			return parametri;
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogView.info("Rest.getMeteoLocale: ERRORE");
+			return null;
+		} 
+		
+	}
 }
