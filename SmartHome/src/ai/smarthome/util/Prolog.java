@@ -95,25 +95,20 @@ public class Prolog {
 		ArrayList<Report> listaFattiDedotti = null;
 		if(stato) {
 			listaFattiDedotti = (ArrayList<Report>) risultati.get("listaDedotti");
-			if (listaFattiDedotti == null)
-				return false;
-			if (listaFattiDedotti.isEmpty())
-				return true;
+			if (listaFattiDedotti != null && !listaFattiDedotti.isEmpty()) {
+				for(Report dedtToSave : listaFattiDedotti) {
+					//		if (!checkDeduzioneRidondante(db, dedtToSave.getProlog(), listaFattiDedottiSalvati)) {
+								Report.insert(db, dedtToSave);
+								if (!dedtToSave.getItem().equals("")) {
+									Componente.cambiaStato(db, dedtToSave.getItem(), dedtToSave.getStato());
+									Report.cambiaStatoComponente(db, dedtToSave.getItem(), dedtToSave.getStato());
+								}
+					//		}
+						}
+			}
 		}
 		else
 			return false;
-		
-	//	ArrayList<Report> listaFattiDedottiSalvati = Report.getListaFattiDedottiSalvati(db);
-		for(Report dedtToSave : listaFattiDedotti) {
-	//		if (!checkDeduzioneRidondante(db, dedtToSave.getProlog(), listaFattiDedottiSalvati)) {
-				Report.insert(db, dedtToSave);
-				if (!dedtToSave.getItem().equals("")) {
-					Componente.cambiaStato(db, dedtToSave.getItem(), dedtToSave.getStato());
-					Report.cambiaStatoComponente(db, dedtToSave.getItem(), dedtToSave.getStato());
-				}
-	//		}
-		}
-		
 		return true;
 		
 	}
@@ -224,11 +219,11 @@ public class Prolog {
 						statoAzione = "acceso: intensità bassa";
 					}
 					if(comp.getStato() == 2) {
-						stato = "middle";
+						stato = "200";
 						statoAzione = "acceso: intensità media";
 					}
 					if(comp.getStato() == 3) {
-						stato = "max";
+						stato = "300";
 						statoAzione = "acceso: intensità massima";
 					}
 				}

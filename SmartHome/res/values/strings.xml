@@ -20,6 +20,8 @@
     <string name="logout">Logout</string>
     <string name="report">Report</string>
     
+    <string name="mondoLogin">Accedi con le tue credenziali Mondo</string>
+    
     <string name="formRegistrazione">Registrati al sistema per poter accedere alle funzionalità del sistema C@SA.\nProcedi con la compilazione dei campi sottostanti ed effettua l\'accesso nella sezione di login.</string>
     <string name="registrazione">Registrazione</string>
     <string name="cognome">Cognome</string>

@@ -19,7 +19,7 @@ import android.widget.TextView;
 public class MeteoFragment extends Fragment {
 	
 	private SeekBar seekMeteo, seekLumi, seekTempInt, seekTempEst, seekUmiditaInt, seekUmiditaEst, seekVento; 
-    private TextView textLoc, textMeteo, textTempInt, textTempEst, textUmiditaInt, textUmiditaEst, textVento, textLumi;
+    private TextView textMeteo, textTempInt, textTempEst, textUmiditaInt, textUmiditaEst, textVento, textLumi;
     private SQLiteDatabase db;
     
     public MeteoFragment() {

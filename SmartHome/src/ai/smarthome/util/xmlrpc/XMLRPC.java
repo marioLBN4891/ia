@@ -132,17 +132,7 @@ public class XMLRPC {
 				if(risultati.length > 0) {
 					for(int i=0; i < risultati.length; i++) {
 						String fattoDedotto = (String) risultati[i];
-						if ( ! (fattoDedotto.contains("tot_lux") || 
-								fattoDedotto.contains("condition_window") || 
-								fattoDedotto.contains("soggetto1") || 
-								fattoDedotto.contains("_setting") || 
-								fattoDedotto.contains("action") ||
-								fattoDedotto.contains("pick_") || 
-								fattoDedotto.contains("put_away_") || 
-								fattoDedotto.contains("humidier") || 
-								fattoDedotto.contains("warm") || 
-								fattoDedotto.contains("cold") || 
-								fattoDedotto.contains("_no")))
+						if (fattoDedotto.contains("_choice_"))
 							listaDedotti.add(Prolog.fattoDedottoToReport(db,fattoDedotto));
 					}
 					map.put("esito", true);

@@ -26,21 +26,11 @@ tools:context="ai.smarthome.activity.StartActivity" >
     android:src="@drawable/scritta_uniba" 
     android:contentDescription= "@string/app_name" />
     
-    <ImageView
-    android:id="@+id/logoDibImage"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/scrittaUnibaImage"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="20dp"
-    android:src="@drawable/logo_dib" 
-    android:contentDescription= "@string/app_name" />
-    
     <TextView
     android:id="@+id/cdlText"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/logoDibImage"
+    android:layout_below="@+id/scrittaUnibaImage"
     android:layout_centerHorizontal="true"
     android:gravity="center"
     android:layout_marginTop="25dp"

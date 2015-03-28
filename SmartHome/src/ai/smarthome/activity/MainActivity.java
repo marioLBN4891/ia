@@ -350,29 +350,30 @@ public class MainActivity extends Activity {
     	    	        	if(bundle.get(c.getNome()) != null) 
     	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
             		}
-            		
+        			else
             		if(switchComponente.getText().equals("Termosifone")) {
             			Bundle bundle = getIntent().getExtras();
     	    	        if(bundle != null) 
     	    	        	if(bundle.get(c.getNome()) != null) 
     	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
             		}
-            		
+            		else
             		if(switchComponente.getText().equals("Forno a microonde")) {
             			Bundle bundle = getIntent().getExtras();
     	    	        if(bundle != null) 
     	    	        	if(bundle.get(c.getNome()) != null) 
     	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
             		}
-            		
+            		else
             		if(switchComponente.getText().equals("Illuminazione")) {
             			Bundle bundle = getIntent().getExtras();
     	    	        if(bundle != null) 
     	    	        	if(bundle.get(c.getNome()) != null) 
     	    	        		Componente.update(db, c.getNome(), (Integer) bundle.get(c.getNome()));
             		}
+            		else
+            			Componente.update(db, c.getNome(), ((stato) ? 1:0));
             	}
-	    		Componente.update(db, c.getNome(), ((stato) ? 1:0));
 	    	}
 	    }
 	    UtilConfigurazione.updateComponenti(db, 1);

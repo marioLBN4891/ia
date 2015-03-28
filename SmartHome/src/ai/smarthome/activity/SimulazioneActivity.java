@@ -20,8 +20,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,7 +37,7 @@ public class SimulazioneActivity extends Activity  {
 	private Button apriButton, chiudiButton, accendiButton, spegniButton, prendiButton, riponiButton, negaButton;
 	private ToggleButton presenzaButton;
 	private String timestamp = UtilConfigurazione.setTimestamp();
-	
+	int selectedItem = -1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,24 +104,11 @@ public class SimulazioneActivity extends Activity  {
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.menu_action_simulazione, menu);
-	    return super.onCreateOptionsMenu(menu);
-	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.report:
-			Intent intent = new Intent(SimulazioneActivity.this, ReportActivity.class);
-			intent.putExtra(Costanti.UTENTE, user);
-			startActivity(intent);
-			finish();
-            
-        case android.R.id.home:
+		case android.R.id.home:
         	new AlertDialog.Builder(this).setIcon(R.drawable.attenzione).setTitle("Simulazione")
             .setMessage("Termina simulazione?")
             .setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -254,13 +239,14 @@ public class SimulazioneActivity extends Activity  {
 	}
 	
 	public void exeAccendi(View view) {
+		selectedItem = -1;
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		final AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(this);
 		alertDialogBuilder
  			.setTitle("Accendi")
  			.setSingleChoiceItems(Componente.getListaCharSequence(Componente.ACCESO_SPENTO, 0, db), 0, null)
 			.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
+				public void onClick(DialogInterface dialog,int idAccendi) {
 					ListView lw = ((AlertDialog)dialog).getListView();
 					final String checkedItem = (String) lw.getAdapter().getItem(lw.getCheckedItemPosition());
 					if(checkedItem.equals("Condizionatore")) {
@@ -268,13 +254,20 @@ public class SimulazioneActivity extends Activity  {
 	        			final CharSequence[] listaStatiProlog = {"low", "middle", "max", "deumidifier"};
 	        			alertDialogBuilder2
 	        			.setTitle("Stato "+checkedItem+":")
-	        		   	.setSingleChoiceItems(listaStati, 0, null)
+	        		   	.setSingleChoiceItems(listaStati, 0, new DialogInterface.OnClickListener() {
+	        		   		@Override
+	        		   		public void onClick(DialogInterface arg0, int arg1) {
+	        		   			selectedItem = arg1;
+	        		   		}
+	        		   	 })
 	        		    .setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
-	        		    	public void onClick(DialogInterface dialog,int id) {
-	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[id]+"("+timestamp+")";
-	        					Report report = new Report("Hai acceso "+checkedItem, checkedItem, id, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
+	        		    	public void onClick(DialogInterface dialog,int idCond) {
+	        		    		if(selectedItem == -1) 
+	        		    			selectedItem = 0;
+	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[selectedItem]+"("+timestamp+")";
+	        		    		Report report = new Report("Hai acceso "+checkedItem, checkedItem, selectedItem+1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 	        					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
-	        						Componente.cambiaStato(db, checkedItem, id);
+	        						Componente.cambiaStato(db, checkedItem, selectedItem+1);
 	        						//Report.cambiaStatoComponente(db, checkedItem);
 	        						spegniButton.setEnabled(true);
 	        						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
@@ -299,13 +292,20 @@ public class SimulazioneActivity extends Activity  {
 	        			final CharSequence[] listaStatiProlog = {"low", "middle", "max"};
 	        			alertDialogBuilder2
 	        			.setTitle("Stato "+checkedItem+":")
-	        		   	.setSingleChoiceItems(listaStati, 0, null)
+	        		   	.setSingleChoiceItems(listaStati, 0, new DialogInterface.OnClickListener() {
+	        		   		@Override
+	        		   		public void onClick(DialogInterface arg0, int arg1) {
+	        		   			selectedItem = arg1;
+	        		   		}
+	        		   	 })
 	        		    .setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
-	        		    	public void onClick(DialogInterface dialog,int id) {
-	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[id]+"("+timestamp+")";
-	        					Report report = new Report("Hai acceso "+checkedItem, checkedItem, id, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
+	        		    	public void onClick(DialogInterface dialog,int idTerm) {
+	        		    		if(selectedItem == -1) 
+	        		    			selectedItem = 0;
+	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[selectedItem]+"("+timestamp+")";
+	        		    		Report report = new Report("Hai acceso "+checkedItem, checkedItem, selectedItem+1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 	        					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
-	        						Componente.cambiaStato(db, checkedItem, id);
+	        						Componente.cambiaStato(db, checkedItem, selectedItem+1);
 	        						//Report.cambiaStatoComponente(db, checkedItem);
 	        						spegniButton.setEnabled(true);
 	        						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
@@ -328,15 +328,23 @@ public class SimulazioneActivity extends Activity  {
 	        		if(checkedItem.equals("Forno a microonde")) {
 	        			final CharSequence[] listaStati = {"riscaldamento", "scongelamento"};	 
 	        			final CharSequence[] listaStatiProlog = {"heat", "defrost"};
+	        			
 	        			alertDialogBuilder2
 	        			.setTitle("Stato "+checkedItem+":")
-	        		   	.setSingleChoiceItems(listaStati, 0, null)
-	        		    .setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
-	        		    	public void onClick(DialogInterface dialog,int id) {
-	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[id]+"("+timestamp+")";
-	        					Report report = new Report("Hai acceso "+checkedItem, checkedItem, id, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
+	        		   	.setSingleChoiceItems(listaStati, -1, new DialogInterface.OnClickListener() {
+	        		   		@Override
+	        		   		public void onClick(DialogInterface arg0, int arg1) {
+	        		   			selectedItem = arg1;
+	        		   		}
+	        		   	 })
+	        		   	.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
+	        		    	public void onClick(DialogInterface dialog,int idTerm) {
+	        		    		if(selectedItem == -1) 
+	        		    			selectedItem = 0;
+	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[selectedItem]+"("+timestamp+")";
+	        		    		Report report = new Report("Hai acceso "+checkedItem, checkedItem, selectedItem+1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 	        					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
-	        						Componente.cambiaStato(db, checkedItem, id);
+	        						Componente.cambiaStato(db, checkedItem, selectedItem+1);
 	        						//Report.cambiaStatoComponente(db, checkedItem);
 	        						spegniButton.setEnabled(true);
 	        						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
@@ -348,7 +356,7 @@ public class SimulazioneActivity extends Activity  {
 	        						return;
 	        					}
 	        		    	}
-	        		    })
+	        		    })  
 	        		    .setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
 	        		    	public void onClick(DialogInterface dialog,int id) {
 	        		    		dialog.cancel();
@@ -361,13 +369,20 @@ public class SimulazioneActivity extends Activity  {
 	        			final CharSequence[] listaStatiProlog = {"100", "200", "300"};
 	        			alertDialogBuilder2
 	        			.setTitle("Stato "+checkedItem+":")
-	        		   	.setSingleChoiceItems(listaStati, 0, null)
+	        		   	.setSingleChoiceItems(listaStati, 0, new DialogInterface.OnClickListener() {
+	        		   		@Override
+	        		   		public void onClick(DialogInterface arg0, int arg1) {
+	        		   			selectedItem = arg1;
+	        		   		}
+	        		   	 })
 	        		    .setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
-	        		    	public void onClick(DialogInterface dialog,int id) {
-	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[id]+"("+timestamp+")";
-	        					Report report = new Report("Hai acceso "+checkedItem, checkedItem, id, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
+	        		    	public void onClick(DialogInterface dialog,int idLight) {
+	        		    		if(selectedItem == -1) 
+	        		    			selectedItem = 0;
+	        		    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[selectedItem]+"("+timestamp+")";
+	        		    		Report report = new Report("Hai acceso "+checkedItem, checkedItem, selectedItem+1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 	        					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
-	        						Componente.cambiaStato(db, checkedItem, id);
+	        						Componente.cambiaStato(db, checkedItem, selectedItem+1);
 	        						//Report.cambiaStatoComponente(db, checkedItem);
 	        						spegniButton.setEnabled(true);
 	        						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
@@ -455,11 +470,12 @@ public class SimulazioneActivity extends Activity  {
 					String fatto = "action_pick_"+Oggetto.getProlog(db, checkedItem)+"("+timestamp+")";
 					Report report = new Report("Hai preso "+checkedItem, checkedItem, 1, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
 					if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
-						Oggetto.cambiaStato(db, checkedItem, 0);
+						Oggetto.cambiaStato(db, checkedItem, 1);
 						riponiButton.setEnabled(true);
 						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
 						spegniButton.setEnabled(true);
 						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+						refreshListaFatti();
 					}
 					else
 						alertServerError();
@@ -491,11 +507,10 @@ public class SimulazioneActivity extends Activity  {
 						chiudiButton.setEnabled(Componente.checkComponente(Componente.APERTO_CHIUSO, 1, db));
 						spegniButton.setEnabled(true);
 						accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
+						refreshListaFatti();
 					}
-					else {
-						Oggetto.cambiaStato(db, checkedItem, 1);
+					else 
 						alertServerError();
-					}
 				}
 			})
 			.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
@@ -584,13 +599,13 @@ public class SimulazioneActivity extends Activity  {
 			    textView2.setTypeface(null, Typeface.BOLD);
 			}
 		    if (r.getNuovo() == 0 && r.getSentReceived() == 0) {
-		    	textView1.setTextColor(Color.BLUE);
+		    	textView1.setTextColor(Color.BLACK);
 		    	textView2.setTextColor(Color.BLACK);
 			}
 			    
 		    if (r.getSentReceived() == 1) {
-		    	textView1.setTextColor(Color.CYAN);
-			    textView2.setTextColor(Color.CYAN);
+		    	textView1.setTextColor(Color.BLUE);
+			    textView2.setTextColor(Color.BLUE);
 			}
 			
 		    TableRow riga = new TableRow(this);
@@ -691,32 +706,5 @@ public class SimulazioneActivity extends Activity  {
 		}).show();
 	}
 	
-	private void creaDialogOpen(final String checkedItem, CharSequence[] listaStati, final CharSequence[] listaStatiProlog) {
-    	new AlertDialog.Builder(this)
-		.setIcon(R.drawable.attenzione)
-	    .setTitle("Stato "+checkedItem+":")
-	   	.setSingleChoiceItems(listaStati, 0, null)
-	    .setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
-	    	public void onClick(DialogInterface dialog,int id) {
-	    		String fatto = "action_"+Componente.getProlog(db, checkedItem)+"_"+listaStatiProlog[id]+"("+timestamp+")";
-				Report report = new Report("Hai acceso "+checkedItem, checkedItem, id, Prolog.creaStringaFatto(fatto, "1.0"), 0, 1, 1, 0);
-				if (Prolog.eseguiConfigurazione(db, timestamp, user, report)) {
-					Componente.cambiaStato(db, checkedItem, id);
-					//Report.cambiaStatoComponente(db, checkedItem);
-					spegniButton.setEnabled(true);
-					accendiButton.setEnabled(Componente.checkComponente(Componente.ACCESO_SPENTO, 0, db));
-					refreshListaFatti();
-				}
-				else {
-					alertServerError();
-				}
-	    	}
-	    })
-	    .setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
-	    	public void onClick(DialogInterface dialog,int id) {
-	    		dialog.cancel();
-	    	}
-	    }).show();
-    }
-	
+		
 }

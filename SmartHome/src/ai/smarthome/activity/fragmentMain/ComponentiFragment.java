@@ -25,7 +25,7 @@ import android.widget.Switch;
 public class ComponentiFragment extends Fragment {
 	
 	private SQLiteDatabase db;
-	
+	int selectedItem = -1;
     public ComponentiFragment() {
     
     }
@@ -99,6 +99,7 @@ public class ComponentiFragment extends Fragment {
     }
     
     private void creaDialog(final Switch switchElement, final CharSequence[] listaStati) {
+    	selectedItem = -1;
     	switchElement.setOnClickListener(new OnClickListener() {
     		@Override
     		public void onClick(View v) {
@@ -106,11 +107,19 @@ public class ComponentiFragment extends Fragment {
     				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
     				alertDialogBuilder
     				.setTitle("Stato "+switchElement.getText()+":")
-    				.setSingleChoiceItems(listaStati, 0, null)
+    				.setSingleChoiceItems(listaStati, 0, new DialogInterface.OnClickListener() {
+        		   		@Override
+        		   		public void onClick(DialogInterface arg0, int arg1) {
+        		   			selectedItem = arg1;
+        		   		}
+        		   	 })
     				.setPositiveButton("Conferma",new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog,int id) {
+    						if(selectedItem == -1) 
+        		    			selectedItem = 0;
+        		    		
     						Intent i = getActivity().getIntent();
-    						i.putExtra((String) switchElement.getText(), id);
+    						i.putExtra((String) switchElement.getText(), selectedItem+1);
     					}
     				})
     				.setNegativeButton("Annulla",new DialogInterface.OnClickListener() {
