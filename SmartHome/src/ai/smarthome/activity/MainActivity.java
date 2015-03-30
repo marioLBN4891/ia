@@ -48,6 +48,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -317,6 +318,8 @@ public class MainActivity extends Activity {
     }
     
     public void startSimulazione(View view) {
+    	ImageButton start = (ImageButton) findViewById(R.id.starSimulazioneButton);
+    	start.setClickable(false);
     	Report.reset(db);
 		
 		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
