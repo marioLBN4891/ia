@@ -66,7 +66,7 @@ import android.widget.Toast;
 
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends Activity {
+public class MainBISActivity extends Activity {
     
 	private DrawerLayout drawerLayout;
     private ListView drawerListView;
@@ -240,7 +240,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 	Utente.deleteConnessioneVeloce(db);
-                	Intent intent = new Intent(MainActivity.this, AccessoActivity.class);
+                	Intent intent = new Intent(MainBISActivity.this, AccessoActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -390,33 +390,33 @@ public class MainActivity extends Activity {
     	ImageButton start = (ImageButton) findViewById(R.id.starSimulazioneButton);
     	start.setClickable(false);
     	
-//    	if(isMainServiceRunning()) {
-//			sendToService();
-//		} else {
-//			Intent launchIntent = getPackageManager().getLaunchIntentForPackage(W7_PACK);
-//			launchIntent.setAction("org.main.wseven.POSITION_REQUEST");
-//			startActivity(launchIntent);
-//		    	
-//			if ( (lat == null && lon == null) || lat.equals("") && lon.equals("")) {
-//				Toast.makeText(getApplicationContext(), "Errore in W7. Lat/Lon non riconosciuta.", Toast.LENGTH_SHORT).show();
-//				return;
-//			}
-//			if (gmtTime.equals("error")){
-//				Toast.makeText(getApplicationContext(), "Errore in W7. gmtTime non riconosciuto.", Toast.LENGTH_SHORT).show();
-//			}
-//		}
-//    		
+    	if(isMainServiceRunning()) {
+			sendToService();
+		} else {
+			Intent launchIntent = getPackageManager().getLaunchIntentForPackage(W7_PACK);
+			launchIntent.setAction("org.main.wseven.POSITION_REQUEST");
+			startActivity(launchIntent);
+		    	
+			if ( (lat == null && lon == null) || lat.equals("") && lon.equals("")) {
+				Toast.makeText(getApplicationContext(), "Errore in W7. Lat/Lon non riconosciuta.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (gmtTime.equals("error")){
+				Toast.makeText(getApplicationContext(), "Errore in W7. gmtTime non riconosciuto.", Toast.LENGTH_SHORT).show();
+			}
+		}
+    		
     	Report.reset(db);
 		
 		Intent intent = new Intent(getApplicationContext(), SimulazioneActivity.class);
     	intent.putExtra(Costanti.UTENTE, user);
-//    	String timestamp = gmtTime.replace(" ", "");
-//    	timestamp = timestamp.replace("-", "");
-//    	timestamp = timestamp.replace("_", "");
-//    	timestamp = timestamp.replace(":", "");
-//    	timestamp = timestamp.replace(".", "");
-//    	    	
-//    	intent.putExtra("timestamp", "time"+timestamp);
+    	String timestamp = gmtTime.replace(" ", "");
+    	timestamp = timestamp.replace("-", "");
+    	timestamp = timestamp.replace("_", "");
+    	timestamp = timestamp.replace(":", "");
+    	timestamp = timestamp.replace(".", "");
+    	    	
+    	intent.putExtra("timestamp", "time"+timestamp);
     	
     	startActivity(intent);
     	finish();

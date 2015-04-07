@@ -51,6 +51,7 @@ public class SimulazioneActivity extends Activity  {
 		Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
             user = (Utente) bundle.get(Costanti.UTENTE);
+//            timestamp = (String) bundle.get("timestamp");	
         }
         
         
